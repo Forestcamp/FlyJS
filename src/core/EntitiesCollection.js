@@ -11,14 +11,14 @@ this.flyjs = this.flyjs || {};
     'use strict';
     /**
      * Manager for control lists of data
-     * @class EntitiesStore
+     * @class EntitiesCollection
      * @constructor
      */
-    var EntitiesStore = function () {
+    var EntitiesCollection = function () {
 
     };
 
-    var e = EntitiesStore.prototype;
+    var e = EntitiesCollection.prototype;
 
     /**
      * @property _listEntities
@@ -28,16 +28,14 @@ this.flyjs = this.flyjs || {};
     e._listEntities;
 
     /**
-     * @property _listMarkups
-     * @type {Dictionary}
      * @private
      */
-    e._listMarkups;
+    e._listFrames;
 
     /**
      * @method getById
      * @param entityId {String}
-     * @return {EntityMarkupSection}
+     * @return {Object}
      * @public
      */
     e.getById = function (entityId) {
@@ -47,44 +45,44 @@ this.flyjs = this.flyjs || {};
     /**
      * @method getByFrame
      * @param frameId {String} num of frame
-     * @return {EntityMarkupSection}
+     * @return {Object}
      * @public
      */
     e.getByFrame = function (frameId) {
-        return this._listMarkups[frameId];
+        return this._listFrames[frameId];
     }
 
     /**
      * @method getByFrameAndId
      * @param frameId {String}
      * @param entityId {String}
-     * @return {EntityMarkupSection}
+     * @return {}
      * @public
      */
     e.getByFrameAndId = function (frameId, entityId) {
-        return this._listMarkups[frameId][entityId];
+        return this._listFrames[frameId][entityId];
     }
 
     /**
-     * @method getListEntities
+     * @method getEntities
      * @return {Object}
      * @public
      */
-    e.getListEntities = function () {
+    e.getEntities = function () {
         return this._listEntities;
     }
 
     /**
      * Set data from AVSX parser
-     * @method loadData
+     * @method setData
      * @param entity {Array}
-     * @param markup {Array}
+     * @param frames {Array}
      * @public
      */
-    e.loadData = function (entity, markup) {
+    e.setData = function (entity, frames) {
         this._listEntities = entity;
-        this._listMarkups = markup;
+        this._listFrames = frames;
     }
 
-    flyjs.EntitiesStore = EntitiesStore;
+    flyjs.EntitiesCollection = EntitiesCollection;
 })();

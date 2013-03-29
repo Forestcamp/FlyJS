@@ -6,7 +6,7 @@
 /*jslint nomen: true, plusplus: true, vars: true */
 /*global flyjs*/
 this.flyjs = this.flyjs || {};
-(function() {
+(function () {
     "use strict";
 
     var StageController = function (fps, stage) {
