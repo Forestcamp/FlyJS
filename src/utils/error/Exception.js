@@ -4,9 +4,9 @@
  *
  */
 /*jslint nomen: true, plusplus: true, vars: true */
-/*global enginejs, Dictionary*/
+/*global flyjs, Dictionary*/
 
-this.enginejs = this.enginejs || {};
+this.flyjs = this.flyjs || {};
 
 (function () {
     "use strict";
@@ -60,5 +60,5 @@ this.enginejs = this.enginejs || {};
         }
     }
 
-    enginejs.Exception = Exception;
+    flyjs.Exception = Exception;
 })();

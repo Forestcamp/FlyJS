@@ -4,9 +4,9 @@
  *
  */
 /*jslint nomen: true, plusplus: true, vars: true */
-/*global enginejs, Dictionary*/
+/*global flyjs, Dictionary*/
 
-this.enginejs = enginejs || {};
+this.flyjs = flyjs || {};
 
 (function () {
     "use strict";
@@ -54,5 +54,5 @@ this.enginejs = enginejs || {};
         return this._providers[clazz] !== null;
     };
 
-    enginejs.State = State;
+    flyjs.State = State;
 })();

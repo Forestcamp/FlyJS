@@ -11,14 +11,14 @@ this.flyjs = this.flyjs || {};
     'use strict';
     /**
      * Manager for control lists of data
-     * @class EntityManager
+     * @class EntitiesStore
      * @constructor
      */
     var EntitiesStore = function () {
 
     };
 
-    var e = EntityManager.prototype;
+    var e = EntitiesStore.prototype;
 
     /**
      * @property _listEntities
@@ -41,7 +41,7 @@ this.flyjs = this.flyjs || {};
      * @public
      */
     e.getById = function (entityId) {
-        return  this._listEntities[entityId];
+        return this._listEntities[entityId];
     }
 
     /**
@@ -82,10 +82,9 @@ this.flyjs = this.flyjs || {};
      * @public
      */
     e.loadData = function (entity, markup) {
-
         this._listEntities = entity;
         this._listMarkups = markup;
     }
 
-    flyjs.EntityManager = EntityManager;
+    flyjs.EntitiesStore = EntitiesStore;
 })();

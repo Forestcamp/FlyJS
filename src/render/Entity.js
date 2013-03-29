@@ -1,10 +1,9 @@
 /*jslint nomen: true, plusplus: true, vars: true */
-/*global enginejs, Dictionary*/
-this.enginejs = this.enginejs || {};
+/*global flyjs, Dictionary*/
+this.flyjs = this.flyjs || {};
 
 (function () {
     "use strict";
-
     /**
      * @class Entity
      * @constructor
@@ -96,5 +95,5 @@ this.enginejs = this.enginejs || {};
         return componentArray;
     };
 
-    enginejs.Entity = Entity;
+    flyjs.Entity = Entity;
 })();

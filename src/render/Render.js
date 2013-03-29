@@ -97,7 +97,7 @@ this.flyjs = this.flyjs || {};
      * @method startEngine
      * @protected
      */
-    e.startEngine = function () {
+    e.startRender = function () {
         createjs.Ticker.setPaused(false);
     }
 
@@ -106,7 +106,7 @@ this.flyjs = this.flyjs || {};
      *  @method stopEngine
      *  @protected
      */
-    e.stopEngine = function () {
+    e.stopRender = function () {
         createjs.Ticker.setPaused(true);
     }
 
