@@ -1,7 +1,7 @@
 /*jslint nomen: true, plusplus: true, vars: true */
-/*global enginejs, Dictionary*/
+/*global flyjs, Dictionary*/
 
-this.enginejs = this.enginejs || {};
+this.flyjs = this.flyjs || {};
 
 (function () {
     "use strict";
@@ -10,11 +10,11 @@ this.enginejs = this.enginejs || {};
      * @class EngineMonitor
      * @constructor
      */
-    var EngineMonitor = function () {
+    var Render = function () {
 
     };
 
-    var e = EngineMonitor.prototype;
+    var e = Render.prototype;
 
     /**
      *  From hack with debuger
@@ -69,10 +69,10 @@ this.enginejs = this.enginejs || {};
     e.initialize = function (fps, stage) {
 
         if (fps === null || fps === 0) {
-            throw new enginejs.Exception("error in parameters", "FPS is Null");
+            throw new flyjs.Exception("error in parameters", "FPS is Null");
         }
         if (stage === null) {
-            throw new enginejs.Exception("error in parameters", "Stage is Null");
+            throw new flyjs.Exception("error in parameters", "Stage is Null");
         }
 
         this._fps = fps;
@@ -151,5 +151,5 @@ this.enginejs = this.enginejs || {};
         this._stage.update();
     }
 
-    enginejs.EngineMonitor = EngineMonitor;
+    flyjs.Render = Render;
 })();
