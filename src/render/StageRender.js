@@ -20,32 +20,45 @@ this.flyjs = this.flyjs || {};
     p.Render_stopRender  = p.stopRender;
     p.Render_tick = p.tickHandler;
 
-    p.stage = null;
+    p._stage = null;
+
+    p._entitiesCollection = null;
 
     p.initialize = function (stage, fps) {
         if (!stage) {
             throw new flyjs.Exception("StageRender: error in parameters", "Stage is Null");
         }
 
-        this.stage = stage;
+        this._stage = stage;
+        this._entitiesCollection = new flyjs.EntitiesCollection();
 
         // call super
         this.Render_initialize(stage, fps);
-        this.Render_startRender(stage);
     };
 
     p.startRender = function () {
-        this.Render_startRender(this.stage);
+        this.Render_startRender(this._stage);
     };
 
     p.stopRender = function () {
         this.Render_stopRender();
-    }
+    };
 
     p.tickHandler = function (event) {
 
         this.Render_tick(event);
-    }
+
+        var i = 0,
+            length = this._entitiesCollection._listEntities.length;
+
+        for (i; i < length; i++) {
+            this._entitiesCollection._listEntities[i].update();
+        }
+    };
+
+    p.add = function (entity) {
+        this._entitiesCollection.add(entity);
+    };
 
     flyjs.StageRender = StageRender;
 })();

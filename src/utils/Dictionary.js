@@ -181,7 +181,6 @@
             var item = this._map[i];
             iterator.call(scope, item.value, item.key, i, this);
         }
-        ;
     };
 
     /**
@@ -283,7 +282,6 @@
             var item = this._map[i];
             v[i] = item.value;
         }
-        ;
         return v;
     };
 
@@ -358,6 +356,6 @@
         return "{" + o.join(",") + "}";
     };
 
-    return this.Dictionary = window.Dictionary = Dictionary;
+    return window.Dictionary = Dictionary;
 
 })();

@@ -10,9 +10,7 @@ this.flyjs = this.flyjs || {};
      * @class EngineMonitor
      * @constructor
      */
-    var Render = function () {
-
-    };
+    var Render = function () {};
 
     var p = Render.prototype = new createjs.Container();
 
@@ -89,8 +87,7 @@ this.flyjs = this.flyjs || {};
      */
     p.tickHandler = function (event) {
         this.frameNumber++;
-    //    console.log(" FrNum: " + this.frameNumber);
     };
 
     flyjs.Render = Render;
-})();
+}());
