@@ -8,13 +8,19 @@ this.flyjs = this.flyjs || {};
      * @class Entity
      * @constructor
      */
-    var Entity = function () {
-        this.initialize();
+    var Entity = function (x, y, graphic) {
+        this.initialize(x, y, graphic);
     };
 
-    var p = Entity.prototype;
+    var p = Entity.prototype = new flyjs.EntitySprite();
 
-    p.initialize = function () {
+    p.Graphic_initialize = p.initialize;
+    p.Graphic_update = p.update;
+
+    p.initialize = function (x, y, graphic) {
+        this.Graphic_initialize();
+
+        this._graphic = graphic;
         this._components = [];
     };
     /**
@@ -36,6 +42,25 @@ this.flyjs = this.flyjs || {};
      * @private
      */
     p._next = null;
+
+    p._visible = true;
+
+    p._graphic;
+    p.x;
+    p.y;
+    p.width;
+    p.height;
+
+    p.update = function () {
+
+    };
+
+    p.render = function () {
+        if (this._graphic) {
+            this._point.x = this.x;
+            this._point.y = this.y;
+        }
+    }
 
     /**
      * @property {Dictionary}

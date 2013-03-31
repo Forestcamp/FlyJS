@@ -35,11 +35,15 @@
     <script type="text/javascript" src="src/vendor/createjs/easeljs/filters/ColorMatrixFilter.js"></script>
 
     <script type="text/javascript" src="src/utils/BindArray.js"></script>
+    <script type="text/javascript" src="src/core/EntitySprite.js"></script>
     <script type="text/javascript" src="src/core/EntitiesCollection.js"></script>
     <script type="text/javascript" src="src/core/Entity.js"></script>
     <script type="text/javascript" src="src/render/Render.js"></script>
     <script type="text/javascript" src="src/render/EntitiesRender.js"></script>
     <script type="text/javascript" src="src/render/StageRender.js"></script>
+
+    <script type="text/javascript" src="example/entities/Ballon.js"></script>
+    <script type="text/javascript" src="example/Game.js"></script>
 
     <script type="text/javascript">
         jQuery(document).ready(function (){
@@ -48,6 +52,8 @@
 
             canvasHolder.appendChild(canvas.get(0));
             var stage = new createjs.Stage(canvas.get(0));
+
+            stage.addChild(new game.Game(stage));
 
             stage.update();
         });

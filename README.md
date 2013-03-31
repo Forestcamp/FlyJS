@@ -1,4 +1,5 @@
-#
+#Fly.js
+Game engine for HTML5
 
 ## Features
 

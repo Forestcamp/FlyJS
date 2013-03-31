@@ -5,47 +5,47 @@
  */
 /*jslint nomen: true, plusplus: true, vars: true */
 /*global flyjs*/
+
 this.flyjs = this.flyjs || {};
 (function () {
     "use strict";
 
-    var StageController = function (fps, stage) {
-        this.initialize(fps, stage);
-    }
+    var StageRender = function () {
+    };
 
-    var p = StageController.prototype = new flyjs.Render();
+    var p = StageRender.prototype = new flyjs.Render();
 
-    p.RenderMonitor_initialize = p.initialize;
-    p.RenderMonitor_startRender = p.startRender;
-    p.RenderMonitor_stopRender  = p.stopRender;
-    p.RenderMonitor_setToFrame  = p.setToFrame;
-    p.RenderMonitor_resizeCanvas = p.resizeCanvas;
-    p.RenderMonitor_tick = p.tick;
+    p.Render_initialize = p.initialize;
+    p.Render_startRender = p.startRender;
+    p.Render_stopRender  = p.stopRender;
+    p.Render_tick = p.tickHandler;
 
-    // use EventDispatcher for this target (Class):
-    createjs.EventDispatcher.initialize(p);
+    p.stage = null;
 
-    p.initialize = function (fps, stage) {
+    p.initialize = function (stage, fps) {
+        if (!stage) {
+            throw new flyjs.Exception("StageRender: error in parameters", "Stage is Null");
+        }
+
+        this.stage = stage;
+
         // call super
-        this.RenderMonitor_initialize(fps, stage);
-    }
+        this.Render_initialize(stage, fps);
+        this.Render_startRender(stage);
+    };
 
     p.startRender = function () {
-        this.RenderMonitor_startRender();
-    }
+        this.Render_startRender(this.stage);
+    };
 
     p.stopRender = function () {
-        this.RenderMonitor_stopRender();
+        this.Render_stopRender();
     }
 
-    p.tick = function () {
+    p.tickHandler = function (event) {
 
-        this.RenderMonitor_tick();
+        this.Render_tick(event);
     }
 
-    p._resizeCanvas = function (event){
-        this.RenderMonitor_resizeCanvas(event.params);
-    }
-
-    flyjs.StageController = StageController;
+    flyjs.StageRender = StageRender;
 })();

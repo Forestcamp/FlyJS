@@ -1,5 +1,5 @@
 /*jslint nomen: true, plusplus: true, vars: true */
-/*global flyjs, Dictionary*/
+/*global flyjs, createjs*/
 
 this.flyjs = this.flyjs || {};
 
@@ -14,8 +14,10 @@ this.flyjs = this.flyjs || {};
 
     };
 
-    var e = Render.prototype;
+    var p = Render.prototype = new createjs.Container();
 
+    // use EventDispatcher for this target (Class):
+    createjs.EventDispatcher.initialize(p);
     /**
      *  From hack with debuger
      * @type {Number}
@@ -23,7 +25,7 @@ this.flyjs = this.flyjs || {};
      * @default 3000
      * @private
      */
-    e._tickThreshold = 3000;
+    p._tickThreshold = 3000;
 
     /**
      *
@@ -32,14 +34,7 @@ this.flyjs = this.flyjs || {};
      * @default 0
      * @private
      */
-    e._fps = 0;
-
-    /**
-     *  current canvas element
-     *  @property _stage
-     *  @protected
-     */
-    e._stage = null;
+    p._fps = 25;
 
     /**
      *  current Tick fps (frame)
@@ -48,16 +43,7 @@ this.flyjs = this.flyjs || {};
      * @default 0
      * @protected
      */
-    e.frameNumber = 0;
-
-    /**
-     *  Now we do seek And Stop(Pause)
-     * @type {Boolean}
-     * @property _seekAndPause
-     * @default false
-     * @private
-     */
-    e._seekAndPause = false;
+    p.frameNumber = 0;
 
     /**
      * initialize method
@@ -66,90 +52,45 @@ this.flyjs = this.flyjs || {};
      * @method initialize
      * @protected
      */
-    e.initialize = function (fps, stage) {
-
-        if (fps === null || fps === 0) {
-            throw new flyjs.Exception("error in parameters", "FPS is Null");
-        }
-        if (stage === null) {
+    p.initialize = function (stage, fps) {
+        if (!stage) {
             throw new flyjs.Exception("error in parameters", "Stage is Null");
         }
 
-        this._fps = fps;
-        this._stage = stage;
-
-        this._initTicker();
-    }
-
-    /**
-     * Initialize createjs.Ticker
-     * @method _initTicker
-     * @private
-     */
-    e._initTicker = function () {
-        createjs.Ticker.setPaused(true);
-        createjs.Ticker.setFPS(this._fps);
-        createjs.Ticker.addEventListener("tick", e.tick);
-    }
+        if (fps) {
+            this._fps = fps;
+        }
+    };
 
     /**
      * start engine tick, switch off from pause Ticker
      * @method startEngine
      * @protected
      */
-    e.startRender = function () {
-        createjs.Ticker.setPaused(false);
-    }
+    p.startRender = function (stage) {
+        createjs.Ticker.addEventListener("tick", stage);
+        createjs.Ticker.setFPS(this._fps);
+        this.addEventListener("tick", this.tickHandler);
+    };
 
     /**
      *  stop engine tick
      *  @method stopEngine
      *  @protected
      */
-    e.stopRender = function () {
-        createjs.Ticker.setPaused(true);
-    }
+    p.stopRender = function () {
 
-    /**
-     * @method setToFrame
-     * @param frameId {Number}
-     * @param isPaused {Boolean}
-     * @protected
-     */
-    e.setToFrame = function (frameId, isPaused) {
-        this.stopEngine();
-        this.frameNumber = frameId;
-        this._seekAndPause = isPaused;
-        this.startEngine();
-    }
+    };
 
     /**
      *  handler for createjs.Tick - update Entity('s) on Stage
      * @method tick
      * @protected
      */
-    e.tick = function (e) {
-        this._stage.update();
+    p.tickHandler = function (event) {
         this.frameNumber++;
-        if (this._seekAndPause){
-            this._seekAndPause = false;
-            this.stopEngine();
-        }
-    }
-
-    /**
-     * @method resizeCanvas
-     * @param event {Object} with params - y,x,width,height
-     * @protected
-     */
-    e.resizeCanvas = function (event){
-        var canvasObject = $(this._stage.canvas);
-        canvasObject.css("top", event.y );
-        canvasObject.css("left", event.x );
-        canvasObject.attr("width", event.width);
-        canvasObject.attr("height", event.height);
-        this._stage.update();
-    }
+    //    console.log(" FrNum: " + this.frameNumber);
+    };
 
     flyjs.Render = Render;
 })();
