@@ -4,7 +4,7 @@ Game engine for HTML5
 ## Features
 
 * HTML5 ready.
-* Cross-browser compatible (Chrome, Opera, Safari, Firefox 3.6+, IE6+).
+* Cross-browser compatible (Chrome, Opera, Safari, Firefox).
 
 
 ## Documentation

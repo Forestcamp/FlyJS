@@ -61,4 +61,4 @@ this.flyjs = this.flyjs || {};
     };
 
     flyjs.StageRender = StageRender;
-})();
+}());
