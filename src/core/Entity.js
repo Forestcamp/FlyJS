@@ -10,47 +10,33 @@ this.flyjs = this.flyjs || {};
      */
     var Entity = function () {};
 
-    var p = Entity.prototype;
+    extend(Entity.prototype, {
+        initialize: function () {},
+        /**
+         * @type {String}
+         * @property name
+         * @public
+         */
+        name: null,
 
-    p.initialize = function () {
+        /**
+         * @type {boolean}
+         */
+        visible: true,
 
-    };
-    /**
-     * @type {String}
-     * @property name
-     * @public
-     */
-    p.name = null;
+        /**
+         * @type {number}
+         */
+        x: 0,
 
-    /**
-     *
-     * @type {boolean}
-     */
-    p.visible = true;
+        /**
+         * @type {number}
+         */
+        y: 0,
 
-    /**
-     *
-     * @type {number}
-     */
-    p.x = 0;
-
-    /**
-     *
-     * @type {number}
-     */
-    p.y = 0;
-
-    p.update = function () {
-
-    };
-
-    p.render = function () {
-
-    };
-
-    p.render = function () {
-
-    };
+        update: function () {},
+        render: function () {}
+    });
 
     flyjs.Entity = Entity;
 }());
