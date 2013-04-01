@@ -10,8 +10,7 @@ this.flyjs = this.flyjs || {};
 (function () {
     "use strict";
 
-    var StageRender = function () {
-    };
+    var StageRender = function () {};
 
     var p = StageRender.prototype = new flyjs.Render();
 
@@ -20,8 +19,18 @@ this.flyjs = this.flyjs || {};
     p.Render_stopRender  = p.stopRender;
     p.Render_tick = p.tickHandler;
 
+    /**
+     *
+     * @type {createjs.Stage}
+     * @private
+     */
     p._stage = null;
 
+    /**
+     *
+     * @type {flyjs.EntitiesCollection}
+     * @private
+     */
     p._entitiesCollection = null;
 
     p.initialize = function (stage, fps) {
@@ -56,6 +65,12 @@ this.flyjs = this.flyjs || {};
         }
     };
 
+    /**
+     *
+     * @method add
+     * @param entity
+     * @public
+     */
     p.add = function (entity) {
         this._entitiesCollection.add(entity);
     };
