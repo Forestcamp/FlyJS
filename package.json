@@ -21,6 +21,10 @@
         "url": "https://github.com/Forestcamp/Fly.js.git"
     },
     "github": "https://github.com/Forestcamp/Fly.js",
+    "scripts": {
+        "test": "grunt ci"
+    },
+    "engine": "node 1.1.x",
     "devDependencies": {
         "grunt": "~0.4.1",
         "grunt-cli": "~0.1.7",

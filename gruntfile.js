@@ -1,6 +1,7 @@
 /*global module:false*/
 module.exports = function (grunt) {
-    // Project configuration.
+    'use strict';
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         meta: {
