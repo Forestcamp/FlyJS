@@ -1,11 +1,11 @@
 {
-    'name': 'fly.js',
-    'version': '0.1',
-    'keywords': [
-        'game',
-        'html5',
-        'framework',
-        'engine'
+    "name": "fly.js",
+    "version": "0.1",
+    "keywords": [
+        "game",
+        "html5",
+        "framework",
+        "engine"
     ],
     "author": {
         "name": "Oleg Pimenov",
