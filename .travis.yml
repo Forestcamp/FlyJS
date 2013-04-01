@@ -3,6 +3,7 @@ node_js:
   - 0.9
 before_script:
   - npm install -g grunt-cli
+script: grunt release
 branches:
   only:
     - master
