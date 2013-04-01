@@ -17,5 +17,7 @@ Icon
 .Trashes
 
 #dev folders
+npm-debug.log
+deploy/*
 test/*
-node_modules
+node_modules/*
