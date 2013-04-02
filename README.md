@@ -1,6 +1,7 @@
 #Fly.js
 Game engine for HTML5
 
+[![Build Status](https://travis-ci.org/Forestcamp/Fly.js.png?branch=master)](https://travis-ci.org/Forestcamp/Fly.js)
 ## Features
 
 * HTML5 ready.

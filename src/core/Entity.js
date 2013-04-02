@@ -29,12 +29,14 @@ this.flyjs = this.flyjs || {};
         /**
          * @type {number}
          * @property x
+         * @public
          */
         x: 0,
 
         /**
          * @type {number}
          * @property y
+         * @public
          */
         y: 0,
 
