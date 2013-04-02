@@ -1,10 +1,11 @@
 /*jslint nomen: true, plusplus: true, vars: true */
-/*global flyjs, Dictionary*/
+/*global flyjs, extend*/
 this.flyjs = this.flyjs || {};
 
 (function () {
     "use strict";
     /**
+     * Create game Entity
      * @class Entity
      * @constructor
      */
@@ -20,17 +21,20 @@ this.flyjs = this.flyjs || {};
         name: null,
 
         /**
-         * @type {boolean}
+         * @type {Boolean}
+         * @property visible
          */
         visible: true,
 
         /**
          * @type {number}
+         * @property x
          */
         x: 0,
 
         /**
          * @type {number}
+         * @property y
          */
         y: 0,
 

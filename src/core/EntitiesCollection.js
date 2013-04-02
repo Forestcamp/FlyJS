@@ -15,15 +15,13 @@ this.flyjs = this.flyjs || {};
      * @class EntitiesCollection
      * @constructor
      */
-    var EntitiesCollection = function () {
-
-    };
+    var EntitiesCollection = function () {};
 
     var e = EntitiesCollection.prototype;
 
     /**
      * @property _listEntities
-     * @type {Dictionary}
+     * @type {Array}
      * @private
      */
     e._listEntities = [];
@@ -41,7 +39,6 @@ this.flyjs = this.flyjs || {};
      * Set data from AVSX parser
      * @method setData
      * @param entity {Array}
-     * @param frames {Array}
      * @public
      */
     e.add = function (entity) {

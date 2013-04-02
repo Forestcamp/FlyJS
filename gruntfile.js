@@ -30,6 +30,16 @@ module.exports = function (grunt) {
                 dest: '<%= meta.deployPath %>cocat.min.js'
             }
         },
+        yuidoc: {
+            name: '<%= pkg.name %>',
+            description: '<%= pkg.description %>',
+            version: '<%= pkg.version %>',
+            url: '<%= pkg.homepage %>',
+            options: {
+                paths: '<%= meta.srcPath %>core',
+                outdir: 'docs/'
+            }
+        },
         jshint: {
             options: {
                 curly: true,
@@ -54,9 +64,11 @@ module.exports = function (grunt) {
     });
 
     // These plugins provide necessary tasks.
+    grunt.loadNpmTasks('grunt-contrib-yuidoc');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    // Default task
+    grunt.registerTask('docs', ['yuidoc']);
+
     grunt.registerTask('release', ['concat', 'uglify']);
 };
