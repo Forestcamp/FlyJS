@@ -9,12 +9,12 @@
         "html5",
         "javascript",
         "game",
-        "ingine"
+        "engine"
     ],
     "author": {
         "name": "Oleg Pimenov",
         "email": "pimenov.o@gmail.com",
-        "web": "http://flashblogger.ru"
+        "web": "http://www.flashblogger.ru"
     },
     "repository": {
         "type": "git",
