@@ -1,4 +1,5 @@
-/*jslint nomen: true, plusplus: true */
+/*jslint nomen: true, plusplus: true, eqeq: true */
+/*global window*/
 (function () {
     "use strict";
     var Item = function (key, value) {
@@ -67,7 +68,8 @@
         for (i; i < l; i++) {
             item = this._map[i];
             if (item.is(key)) {
-                return item.value = value;
+                item.value = value;
+                return item.value;
             }
         }
         this._map.push(new Item(key, value));
@@ -82,9 +84,10 @@
      */
     Dictionary.prototype.contains = function (key) {
         var l = this._map.length,
-            i = 0;
+            i = 0,
+            item;
         for (i; i < l; i++) {
-            var item = this._map[i];
+            item = this._map[i];
             if (item.is(key)) {
                 return true;
             }
@@ -99,8 +102,11 @@
      * @returns mixed
      */
     Dictionary.prototype.getItem = function (key) {
-        for (var i = 0, l = this._map.length; i < l; i++) {
-            var item = this._map[i];
+        var i = 0,
+            l = this._map.length,
+            item;
+        for (i; i < l; i++) {
+            item = this._map[i];
             if (item.is(key)) {
                 return item.value;
             }
@@ -114,15 +120,16 @@
      * @param {mixed} key The key of the value to be removed.
      */
     Dictionary.prototype.removeItem = function (key) {
-        for (var i = 0, l = this._map.length; i < l; i++) {
-            var item = this._map[i];
+        var i = 0,
+            l = this._map.length,
+            item;
+        for (i; i < l; i++) {
+            item = this._map[i];
             if (item.is(key)) {
                 this._map.splice(i, 1);
                 break;
             }
-            ;
         }
-        ;
     };
 
     /**
@@ -161,7 +168,6 @@
         if (!(source instanceof Dictionary)) {
             throw new Error('Source must be a Dictionary object');
         }
-        ;
         this._map = source._map.slice();
         return this;
     };
@@ -176,9 +182,10 @@
      */
     Dictionary.prototype.each = function (iterator, scope) {
         var i = 0,
-            l = this._map.length;
+            l = this._map.length,
+            item;
         for (i; i < l; i++) {
-            var item = this._map[i];
+            item = this._map[i];
             iterator.call(scope, item.value, item.key, i, this);
         }
     };
@@ -195,7 +202,6 @@
                 return a > b ? 1 : b > a ? -1 : 0;
             };
         }
-        ;
         this._map.sort(function (a, b) {
             return iterator(a.key, b.key);
         });
@@ -214,7 +220,6 @@
                 return a > b ? 1 : b > a ? -1 : 0;
             };
         }
-        ;
         this._map.sort(function (a, b) {
             return iterator(a.value, b.value);
         });
@@ -229,9 +234,12 @@
      * @returns {Dictionary}
      */
     Dictionary.prototype.map = function (iterator, scope) {
-        var r = new Dictionary();
-        for (var i = 0, l = this._map.length; i < l; i++) {
-            var item = this._map[i];
+        var r = new Dictionary(),
+            i = 0,
+            l = this._map.length,
+            item;
+        for (i; i < l; i++) {
+            item = this._map[i];
             r.addItem(item.key, iterator.call(scope, item.value, item.key, i, this));
         }
         return r;
@@ -245,10 +253,14 @@
      * @returns {Dictionary}
      */
     Dictionary.prototype.filter = function (iterator, scope) {
-        var r = new Dictionary();
-        for (var i = 0, l = this._map.length; i < l; i++) {
-            var item = this._map[i];
-            var ok = iterator.call(scope, item.value, item.key, i, this);
+        var r = new Dictionary(),
+            i = 0,
+            l = this._map.length,
+            item,
+            ok;
+        for (i; i < l; i++) {
+            item = this._map[i];
+            ok = iterator.call(scope, item.value, item.key, i, this);
             if (ok) {
                 r.addItem(item.key, item.value);
             }
@@ -262,12 +274,14 @@
      * @returns array
      */
     Dictionary.prototype.keys = function () {
-        var k = [];
-        for (var i = 0, l = this._map.length; i < l; i++) {
-            var item = this._map[i];
+        var k = [],
+            i = 0,
+            l = this._map.length,
+            item;
+        for (i; i < l; i++) {
+            item = this._map[i];
             k[i] = item.key;
         }
-        ;
         return k;
     };
 
@@ -277,9 +291,12 @@
      * @returns array
      */
     Dictionary.prototype.values = function () {
-        var v = [];
-        for (var i = 0, l = this._map.length; i < l; i++) {
-            var item = this._map[i];
+        var v = [],
+            i = 0,
+            l = this._map.length,
+            item;
+        for (i; i < l; i++) {
+            item = this._map[i];
             v[i] = item.value;
         }
         return v;
@@ -293,14 +310,15 @@
      * @returns boolean
      */
     Dictionary.prototype.all = function (iterator, scope) {
-        for (var i = 0, l = this._map.length; i < l; i++) {
-            var item = this._map[i];
+        var i = 0,
+            l = this._map.length,
+            item;
+        for (i = 0; i < l; i++) {
+            item = this._map[i];
             if (!iterator.call(scope, item.value, item.key, this)) {
                 return false;
             }
-            ;
         }
-        ;
         return true;
     };
 
@@ -312,8 +330,11 @@
      * @returns {Boolean}
      */
     Dictionary.prototype.any = function (iterator, scope) {
-        for (var i = 0, l = this._map.length; i < l; i++) {
-            var item = this._map[i];
+        var i = 0,
+            l = this._map.length,
+            item;
+        for (i; i < l; i++) {
+            item = this._map[i];
             if (iterator.call(scope, item.value, item.key, this)) {
                 return true;
             }
@@ -328,12 +349,16 @@
      * @returns Dictionary
      */
     Dictionary.prototype.subset = function () {
-        var r = new Dictionary();
-        var keys = Array.apply(null, arguments);
-        for (var i = 0, l = keys.length; i < l; i++) {
-            var key = keys[i];
+        var r = new Dictionary(),
+            keys = Array.apply(null, arguments),
+            i = 0,
+            l = this._map.length,
+            key,
+            value;
+        for (i; i < l; i++) {
+            key = keys[i];
             if (this.contains(key)) {
-                var value = this.getItem(key);
+                value = this.getItem(key);
                 if (value) {
                     r.addItem(key, value);
                 }
@@ -348,14 +373,16 @@
      * @returns string
      */
     Dictionary.prototype.toString = function () {
-        var o = [];
-        for (var i = 0, l = this._map.length; i < l; i++) {
-            var item = this._map[i];
+        var o = [],
+            i = 0,
+            l = this._map.length,
+            item;
+        for (i; i < l; i++) {
+            item = this._map[i];
             o.push(item.toString());
         }
         return "{" + o.join(",") + "}";
     };
 
-    return window.Dictionary = Dictionary;
-
-})();
+    window.Dictionary = Dictionary;
+}());
