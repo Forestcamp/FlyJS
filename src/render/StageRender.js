@@ -10,6 +10,10 @@ this.flyjs = this.flyjs || {};
 (function () {
     "use strict";
 
+    /**
+     * @class StageRender
+     * @constructor
+     */
     var StageRender = function () {};
 
     var p = StageRender.prototype = new flyjs.Render();
@@ -20,25 +24,18 @@ this.flyjs = this.flyjs || {};
     p.Render_tick = p.tickHandler;
 
     /**
-     *
+     * @property _stage
      * @type {Stage}
      * @private
      */
     p._stage = null;
 
     /**
-     *
+     * @property _entitiesCollection
      * @type {EntitiesCollection}
      * @private
      */
     p._entitiesCollection = null;
-
-    /**
-     *
-     * @type {GamePad}
-     * @private
-     */
-    p._gamePad = null;
 
     p.initialize = function (stage, fps) {
         if (!stage) {
@@ -46,11 +43,13 @@ this.flyjs = this.flyjs || {};
         }
 
         this._stage = stage;
-        this._entitiesCollection = new flyjs.EntitiesCollection();
 
+        //******************
+        // Initialize block
+        //******************
+        this._entitiesCollection = new flyjs.EntitiesCollection();
         flyjs.GamePad.initialize(stage);
-        // call super
-        this.Render_initialize(stage, fps);
+        this.Render_initialize(stage, fps); // call super
     };
 
     p.startRender = function () {
