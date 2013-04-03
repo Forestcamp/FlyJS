@@ -12,83 +12,82 @@ this.flyjs = this.flyjs || {};
 
     var EntitySpriteSheet = function () {};
 
-    var proto = EntitySpriteSheet.prototype = new flyjs.Entity();
+    var p = EntitySpriteSheet.prototype = new flyjs.Entity();
 
-    extend(proto, {
-        /**
-         * @property _stage
-         * @type {createjs.Stage}
-         * @private
-         */
-        _stage: null,
+    /**
+     * @property bitmapAnimation
+     * @type {Object}
+     * @protected
+     */
+    p.bitmapAnimation = null;
 
-        /**
-         * @property _loadedAssets
-         * @type {Array}
-         * @private
-         */
-        _loadedAssets: [],
+    /**
+     * @property sprite
+     * @type {null}
+     * @protected
+     */
+    p.sprite = null;
 
-        /**
-         * @property bitmapAnimation
-         * @type {Object}
-         * @protected
-         */
-        bitmapAnimation: null,
+    /**
+     * @property _stage
+     * @type {createjs.Stage}
+     * @private
+     */
+    p._stage = null;
 
-        /**
-         * @property sprite
-         * @type {null}
-         * @protected
-         */
-        sprite: null,
+    /**
+     * @property _loadedAssets
+     * @type {Array}
+     * @private
+     */
+    p._loadedAssets = [];
 
-        /**
-         * @method initialize
-         * @param stage
-         * @param spriteSheetManifest
-         */
-        initialize: function (stage, spriteSheetManifest) {
+    /**
+     * @method initialize
+     * @param stage
+     * @param spriteSheetManifest
+     * @private
+     */
+    p.initialize = function (stage, spriteSheetManifest) {
 
-            if (!stage) {
-                throw new flyjs.Exception("error in parameters", "Stage is Null");
-            }
-
-            if (!spriteSheetManifest) {
-                throw new flyjs.Exception("error in parameters", "spriteSheetManifest is Null");
-            }
-
-            this._stage = stage;
-
-            this.spriteSheet = new createjs.SpriteSheet(spriteSheetManifest);
-            this.sprite = new createjs.BitmapAnimation(this.spriteSheet);
-
-            this.loadManifest([{src: spriteSheetManifest.images[0], id: "sprite"}]);
-        },
-
-        loadManifest: function (manifest) {
-            this.loader = new createjs.LoadQueue(false);
-            this.loader.onFileLoad = this.handleFileLoad.bind(this);
-            this.loader.onComplete = this.handleComplete.bind(this);
-            this.loader.loadManifest(manifest);
-        },
-
-        handleFileLoad: function (event) {
-            this._loadedAssets.push(event.item);
-        },
-
-        handleComplete: function () {
-            var item = this._loadedAssets[0];
-            var id = item.id;
-            var result = this.loader.getResult(id);
-
-            if (item.type == createjs.LoadQueue.IMAGE) {
-                var bmp = new createjs.Bitmap(result);
-            }
-
-            this._stage.addChild(this.sprite);
+        if (!stage) {
+            throw new flyjs.Exception("error in parameters", "Stage is Null");
         }
-    });
+
+        if (!spriteSheetManifest) {
+            throw new flyjs.Exception("error in parameters", "spriteSheetManifest is Null");
+        }
+
+        this._stage = stage;
+
+        this.spriteSheet = new createjs.SpriteSheet(spriteSheetManifest);
+        this.sprite = new createjs.BitmapAnimation(this.spriteSheet);
+
+        this.loadManifest([{src: spriteSheetManifest.images[0], id: "sprite"}]);
+    };
+
+    p.loadManifest = function (manifest) {
+        this.loader = new createjs.LoadQueue(false);
+        this.loader.onFileLoad = this.handleFileLoad.bind(this);
+        this.loader.onComplete = this.handleComplete.bind(this);
+        this.loader.loadManifest(manifest);
+    };
+
+    p.handleFileLoad = function (event) {
+        this._loadedAssets.push(event.item);
+    };
+
+    p.handleComplete = function () {
+        var item = this._loadedAssets[0],
+            id = item.id,
+            result = this.loader.getResult(id);
+
+        if (item.type == createjs.LoadQueue.IMAGE) {
+            var bmp = new createjs.Bitmap(result);
+        }
+
+        this._stage.addChild(this.sprite);
+    };
 
     flyjs.EntitySpriteSheet = EntitySpriteSheet;
 }());

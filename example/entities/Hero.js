@@ -16,8 +16,8 @@ this.game = this.game || {};
 
     var p = Hero.prototype = new flyjs.EntitySpriteSheet();
 
-    p.SpriteSheet_initialize = p.initialize;
-    p.Entity_update = p.update;
+    p.Flyjs_SpriteSheet_initialize = p.initialize;
+    p.Flyjs_Entity_update = p.update;
 
     p.initialize = function (stage) {
 
@@ -37,14 +37,25 @@ this.game = this.game || {};
         };
 
         //
-        this.SpriteSheet_initialize(stage, spriteSheetManifest);
+        this.Flyjs_SpriteSheet_initialize(stage, spriteSheetManifest);
 
-        // Set up looping
+        this._prepare();
+    };
+
+    /**
+     * Prepare our animation & GamePad buttons
+     * @private
+     */
+    p._prepare = function () {
+        // Createjs - Set up looping
         this.spriteSheet.getAnimation("run").next = "run";
         this.spriteSheet.getAnimation("jump").next = "run";
 
-        this.sprite.gotoAndPlay("jump");
+        this.sprite.gotoAndPlay("run");
 
+        // define GamePad buttons
+        flyjs.GamePad.define("UP", [flyjs.Key.UP]);
+        flyjs.GamePad.define("RIGHT", [flyjs.Key.RIGHT]);
     };
 
     /**
@@ -52,7 +63,13 @@ this.game = this.game || {};
      */
     p.update = function () {
 
-        this.sprite.x += 1;
+        if (flyjs.GamePad.isPressed("UP")) {
+            this.sprite.gotoAndPlay("jump");
+        }
+
+        if (flyjs.GamePad.isPressed("RIGHT")) {
+            this.sprite.x += 3;
+        }
 
     };
 

@@ -6,7 +6,7 @@
 /*jslint nomen: true, plusplus: true, vars: true, eqeq: true */
 /*global flyjs, createjs, extend*/
 
-this.flyjs = flyjs || {};
+this.flyjs = this.flyjs || {};
 
 (function () {
 
@@ -111,99 +111,7 @@ this.flyjs = flyjs || {};
         NUMPAD_DIVIDE: 111,
         NUMPAD_ENTER: 108,
         NUMPAD_MULTIPLY: 106,
-        NUMPAD_SUBTRACT: 109,
-        /**
-         *
-         * @param charInt {int}
-         * @returns {string}
-         */
-        getName: function (charInt) {
-            if (charInt >= Key.A && charInt <= Key.Z) {
-                return String.fromCharCode(charInt);
-            }
-            if (charInt >= Key.F1 && charInt <= Key.F15) {
-                return "F" + String(charInt - 111);
-            }
-            if (charInt >= 96 && charInt <= 105) {
-                return "NUMPAD " + String(charInt - 96);
-            }
-            switch (charInt) {
-                case Key.LEFT:
-                    return "LEFT";
-
-                case Key.UP:
-                    return "UP";
-
-                case Key.RIGHT:
-                    return "RIGHT";
-
-                case Key.DOWN:
-                    return "DOWN";
-
-                case Key.ENTER:
-                    return "ENTER";
-
-                case Key.CONTROL:
-                    return "CONTROL";
-
-                case Key.SPACE:
-                    return "SPACE";
-
-                case Key.SHIFT:
-                    return "SHIFT";
-
-                case Key.BACKSPACE:
-                    return "BACKSPACE";
-
-                case Key.CAPS_LOCK:
-                    return "CAPS LOCK";
-
-                case Key.DELETE:
-                    return "DELETE";
-
-                case Key.END:
-                    return "END";
-
-                case Key.ESCAPE:
-                    return "ESCAPE";
-
-                case Key.HOME:
-                    return "HOME";
-
-                case Key.INSERT:
-                    return "INSERT";
-
-                case Key.TAB:
-                    return "TAB";
-
-                case Key.PAGE_DOWN:
-                    return "PAGE DOWN";
-
-                case Key.PAGE_UP:
-                    return "PAGE UP";
-
-                case Key.NUMPAD_ADD:
-                    return "NUMPAD ADD";
-
-                case Key.NUMPAD_DECIMAL:
-                    return "NUMPAD DECIMAL";
-
-                case Key.NUMPAD_DIVIDE:
-                    return "NUMPAD DIVIDE";
-
-                case Key.NUMPAD_ENTER:
-                    return "NUMPAD ENTER";
-
-                case Key.NUMPAD_MULTIPLY:
-                    return "NUMPAD MULTIPLY";
-
-                case Key.NUMPAD_SUBTRACT:
-                    return "NUMPAD SUBTRACT";
-
-                default:
-                    return String.fromCharCode(charInt);
-            }
-        }
+        NUMPAD_SUBTRACT: 109
     };
 
     flyjs.Key = Key;

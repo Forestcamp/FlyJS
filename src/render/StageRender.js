@@ -21,17 +21,24 @@ this.flyjs = this.flyjs || {};
 
     /**
      *
-     * @type {createjs.Stage}
+     * @type {Stage}
      * @private
      */
     p._stage = null;
 
     /**
      *
-     * @type {flyjs.EntitiesCollection}
+     * @type {EntitiesCollection}
      * @private
      */
     p._entitiesCollection = null;
+
+    /**
+     *
+     * @type {GamePad}
+     * @private
+     */
+    p._gamePad = null;
 
     p.initialize = function (stage, fps) {
         if (!stage) {
@@ -41,6 +48,7 @@ this.flyjs = this.flyjs || {};
         this._stage = stage;
         this._entitiesCollection = new flyjs.EntitiesCollection();
 
+        flyjs.GamePad.initialize(stage);
         // call super
         this.Render_initialize(stage, fps);
     };
@@ -63,6 +71,8 @@ this.flyjs = this.flyjs || {};
         for (i; i < length; i++) {
             this._entitiesCollection._listEntities[i].update();
         }
+
+        flyjs.GamePad.update();
     };
 
     /**
