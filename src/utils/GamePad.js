@@ -31,6 +31,7 @@ this.flyjs = this.flyjs || {};
     GamePad._key = [256];
     GamePad._press = [256];
     GamePad._release = [256];
+    GamePad._keyNum = 0;
 
     /**
      *
@@ -88,6 +89,26 @@ this.flyjs = this.flyjs || {};
         this._control[name] = buttons;
     };
 
+    GamePad.check = function (inputChar) {
+        if (inputChar) {
+            if (!this._control[inputChar]) {
+                return false;
+            }
+            var v = this._control[inputChar],
+                i = v.length;
+            while (i--) {
+                if (v[i] < 0) {
+                    if (this._keyNum > 0) {
+                        return true;
+                    }
+                } else if (this._key[v[i]]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return inputChar < 0 ? this._keyNum > 0 : this._key[inputChar];
+    };
     /**
      * @method pressed
      * @param inputChar
@@ -164,6 +185,7 @@ this.flyjs = this.flyjs || {};
 
         if (!this._key[keyCode]) {
             this._key[keyCode] = true;
+            this._keyNum++;
             this._press[this._pressNum++] = keyCode;
         }
     };
@@ -185,6 +207,7 @@ this.flyjs = this.flyjs || {};
 
         if (this._key[keyCode]) {
             this._key[keyCode] = false;
+            this._keyNum--;
             this._release[this._releaseNum++] = keyCode;
         }
     };

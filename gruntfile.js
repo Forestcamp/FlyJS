@@ -52,7 +52,7 @@ module.exports = function (grunt) {
                     createjs: true
                 }
             },
-            files: ['Gruntfile.js', 'src/core/*.js', 'src/render/*.js', 'src/utils/*.js']
+            files: ['Gruntfile.js', 'example/*', 'src/core/*.js', 'src/render/*.js', 'src/utils/*.js']
         }
     });
 

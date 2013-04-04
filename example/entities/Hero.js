@@ -56,6 +56,7 @@ this.game = this.game || {};
         // define GamePad buttons
         flyjs.GamePad.define("UP", [flyjs.Key.UP]);
         flyjs.GamePad.define("RIGHT", [flyjs.Key.RIGHT]);
+        flyjs.GamePad.define("LEFT", [flyjs.Key.LEFT]);
     };
 
     /**
@@ -67,8 +68,12 @@ this.game = this.game || {};
             this.sprite.gotoAndPlay("jump");
         }
 
-        if (flyjs.GamePad.isPressed("RIGHT")) {
+        if (flyjs.GamePad.check("RIGHT")) {
             this.sprite.x += 3;
+        }
+
+        if (flyjs.GamePad.check("LEFT")) {
+            this.sprite.x -= 3;
         }
 
     };
