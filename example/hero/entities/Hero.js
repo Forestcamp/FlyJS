@@ -26,7 +26,7 @@ this.game = this.game || {};
                 "run": [0, 25],
                 "jump": [26, 63]
             },
-            "images": ["assets/runningGrant.png"],
+            "images": ["../../assets/runningGrant.png"],
             "frames": {
                 "regX": 0,
                 "height": 292.5,
