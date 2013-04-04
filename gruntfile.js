@@ -40,26 +40,19 @@ module.exports = function (grunt) {
                 outdir: 'docs/'
             }
         },
-        jshint: {
-            options: {
-                curly: true,
-                eqeqeq: true,
-                immed: true,
-                latedef: true,
-                newcap: true,
-                noarg: true,
-                sub: true,
-                undef: true,
-                boss: true,
-                eqnull: true,
-                indent: 2,
-                trailing: true,
+        jslint: {
+            directives: {
+                nomen: true,
+                vars: true,
+                eqeq: true,
+                plusplus: true,
                 globals: {
-                    exports: true,
-                    module: false
+                    flyjs: true,
+                    window: true,
+                    createjs: true
                 }
             },
-            files: ['gruntfile.js', 'src/core/*.js', 'src/render/*.js', 'src/utils/*.js']
+            files: ['Gruntfile.js', 'src/core/*.js', 'src/render/*.js', 'src/utils/*.js']
         }
     });
 
@@ -67,8 +60,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-yuidoc');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-jslint');
 
     grunt.registerTask('docs', ['yuidoc']);
 
-    grunt.registerTask('release', ['concat', 'uglify']);
+    grunt.registerTask('release', ['jslint']);
 };

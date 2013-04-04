@@ -58,7 +58,7 @@ this.flyjs = this.flyjs || {};
                 lineNumber: lineNumber
             };
         }
-    }
+    };
 
     flyjs.Exception = Exception;
-})();
+}());

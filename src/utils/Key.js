@@ -16,103 +16,106 @@ this.flyjs = this.flyjs || {};
      * @class Key
      * @constructor
      */
-    var Key = {
-        ANY: -1,
-
-        LEFT: 37,
-        UP: 38,
-        RIGHT: 39,
-        DOWN: 40,
-
-        ENTER: 13,
-        COMMAND: 15,
-        CONTROL: 17,
-        SPACE: 32,
-        SHIFT: 16,
-        BACKSPACE: 8,
-        CAPS_LOCK: 20,
-        DELETE: 46,
-        END: 35,
-        ESCAPE: 27,
-        HOME: 36,
-        INSERT: 45,
-        TAB: 9,
-        PAGE_DOWN: 34,
-        PAGE_UP: 33,
-        LEFT_SQUARE_BRACKET: 219,
-        RIGHT_SQUARE_BRACKET: 221,
-
-        A: 65,
-        B: 66,
-        C: 67,
-        D: 68,
-        E: 69,
-        F: 70,
-        G: 71,
-        H: 72,
-        I: 73,
-        J: 74,
-        K: 75,
-        L: 76,
-        M: 77,
-        N: 78,
-        O: 79,
-        P: 80,
-        Q: 81,
-        R: 82,
-        S: 83,
-        T: 84,
-        U: 85,
-        V: 86,
-        W: 87,
-        X: 88,
-        Y: 89,
-        Z: 90,
-
-        F1: 112,
-        F2: 113,
-        F3: 114,
-        F4: 115,
-        F5: 116,
-        F6: 117,
-        F7: 118,
-        F8: 119,
-        F9: 120,
-        F10: 121,
-        F11: 122,
-        F12: 123,
-        F13: 124,
-        F14: 125,
-        F15: 126,
-
-        DIGIT_0: 48,
-        DIGIT_1: 49,
-        DIGIT_2: 50,
-        DIGIT_3: 51,
-        DIGIT_4: 52,
-        DIGIT_5: 53,
-        DIGIT_6: 54,
-        DIGIT_7: 55,
-        DIGIT_8: 56,
-        DIGIT_9: 57,
-
-        NUMPAD_0: 96,
-        NUMPAD_1: 97,
-        NUMPAD_2: 98,
-        NUMPAD_3: 99,
-        NUMPAD_4: 100,
-        NUMPAD_5: 101,
-        NUMPAD_6: 102,
-        NUMPAD_7: 103,
-        NUMPAD_8: 104,
-        NUMPAD_9: 105,
-        NUMPAD_ADD: 107,
-        NUMPAD_DECIMAL: 110,
-        NUMPAD_DIVIDE: 111,
-        NUMPAD_ENTER: 108,
-        NUMPAD_MULTIPLY: 106,
-        NUMPAD_SUBTRACT: 109
+    var Key = function () {
+        throw "Key cannot be instantiated.";
     };
+
+
+    Key.ANY = -1;
+
+    Key.LEFT = 37;
+    Key.UP = 38;
+    Key.RIGHT = 39;
+    Key.DOWN = 40;
+
+    Key.ENTER = 13;
+    Key.COMMAND = 15;
+    Key.CONTROL = 17;
+    Key.SPACE = 32;
+    Key.SHIFT = 16;
+    Key.BACKSPACE = 8;
+    Key.CAPS_LOCK = 20;
+    Key.DELETE = 46;
+    Key.END = 35;
+    Key.ESCAPE = 27;
+    Key.HOME = 36;
+    Key.INSERT = 45;
+    Key.TAB = 9;
+    Key.PAGE_DOWN = 34;
+    Key.PAGE_UP = 33;
+    Key.LEFT_SQUARE_BRACKET = 219;
+    Key.RIGHT_SQUARE_BRACKET = 221;
+
+    Key.A = 65;
+    Key.B = 66;
+    Key.C = 67;
+    Key.D = 68;
+    Key.E = 69;
+    Key.F = 70;
+    Key.G = 71;
+    Key.H = 72;
+    Key.I = 73;
+    Key.J = 74;
+    Key.K = 75;
+    Key.L = 76;
+    Key.M = 77;
+    Key.N = 78;
+    Key.O = 79;
+    Key.P = 80;
+    Key.Q = 81;
+    Key.R = 82;
+    Key.S = 83;
+    Key.T = 84;
+    Key.U = 85;
+    Key.V = 86;
+    Key.W = 87;
+    Key.X = 88;
+    Key.Y = 89;
+    Key.Z = 90;
+
+    Key.F1 = 112;
+    Key.F2 = 113;
+    Key.F3 = 114;
+    Key.F4 = 115;
+    Key.F5 = 116;
+    Key.F6 = 117;
+    Key.F7 = 118;
+    Key.F8 = 119;
+    Key.F9 = 120;
+    Key.F10 = 121;
+    Key.F11 = 122;
+    Key.F12 = 123;
+    Key.F13 = 124;
+    Key.F14 = 125;
+    Key.F15 = 126;
+
+    Key.DIGIT_0 = 48;
+    Key.DIGIT_1 = 49;
+    Key.DIGIT_2 = 50;
+    Key.DIGIT_3 = 51;
+    Key.DIGIT_4 = 52;
+    Key.DIGIT_5 = 53;
+    Key.DIGIT_6 = 54;
+    Key.DIGIT_7 = 55;
+    Key.DIGIT_8 = 56;
+    Key.DIGIT_9 = 57;
+
+    Key.NUMPAD_0 = 96;
+    Key.NUMPAD_1 = 97;
+    Key.NUMPAD_2 = 98;
+    Key.NUMPAD_3 = 99;
+    Key.NUMPAD_4 = 100;
+    Key.NUMPAD_5 = 101;
+    Key.NUMPAD_6 = 102;
+    Key.NUMPAD_7 = 103;
+    Key.NUMPAD_8 = 104;
+    Key.NUMPAD_9 = 105;
+    Key.NUMPAD_ADD = 107;
+    Key.NUMPAD_DECIMAL = 110;
+    Key.NUMPAD_DIVIDE = 111;
+    Key.NUMPAD_ENTER = 108;
+    Key.NUMPAD_MULTIPLY = 106;
+    Key.NUMPAD_SUBTRACT = 109;
 
     flyjs.Key = Key;
 }());

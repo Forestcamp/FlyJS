@@ -85,7 +85,7 @@ this.flyjs = this.flyjs || {};
      * @method tick
      * @protected
      */
-    p.tickHandler = function (event) {
+    p.tickHandler = function () {
         this.frameNumber++;
     };
 

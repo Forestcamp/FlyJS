@@ -15,5 +15,9 @@ this.flyjs = this.flyjs || {};
 
     var p = EntityImage.prototype = new flyjs.Entity();
 
+    p.initialize = function () {
+
+    };
+
     flyjs.EntityImage = EntityImage;
 }());

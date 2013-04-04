@@ -4,7 +4,7 @@
  *
  */
 /*jslint nomen: true, plusplus: true, vars: true, eqeq: true */
-/*global flyjs, createjs, extend*/
+/*global flyjs, createjs*/
 this.flyjs = this.flyjs || {};
 
 (function () {
@@ -78,13 +78,6 @@ this.flyjs = this.flyjs || {};
     };
 
     p.handleComplete = function () {
-        var item = this._loadedAssets[0],
-            id = item.id,
-            result = this.loader.getResult(id);
-
-        if (item.type == createjs.LoadQueue.IMAGE) {
-            var bmp = new createjs.Bitmap(result);
-        }
 
         this._stage.addChild(this.sprite);
     };
