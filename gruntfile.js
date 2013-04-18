@@ -58,7 +58,8 @@ module.exports = function (grunt) {
                 'example/entities/*.js',
                 'src/core/*.js',
                 'src/render/*.js',
-                'src/utils/*.js'
+                'src/utils/*.js',
+                'src/collection/*.js'
             ]
         }
     });
