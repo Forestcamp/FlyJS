@@ -24,11 +24,11 @@ this.flyjs = this.flyjs || {};
     p.Render_tick = p.tickHandler;
 
     /**
-     * @property _stage
+     * @property stage
      * @type {Stage}
      * @private
      */
-    p._stage = null;
+    p.stage = null;
 
     /**
      * @property _entitiesCollection
@@ -37,23 +37,31 @@ this.flyjs = this.flyjs || {};
      */
     p._entitiesCollection = null;
 
-    p.initialize = function (stage, fps) {
+    p.initialize = function (stage, manifest) {
         if (!stage) {
             throw new flyjs.Exception("StageRender: error in parameters", "Stage is Null");
         }
 
-        this._stage = stage;
+        this.stage = stage;
 
         //******************
         // Initialize block
         //******************
         this._entitiesCollection = new flyjs.EntitiesCollection();
         flyjs.GamePad.initialize(stage);
-        this.Render_initialize(stage, fps); // call super
+        this.Render_initialize(stage);
+
+        this.loader = new flyjs.ManifestLoader();
+        this.loader.addEventListener('ManifestCompleteLoad', this.loadManifestComplete.bind(this));
+        this.loader.start(manifest);
+    };
+
+    p.loadManifestComplete = function (event) {
+        this.loader.removeEventListener('ManifestCompleteLoad', this.loadManifestComplete);
     };
 
     p.startRender = function () {
-        this.Render_startRender(this._stage);
+        this.Render_startRender(this.stage);
     };
 
     p.stopRender = function () {

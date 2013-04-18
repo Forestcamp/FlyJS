@@ -22,12 +22,15 @@ this.game = this.game || {};
 
     p.initialize = function (stage) {
         // must call super !!
-        this.StageRender_initialize(stage);
+        this.StageRender_initialize(stage, 'manifest.json');
 
-        this._createEntities(stage);
+    };
+
+    p.loadManifestComplete = function (event) {
+        this._createEntities(this.stage);
 
         // after create game Entities run Stage update
-        this.Render_startRender(stage);
+        this.startRender();
     };
 
     /**

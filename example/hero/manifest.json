@@ -1,0 +1,35 @@
+{
+    "name": "Hero game",
+    "spriteSheets" : [
+        {
+            "id": "hero",
+            "animations": {
+                "run": [0, 25],
+                "jump": [26, 63]
+            },
+            "images": ["../../assets/runningGrant.png"],
+            "frames": {
+                "regX": 0,
+                "height": 292.5,
+                "count": 64,
+                "regY": 0,
+                "width": 165.75
+            }
+        },
+        {
+            "id": "hero-2",
+            "animations": {
+                "run": [0, 25],
+                "jump": [26, 63]
+            },
+            "images": ["../../assets/runningGrant-2.png"],
+            "frames": {
+                "regX": 0,
+                "height": 292.5,
+                "count": 64,
+                "regY": 0,
+                "width": 165.75
+            }
+        }
+    ]
+}

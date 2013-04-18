@@ -11,38 +11,49 @@ this.flyjs = this.flyjs || {};
      */
     var Entity = function () {};
 
-    extend(Entity.prototype, {
-        initialize: function () {},
-        /**
-         * @type {String}
-         * @property name
-         * @public
-         */
-        name: null,
+    var p = Entity.prototype;
 
-        /**
-         * @type {Boolean}
-         * @property visible
-         */
-        visible: true,
+    /**
+     * @type {String}
+     * @property name
+     * @public
+     */
+    p.name = null;
 
-        /**
-         * @type {number}
-         * @property x
-         * @public
-         */
-        x: 0,
+    /**
+     * @property _stage
+     * @type {Stage}
+     * @public
+     */
+    p.stage = null;
 
-        /**
-         * @type {number}
-         * @property y
-         * @public
-         */
-        y: 0,
+    /**
+     * @type {Boolean}
+     * @property visible
+     */
+    p.visible = true;
 
-        update: function () {},
-        render: function () {}
-    });
+    /**
+     * @type {number}
+     * @property x
+     * @public
+     */
+    p.x = 0;
+
+    /**
+     * @type {number}
+     * @property y
+     * @public
+     */
+    p.y = 0;
+
+    p.initialize = function (stage) {
+        this.stage = stage;
+    };
+
+    p.update = function () {};
+    p.render = function () {};
+
 
     flyjs.Entity = Entity;
 }());

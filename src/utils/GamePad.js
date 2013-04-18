@@ -61,7 +61,7 @@ this.flyjs = this.flyjs || {};
      * @param stage
      */
     GamePad.initialize = function (stage) {
-        if (stage && stage.canvas.ALLOW_KEYBOARD_INPUT == 1) {
+        if (stage) {
             stage.canvas.ownerDocument.onkeydown = this._onKeyDown.bind(this);
             stage.canvas.ownerDocument.onkeyup = this._onKeyUp.bind(this);
         }

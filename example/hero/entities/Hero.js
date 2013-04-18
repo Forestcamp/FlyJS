@@ -14,30 +14,13 @@ this.game = this.game || {};
         this.initialize(stage);
     };
 
-    var p = Hero.prototype = new flyjs.EntitySpriteSheet();
+    var p = Hero.prototype = new flyjs.Entity();
 
-    p.Flyjs_SpriteSheet_initialize = p.initialize;
-    p.Flyjs_Entity_update = p.update;
+    p.Flyjs_Entity_initialize = p.initialize;
 
     p.initialize = function (stage) {
 
-        var spriteSheetManifest = {
-            "animations": {
-                "run": [0, 25],
-                "jump": [26, 63]
-            },
-            "images": ["../../assets/runningGrant.png"],
-            "frames": {
-                "regX": 0,
-                "height": 292.5,
-                "count": 64,
-                "regY": 0,
-                "width": 165.75
-            }
-        };
-
-        //
-        this.Flyjs_SpriteSheet_initialize(stage, spriteSheetManifest);
+        this.Flyjs_Entity_initialize(stage);
 
         this._prepare();
     };
@@ -47,12 +30,15 @@ this.game = this.game || {};
      * @private
      */
     p._prepare = function () {
+        // get our Sprite
+        this.hero = flyjs.SpriteSheetCollection.getSprite('hero');
         // Createjs - Set up looping
-        this.spriteSheet.getAnimation("run").next = "run";
-        this.spriteSheet.getAnimation("jump").next = "run";
+        this.hero.sprite.getAnimation("run").next = "run";
+        this.hero.sprite.getAnimation("jump").next = "run";
 
-        this.sprite.gotoAndPlay("run");
+        this.hero.bitmap.gotoAndPlay("run");
 
+        this.stage.addChild(this.hero.bitmap);
         // define GamePad buttons
         flyjs.GamePad.define("UP", [flyjs.Key.UP]);
         flyjs.GamePad.define("RIGHT", [flyjs.Key.RIGHT]);
@@ -65,15 +51,15 @@ this.game = this.game || {};
     p.update = function () {
 
         if (flyjs.GamePad.isPressed("UP")) {
-            this.sprite.gotoAndPlay("jump");
+            this.hero.bitmap.gotoAndPlay("jump");
         }
 
         if (flyjs.GamePad.check("RIGHT")) {
-            this.sprite.x += 3;
+            this.hero.bitmap.x += 3;
         }
 
         if (flyjs.GamePad.check("LEFT")) {
-            this.sprite.x -= 3;
+            this.hero.bitmap.x -= 3;
         }
 
     };

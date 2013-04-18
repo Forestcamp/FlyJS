@@ -50,13 +50,9 @@ this.flyjs = this.flyjs || {};
      * @method initialize
      * @protected
      */
-    p.initialize = function (stage, fps) {
+    p.initialize = function (stage) {
         if (!stage) {
             throw new flyjs.Exception("error in parameters", "Stage is Null");
-        }
-
-        if (fps) {
-            this._fps = fps;
         }
     };
 
