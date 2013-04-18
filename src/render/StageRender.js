@@ -37,6 +37,13 @@ this.flyjs = this.flyjs || {};
      */
     p._entitiesCollection = null;
 
+    /**
+     * @property _FPSMeter
+     * @type {FPSMeter}
+     * @private
+     */
+    p._FPSMeter = null;
+
     p.initialize = function (stage, manifest) {
         if (!stage) {
             throw new flyjs.Exception("StageRender: error in parameters", "Stage is Null");
@@ -62,6 +69,7 @@ this.flyjs = this.flyjs || {};
 
     p.startRender = function () {
         this.Render_startRender(this.stage);
+        this._FPSMeter = new flyjs.FPSMeter(this.stage);
     };
 
     p.stopRender = function () {
