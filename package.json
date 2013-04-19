@@ -24,7 +24,7 @@
     "scripts": {
         "start": "grunt release"
     },
-    "engine": "node 1.1.x",
+    "engine": "node 0.11",
     "devDependencies": {
         "grunt": "~0.4.1",
         "grunt-contrib-concat": "~0.1.3",
