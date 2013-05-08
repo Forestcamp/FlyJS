@@ -3,7 +3,7 @@
  * @author Oleg Pimenov, https://github.com/fost
  *
  */
-/*jslint nomen: true, plusplus: true, vars: true, eqeq: true */
+/*jslint nomen: true, plusplus: true, vars: true, eqeq:true, eqnull:true, unused:true */
 /*global flyjs, createjs*/
 
 this.flyjs = this.flyjs || {};
@@ -16,11 +16,20 @@ this.flyjs = this.flyjs || {};
 
     AssetManager._assets = {};
 
+    /**
+     * @method addBitmapAsset
+     * @param asset {Object}
+     */
     AssetManager.addBitmapAsset = function (asset) {
-        var bitmap = new createjs.Bitmap(asset.src);
+        var bitmap;
+        bitmap = new createjs.Bitmap(asset.src);
         this._assets[asset.id] = bitmap;
     };
 
+    /**
+     * @method addSpriteSheetAsset
+     * @param asset {Object}
+     */
     AssetManager.addSpriteSheetAsset = function (asset) {
         var spriteSheet,
             bitmapAnimation;
@@ -40,11 +49,8 @@ this.flyjs = this.flyjs || {};
      */
     AssetManager.getAsset = function (name) {
         var asset = this._assets[name];
-//        if (this._assetsSpriteSheet[name] != null && this._assetsBitmap != null) {
-//            throw "asset name must be unique!";
-//        }
-//
-        if (asset == null || asset == undefined) {
+
+        if (asset == null) {
             throw "asset not exist!";
         }
 

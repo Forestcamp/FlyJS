@@ -59,7 +59,8 @@ module.exports = function (grunt) {
                 'src/core/*.js',
                 'src/render/*.js',
                 'src/utils/*.js',
-                'src/collection/*.js'
+                'src/collection/*.js',
+                'src/texture/*.js'
             ]
         }
     });
