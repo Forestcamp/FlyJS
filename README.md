@@ -7,7 +7,7 @@ Game engine for HTML5
 * HTML5 ready.
 * Cross-browser compatible (Chrome, Opera, Safari, Firefox).
 
-![FlyJS](https://github.com/Forestcamp/Fly.js/blob/master/flyjs-logo.png)
+![FlyJS](https://raw.github.com/Forestcamp/Fly.js/master/flyjs-logo.png)
 
 ## Documentation
 
