@@ -31,8 +31,7 @@ this.flyjs = this.flyjs || {};
 
         for (i; i < length; i++) {
             listItem = list[i];
-            bitmap = new createjs.Bitmap(listItem.src);
-            flyjs.StaticImageCollection.setCollection(listItem.id, bitmap);
+            flyjs.AssetManager.addBitmapAsset(listItem);
         }
     };
 
@@ -50,9 +49,7 @@ this.flyjs = this.flyjs || {};
 
         for (i; i < length; i++) {
             listItem = list[i];
-            spriteSheet = new createjs.SpriteSheet(listItem);
-            bitmapAnimation = new createjs.BitmapAnimation(spriteSheet);
-            flyjs.SpriteSheetCollection.setCollection(listItem.id, spriteSheet, bitmapAnimation);
+            flyjs.AssetManager.addSpriteSheetAsset(listItem);
         }
     };
 

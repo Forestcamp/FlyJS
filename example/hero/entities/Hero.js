@@ -31,7 +31,7 @@ this.game = this.game || {};
      */
     p._prepare = function () {
         // get our Sprite
-        this.hero = flyjs.SpriteSheetCollection.getSource('hero');
+        this.hero = flyjs.AssetManager.getAsset('hero');
         // Createjs - Set up looping
         this.hero.sprite.getAnimation("run").next = "run";
         this.hero.sprite.getAnimation("jump").next = "run";
