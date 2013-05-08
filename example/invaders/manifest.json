@@ -1,0 +1,9 @@
+{
+    "name": "Invaders",
+    "images" : [
+        {
+            "id": "background",
+            "src": "assets/invaders.png"
+        }
+    ]
+}

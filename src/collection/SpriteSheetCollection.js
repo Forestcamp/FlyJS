@@ -4,7 +4,7 @@
  *
  */
 /*jslint nomen: true, plusplus: true, vars: true, eqeq: true */
-/*global flyjs, createjs, window*/
+/*global flyjs, createjs*/
 this.flyjs = this.flyjs || {};
 (function () {
     'use strict';
@@ -22,8 +22,8 @@ this.flyjs = this.flyjs || {};
 
     SpriteSheetCollection.setCollection = function (id, spriteSheet, bitmapAnimation) {
         this._collection[id] = {
-            sprite: spriteSheet,
-            bitmap: bitmapAnimation
+            'sprite': spriteSheet,
+            'bitmap': bitmapAnimation
         };
     };
 
@@ -31,11 +31,12 @@ this.flyjs = this.flyjs || {};
      *
      * @returns {Object}
      */
-    SpriteSheetCollection.getSprite = function (id) {
+    SpriteSheetCollection.getSource = function (id) {
+        var sprite = null;
         if (this._collection.hasOwnProperty(id)) {
-            return this._collection[id];
+            sprite = this._collection[id];
         }
-        return null;
+        return sprite;
     };
 
     flyjs.SpriteSheetCollection = SpriteSheetCollection;

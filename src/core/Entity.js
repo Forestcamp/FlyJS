@@ -1,5 +1,5 @@
 /*jslint nomen: true, plusplus: true, vars: true */
-/*global flyjs, extend*/
+/*global flyjs*/
 this.flyjs = this.flyjs || {};
 
 (function () {
@@ -47,6 +47,10 @@ this.flyjs = this.flyjs || {};
      */
     p.y = 0;
 
+    p.originX = 0;
+
+    p.originY = 0;
+
     p.initialize = function (stage) {
         this.stage = stage;
     };
@@ -54,6 +58,19 @@ this.flyjs = this.flyjs || {};
     p.update = function () {};
     p.render = function () {};
 
+    /**
+     *
+     * @param width
+     * @param height
+     * @param originX
+     * @param originY
+     */
+    p.setHitBox = function (width, height, originX, originY) {
+        this.width = width;
+        this.height = height;
+        this.originX = originX;
+        this.originY = originY;
+    };
 
     flyjs.Entity = Entity;
 }());
