@@ -1,4 +1,4 @@
-#FlyJS
+#FlyJS ![FlyJS](https://raw.github.com/Forestcamp/Fly.js/master/flyjs-logo.png)
 Game engine for HTML5
 
 [![Build Status](https://travis-ci.org/Forestcamp/Fly.js.png?branch=master)](https://travis-ci.org/Forestcamp/Fly.js)
@@ -6,8 +6,6 @@ Game engine for HTML5
 
 * HTML5 ready.
 * Cross-browser compatible (Chrome, Opera, Safari, Firefox).
-
-![FlyJS](https://raw.github.com/Forestcamp/Fly.js/master/flyjs-logo.png)
 
 ## Documentation
 
