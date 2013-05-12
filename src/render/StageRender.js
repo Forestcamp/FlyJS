@@ -4,7 +4,7 @@
  *
  */
 /*jslint nomen: true, plusplus: true, vars: true */
-/*global flyjs*/
+/*global flyjs, createjs, document*/
 
 this.flyjs = this.flyjs || {};
 (function () {
@@ -69,7 +69,15 @@ this.flyjs = this.flyjs || {};
 
     p.startRender = function () {
         this.Render_startRender(this.stage);
-        this._FPSMeter = new flyjs.FPSMeter(this.stage);
+        this._FPSMeter = new Stats();
+        this._FPSMeter.setMode(0);
+        this._FPSMeter.begin();
+        // Align top-left
+        this._FPSMeter.domElement.style.position = 'absolute';
+        this._FPSMeter.domElement.style.left = '0px';
+        this._FPSMeter.domElement.style.top = '0px';
+
+        document.body.appendChild(this._FPSMeter.domElement);
     };
 
     p.stopRender = function () {
@@ -78,6 +86,7 @@ this.flyjs = this.flyjs || {};
 
     p.tickHandler = function (event) {
 
+        this._FPSMeter.begin();
         this.Render_tick(event);
 
         var i = 0,
@@ -88,6 +97,7 @@ this.flyjs = this.flyjs || {};
         }
 
         flyjs.GamePad.update();
+        this._FPSMeter.end();
     };
 
     /**
