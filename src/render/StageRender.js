@@ -4,7 +4,7 @@
  *
  */
 /*jslint nomen: true, plusplus: true, vars: true */
-/*global flyjs, createjs, document*/
+/*global flyjs, createjs, document, Stats*/
 
 this.flyjs = this.flyjs || {};
 (function () {
@@ -39,7 +39,7 @@ this.flyjs = this.flyjs || {};
 
     /**
      * @property _FPSMeter
-     * @type {FPSMeter}
+     * @type {Stats}
      * @private
      */
     p._FPSMeter = null;

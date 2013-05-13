@@ -3,7 +3,7 @@
  * @author Oleg Pimenov, https://github.com/fost
  *
  */
-/*jslint nomen: true, plusplus: true, vars: true, eqeq:true, eqnull:true, unused:true */
+/*jslint nomen: true, plusplus: true, vars: true, eqeq:true*/
 /*global flyjs, createjs*/
 
 this.flyjs = this.flyjs || {};
