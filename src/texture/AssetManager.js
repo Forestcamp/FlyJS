@@ -4,6 +4,7 @@
  *
  */
 /*jslint nomen: true, plusplus: true, vars: true, eqeq:true*/
+/*jshint eqnull:true*/
 /*global flyjs, createjs*/
 
 this.flyjs = this.flyjs || {};

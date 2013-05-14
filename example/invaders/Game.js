@@ -27,9 +27,8 @@ this.game = this.game || {};
 
     /**
      * @override
-     * @param event
      */
-    p.loadManifestComplete = function (event) {
+    p.loadManifestComplete = function () {
         this._createEntities();
         // after create game Entities run Stage update
         this.startRender();
@@ -41,6 +40,8 @@ this.game = this.game || {};
      */
     p._createEntities = function () {
         this.stage.addChild(flyjs.AssetManager.getAsset('background'));
+
+        this.add(new game.PlayerShip(this.stage));
     };
 
     /**

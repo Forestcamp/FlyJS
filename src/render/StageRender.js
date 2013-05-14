@@ -63,15 +63,13 @@ this.flyjs = this.flyjs || {};
         this.loader.start(manifest);
     };
 
-    p.loadManifestComplete = function (event) {
-        this.loader.removeEventListener('ManifestCompleteLoad', this.loadManifestComplete);
-    };
-
-    p.startRender = function () {
-        this.Render_startRender(this.stage);
+    /**
+     * @method _addStats
+     * @private
+     */
+    p._addStats = function () {
         this._FPSMeter = new Stats();
         this._FPSMeter.setMode(0);
-        this._FPSMeter.begin();
         // Align top-left
         this._FPSMeter.domElement.style.position = 'absolute';
         this._FPSMeter.domElement.style.left = '0px';
@@ -80,12 +78,20 @@ this.flyjs = this.flyjs || {};
         document.body.appendChild(this._FPSMeter.domElement);
     };
 
+    p.loadManifestComplete = function () {
+        this.loader.removeEventListener('ManifestCompleteLoad', this.loadManifestComplete);
+    };
+
+    p.startRender = function () {
+        this.Render_startRender(this.stage);
+        this._addStats();
+    };
+
     p.stopRender = function () {
         this.Render_stopRender();
     };
 
     p.tickHandler = function (event) {
-
         this._FPSMeter.begin();
         this.Render_tick(event);
 

@@ -4,6 +4,10 @@
         {
             "id": "background",
             "src": "assets/invaders.png"
+        },
+        {
+            "id": "player-ship",
+            "src": "assets/player-ship.png"
         }
     ]
 }
