@@ -1,4 +1,5 @@
-/*jslint nomen: true, plusplus: true, vars: true */
+/*jslint nomen: true, plusplus: true, vars: true, eqeq:true */
+/*jshint eqnull:true*/
 /*global flyjs*/
 this.flyjs = this.flyjs || {};
 
@@ -34,6 +35,31 @@ this.flyjs = this.flyjs || {};
     p.visible = true;
 
     /**
+     *
+     * @type {boolean}
+     * @property collidable
+     */
+    p.collidable = true;
+
+    /**
+     * @property allowCollisions
+     * @type {boolean}
+     */
+    p.allowCollisions = true;
+
+    /**
+     * @property exists
+     * @type {boolean}
+     */
+    p.exists = true;
+
+    /**
+     * x,y position
+     * @property last
+     * @type {Object}
+     */
+    p.last = null;
+    /**
      * @type {number}
      * @property x
      * @public
@@ -51,25 +77,36 @@ this.flyjs = this.flyjs || {};
 
     p.originY = 0;
 
+    /**
+     * Sprite, MovieClip or Graphic
+     * @type {Object}
+     */
+    p.child = null;
+
     p.initialize = function (stage) {
         this.stage = stage;
+        this.last = {};
     };
 
-    p.update = function () {};
-    p.render = function () {};
+    p.addChild = function (child) {
+        this.child = child;
+        this.stage.addChild(child);
+    };
 
-    /**
-     *
-     * @param width
-     * @param height
-     * @param originX
-     * @param originY
-     */
-    p.setHitBox = function (width, height, originX, originY) {
-        this.width = width;
-        this.height = height;
-        this.originX = originX;
-        this.originY = originY;
+    p.update = function () {
+        if (this.child != null) {
+            this.last.x = this.x = this.child.x;
+            this.last.y = this.y = this.child.y;
+            if (this.child.hasOwnProperty('image')) {
+                this.width = this.child.image.width;
+                this.height = this.child.image.height;
+            }
+        }
+    };
+
+    p.destroy = function () {
+        this.stage = null;
+        this.last = null;
     };
 
     flyjs.Entity = Entity;

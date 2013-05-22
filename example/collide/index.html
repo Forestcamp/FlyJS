@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>FlyJS | Collide</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="text/javascript" src="../../vendor/jquery-2.0.0.min.js"></script>
+</head>
+<body>
+
+<div class="canvasHolder" style="float: left; height: 150px"></div>
+
+<script type="text/javascript" src="../../src/vendor/stats.min.js"></script>
+
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/events/EventDispatcher.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/utils/UID.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/geom/Matrix2D.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/DisplayObject.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/Container.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/Stage.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/events/MouseEvent.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/Shape.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/Graphics.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/geom/Rectangle.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/geom/Point.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/utils/Ticker.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/SpriteSheet.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/Bitmap.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/BitmapAnimation.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/Text.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/filters/Filter.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/filters/BoxBlurFilter.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/filters/ColorFilter.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/filters/ColorMatrixFilter.js"></script>
+
+<script type="text/javascript" src="../../src/vendor/createjs/preloadjs/AbstractLoader.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/preloadjs/LoadQueue.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/preloadjs/TagLoader.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/preloadjs/XHRLoader.js"></script>
+
+<script type="text/javascript" src="../../src/utils/Key.js"></script>
+<script type="text/javascript" src="../../src/utils/GamePad.js"></script>
+<script type="text/javascript" src="../../src/texture/AssetManager.js"></script>
+<script type="text/javascript" src="../../src/collection/EntitiesCollection.js"></script>
+<script type="text/javascript" src="../../src/core/ManifestParser.js"></script>
+<script type="text/javascript" src="../../src/core/ManifestLoader.js"></script>
+<script type="text/javascript" src="../../src/core/Entity.js"></script>
+<script type="text/javascript" src="../../src/core/collision/Node.js"></script>
+<script type="text/javascript" src="../../src/core/collision/BoundsNode.js"></script>
+<script type="text/javascript" src="../../src/core/collision/QuadTree.js"></script>
+<script type="text/javascript" src="../../src/render/Render.js"></script>
+<script type="text/javascript" src="../../src/render/EntitiesRender.js"></script>
+<script type="text/javascript" src="../../src/render/StageRender.js"></script>
+
+<script type="text/javascript" src="entities/Circle.js"></script>
+<script type="text/javascript" src="Game.js"></script>
+
+<script type="text/javascript">
+    jQuery(document).ready(function (){
+
+        var canvasHolder = document.getElementsByClassName('canvasHolder')[0];
+        var canvas = $('<canvas width="800" height="600" style="clear: left;" />');
+
+        canvasHolder.appendChild(canvas.get(0));
+        var stage = new createjs.Stage(canvas.get(0));
+        stage.addChild(new game.Game(stage));
+
+        stage.update();
+    });
+</script>
+</body>
+</html>

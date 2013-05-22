@@ -54,6 +54,8 @@ module.exports = function (grunt) {
             },
             files: [
                 'Gruntfile.js',
+                'example/collide/entities/*.js',
+                'example/collide/*.js',
                 'example/invaders/*.js',
                 'example/hero/*.js',
                 'src/core/*.js',
