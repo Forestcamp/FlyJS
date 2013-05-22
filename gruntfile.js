@@ -46,6 +46,7 @@ module.exports = function (grunt) {
                 vars: true,
                 eqeq: true,
                 plusplus: true,
+                bitwise: true,
                 globals: {
                     flyjs: true,
                     window: true,
@@ -58,6 +59,7 @@ module.exports = function (grunt) {
                 'example/collide/*.js',
                 'example/invaders/*.js',
                 'example/hero/*.js',
+                'src/core/collision/*.js',
                 'src/core/*.js',
                 'src/render/*.js',
                 'src/utils/*.js',
