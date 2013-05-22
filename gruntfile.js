@@ -66,6 +66,30 @@ module.exports = function (grunt) {
                 'src/collection/*.js',
                 'src/texture/*.js'
             ]
+        },
+        jshint: {
+            options: {
+                eqeqeq: true,
+                eqnull: true,
+                globals: {
+                    flyjs: true,
+                    window: true,
+                    createjs: true
+                }
+            },
+            uses_defaults: [
+                'Gruntfile.js',
+                'example/collide/entities/*.js',
+                'example/collide/*.js',
+                'example/invaders/*.js',
+                'example/hero/*.js',
+                'src/core/collision/*.js',
+                'src/core/*.js',
+                'src/render/*.js',
+                'src/utils/*.js',
+                'src/collection/*.js',
+                'src/texture/*.js'
+            ]
         }
     });
 
@@ -73,9 +97,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-yuidoc');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jslint');
 
     grunt.registerTask('docs', ['yuidoc']);
 
-    grunt.registerTask('release', ['jslint']);
+    grunt.registerTask('release', ['jslint', 'jshint']);
 };
