@@ -40,18 +40,51 @@ module.exports = function (grunt) {
             compress_flyjs: {
                 files: [{
                     src: [
-                        'src/core/**/*.js',
-                        'src/render/*.js',
-                        'src/utils/*.js',
-                        'src/collection/*.js',
-                        'src/texture/*.js',
                         'src/vendor/stats.min.js',
-                        'src/vendor/createjs/**/*.js'
+                        'src/vendor/createjs/easeljs/utils/UID.js',
+                        'src/vendor/createjs/easeljs/events/EventDispatcher.js',
+                        'src/vendor/createjs/easeljs/utils/Ticker.js',
+                        'src/vendor/createjs/easeljs/events/MouseEvent.js',
+                        'src/vendor/createjs/easeljs/geom/Matrix2D.js',
+                        'src/vendor/createjs/easeljs/geom/Point.js',
+                        'src/vendor/createjs/easeljs/geom/Rectangle.js',
+                        'src/vendor/createjs/easeljs/ui/ButtonHelper.js',
+                        'src/vendor/createjs/easeljs/display/Shadow.js',
+                        'src/vendor/createjs/easeljs/display/SpriteSheet.js',
+                        'src/vendor/createjs/easeljs/display/Graphics.js',
+                        'src/vendor/createjs/easeljs/display/DisplayObject.js',
+                        'src/vendor/createjs/easeljs/display/Container.js',
+                        'src/vendor/createjs/easeljs/display/Stage.js',
+                        'src/vendor/createjs/easeljs/display/Bitmap.js',
+                        'src/vendor/createjs/easeljs/display/BitmapAnimation.js',
+                        'src/vendor/createjs/easeljs/display/Shape.js',
+                        'src/vendor/createjs/easeljs/display/Text.js',
+                        'src/vendor/createjs/easeljs/utils/SpriteSheetUtils.js',
+                        'src/vendor/createjs/easeljs/utils/SpriteSheetBuilder.js',
+                        'src/vendor/createjs/easeljs/display/DOMElement.js',
+                        'src/vendor/createjs/easeljs/filters/Filter.js',
+                        'src/vendor/createjs/easeljs/ui/Touch.js',
+                        'src/vendor/createjs/easeljs/version.js',
+                        'src/vendor/createjs/preloadjs/version.js',
+                        'src/vendor/createjs/easeljs/events/EventDispatcher.js',
+                        'src/vendor/createjs/preloadjs/AbstractLoader.js',
+                        'src/vendor/createjs/preloadjs/LoadQueue.js',
+                        'src/vendor/createjs/preloadjs/TagLoader.js',
+                        'src/vendor/createjs/preloadjs/XHRLoader.js',
+                        'src/utils/*.js',
+                        'src/texture/*.js',
+                        'src/collection/*.js',
+                        'src/core/*.js',
+                        'src/core/collision/Node.js',
+                        'src/core/collision/BoundsNode.js',
+                        'src/core/collision/QuadTree.js',
+                        'src/render/*.js'
                     ],
                     dest: '<%= meta.deployPath %>flyjs.min.js'
                 }],
                 options: {
-                    report: 'min'
+                    report: 'min',
+                    beautify: false
                 }
             }
         },
@@ -93,6 +126,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-jslint');
 
     grunt.registerTask('docs', ['yuidoc']);
-    grunt.registerTask('ugli', ['uglify']);
+    grunt.registerTask('ugli', ['uglify', 'jslint', 'jshint']);
     grunt.registerTask('release', ['jslint', 'jshint']);
 };

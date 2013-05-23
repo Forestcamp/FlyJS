@@ -25,8 +25,6 @@ this.game = this.game || {};
      */
     p.alive = true;
 
-    p._bottomOffset = 20;
-
     /**
      *
      * @param stage
@@ -45,7 +43,7 @@ this.game = this.game || {};
         this.ship = flyjs.AssetManager.getAsset('player-ship');
         // set ship position
         this.ship.x = this.stage.canvas.width / 2 - this.ship.image.width / 2;
-        this.ship.y = this.stage.canvas.height - this.ship.image.height - this._bottomOffset;
+        this.ship.y = this.stage.canvas.height - this.ship.image.height;
 
         this.stage.addChild(this.ship);
 
