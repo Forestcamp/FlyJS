@@ -104,6 +104,7 @@ var p = Bitmap.prototype = new createjs.DisplayObject();
 	/**
 	 * Returns true or false indicating whether the display object would be visible if drawn to a canvas.
 	 * This does not account for whether it would be visible within the boundaries of the stage.
+	 *
 	 * NOTE: This method is mainly for internal use, though it may be useful for advanced uses.
 	 * @method isVisible
 	 * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas
@@ -123,6 +124,7 @@ var p = Bitmap.prototype = new createjs.DisplayObject();
 	/**
 	 * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
 	 * Returns true if the draw was handled (useful for overriding functionality).
+	 *
 	 * NOTE: This method is mainly for internal use, though it may be useful for advanced uses.
 	 * @method draw
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
@@ -147,18 +149,30 @@ var p = Bitmap.prototype = new createjs.DisplayObject();
 	/**
 	 * Because the content of a Bitmap is already in a simple format, cache is unnecessary for Bitmap instances.
 	 * You should <b>not</b> cache Bitmap instances as it can degrade performance.
+	 *
+	 * <strong>However: If you want to use a filter on a Bitmap, you <em>MUST</em> cache it, or it will not work.</strong>
+	 * To see the API for caching, please visit the DisplayObject {{#crossLink "DisplayObject/cache"}}{{/crossLink}}
+	 * method.
 	 * @method cache
 	 **/
 	
 	/**
 	 * Because the content of a Bitmap is already in a simple format, cache is unnecessary for Bitmap instances.
 	 * You should <b>not</b> cache Bitmap instances as it can degrade performance.
+	 *
+	 * <strong>However: If you want to use a filter on a Bitmap, you <em>MUST</em> cache it, or it will not work.</strong>
+	 * To see the API for caching, please visit the DisplayObject {{#crossLink "DisplayObject/cache"}}{{/crossLink}}
+	 * method.
 	 * @method updateCache
 	 **/
 	
 	/**
 	 * Because the content of a Bitmap is already in a simple format, cache is unnecessary for Bitmap instances.
 	 * You should <b>not</b> cache Bitmap instances as it can degrade performance.
+	 *
+	 * <strong>However: If you want to use a filter on a Bitmap, you <em>MUST</em> cache it, or it will not work.</strong>
+	 * To see the API for caching, please visit the DisplayObject {{#crossLink "DisplayObject/cache"}}{{/crossLink}}
+	 * method.
 	 * @method uncache
 	 **/
 	

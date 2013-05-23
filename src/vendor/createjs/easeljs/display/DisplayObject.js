@@ -66,6 +66,23 @@
  *	    //Update stage will render next frame
  *	    stage.update();
  *
+ * <b>Simple Interaction Example</b><br>
+ *
+ *      displayObject.addEventListener("click", handleClick);
+ *      function handleClick(event){
+ *          // Click happenened
+ *      }
+ *
+ *      displayObject.addEventListener("mousedown", handlePress);
+ *      function handlePress(event) {
+ *          // A mouse press happened.
+ *          // Listen for mouse move while the mouse is down:
+ *          event.addEventListener("mousemove", handleMove);
+ *      }
+ *      function handleMove(event) {
+ *          // Check out the DragAndDrop example in GitHub for more
+ *      }
+ *
  * <b>Simple Animation Example</b><br />
  * This example moves the shape created in the previous demo across the screen.
  *
@@ -91,6 +108,11 @@
  *      <li>{{#crossLink "SpriteSheetUtils"}}{{/crossLink}} and a {{#crossLink "SpriteSheetBuilder"}}{{/crossLink}} to
  *      help build and manage {{#crossLink "SpriteSheet"}}{{/crossLink}} functionality at run-time.</li>
  * </ul>
+ *
+ * <h4>Browser Support</h4>
+ * All modern browsers that support Canvas will support EaselJS (<a href="http://caniuse.com/canvas">http://caniuse.com/canvas</a>).
+ * Browser performance may vary between platforms, for example, Android Canvas has poor hardware support, and is much
+ * slower on average than most other browsers.
  *
  * @module EaselJS
  */
@@ -286,7 +308,7 @@ var p = DisplayObject.prototype;
 
 	/**
 	 * The factor to stretch this display object horizontally. For example, setting scaleX to 2 will stretch the display
-	 * object to twice it's nominal width.
+	 * object to twice it's nominal width. To horizontally flip an object, set the scale to a negative number.
 	 * @property scaleX
 	 * @type {Number}
 	 * @default 1
@@ -295,7 +317,7 @@ var p = DisplayObject.prototype;
 
 	/**
 	 * The factor to stretch this display object vertically. For example, setting scaleY to 0.5 will stretch the display
-	 * object to half it's nominal height.
+	 * object to half it's nominal height. To vertically flip an object, set the scale to a negative number.
 	 * @property scaleY
 	 * @type {Number}
 	 * @default 1
@@ -571,6 +593,7 @@ var p = DisplayObject.prototype;
 	/**
 	 * Returns true or false indicating whether the display object would be visible if drawn to a canvas.
 	 * This does not account for whether it would be visible within the boundaries of the stage.
+	 *
 	 * NOTE: This method is mainly for internal use, though it may be useful for advanced uses.
 	 * @method isVisible
 	 * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas
@@ -581,12 +604,12 @@ var p = DisplayObject.prototype;
 
 	/**
 	 * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
-	 * Returns `true` if the draw was handled (useful for overriding functionality).
+	 * Returns <code>true</code> if the draw was handled (useful for overriding functionality).
 	 *
 	 * NOTE: This method is mainly for internal use, though it may be useful for advanced uses.
 	 * @method draw
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
-	 * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache. For example,
+	 * @param {Boolean} [ignoreCache=false] Indicates whether the draw operation should ignore any current cache. For example,
 	 * used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
 	 **/
 	p.draw = function(ctx, ignoreCache) {
@@ -630,17 +653,27 @@ var p = DisplayObject.prototype;
 	 * Draws the display object into a new canvas, which is then used for subsequent draws. For complex content
 	 * that does not change frequently (ex. a Container with many children that do not move, or a complex vector Shape),
 	 * this can provide for much faster rendering because the content does not need to be re-rendered each tick. The
-	 * cached display object can be moved, rotated, faded, etc freely, however if it's content changes, you must manually
-	 * update the cache by calling updateCache() or cache() again. You must specify the cache area via the x, y, w,
-	 * and h parameters. This defines the rectangle that will be rendered and cached using this display object's
-	 * coordinates. For example if you defined a Shape that drew a circle at 0, 0 with a radius of 25, you could call
-	 * myShape.cache(-25, -25, 50, 50) to cache the full shape.
+	 * cached display object can be moved, rotated, faded, etc freely, however if it's content changes, you must
+	 * manually update the cache by calling <code>updateCache()</code> or <code>cache()</code> again. You must specify
+	 * the cache area via the x, y, w, and h parameters. This defines the rectangle that will be rendered and cached
+	 * using this display object's coordinates.
+	 *
+	 * <h4>Example</h4>
+	 * For example if you defined a Shape that drew a circle at 0, 0 with a radius of 25:
+	 *
+	 *      var shape = new createjs.Shape();
+	 *      shape.graphics.beginFill("#ff0000").drawCircle(0, 0, 25);
+	 *      myShape.cache(-25, -25, 50, 50);
+	 *
+	 * Note that filters need to be defined <em>before</em> the cache is applied. Check out the {{#crossLink "Filter"}}{{/crossLink}}
+	 * class for more information.
+	 *
 	 * @method cache
 	 * @param {Number} x The x coordinate origin for the cache region.
 	 * @param {Number} y The y coordinate origin for the cache region.
 	 * @param {Number} width The width of the cache region.
 	 * @param {Number} height The height of the cache region.
-	 * @param {Number} scale Optional. The scale at which the cache will be created. For example, if you cache a vector shape using
+	 * @param {Number} [scale=1] The scale at which the cache will be created. For example, if you cache a vector shape using
 	 * 	myShape.cache(0,0,100,100,2) then the resulting cacheCanvas will be 200x200 px. This lets you scale and rotate
 	 * 	cached elements with greater fidelity. Default is 1.
 	 **/
@@ -660,6 +693,16 @@ var p = DisplayObject.prototype;
 	 * Redraws the display object to its cache. Calling updateCache without an active cache will throw an error.
 	 * If compositeOperation is null the current cache will be cleared prior to drawing. Otherwise the display object
 	 * will be drawn over the existing cache using the specified compositeOperation.
+	 *
+	 * <h4>Example</h4>
+	 * Clear the current graphics of a cached shape, draw some new instructions, and then update the cache. The new line
+	 * will be drawn on top of the old one.
+	 *
+	 *      // Not shown: Creating the shape, and caching it.
+	 *      shapeInstance.clear();
+	 *      shapeInstance.setStrokeStyle(3).beginStroke("#ff0000").moveTo(100, 100).lineTo(200,200);
+	 *      shapeInstance.updateCache();
+	 *
 	 * @method updateCache
 	 * @param {String} compositeOperation The compositeOperation to use, or null to clear the cache and redraw it.
 	 * <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#compositing">
@@ -670,7 +713,7 @@ var p = DisplayObject.prototype;
 		if (!cacheCanvas) { throw "cache() must be called before updateCache()"; }
 		var ctx = cacheCanvas.getContext("2d");
 		ctx.save();
-		if (!compositeOperation) { ctx.clearRect(0, 0, cacheCanvas.width, cacheCanvas.height); }
+		if (!compositeOperation) { ctx.clearRect(0, 0, cacheCanvas.width+1, cacheCanvas.height+1); }
 		ctx.globalCompositeOperation = compositeOperation;
 		ctx.setTransform(scale, 0, 0, scale, -offX, -offY);
 		this.draw(ctx, true);
@@ -680,7 +723,7 @@ var p = DisplayObject.prototype;
 	}
 
 	/**
-	 * Clears the current cache. See cache() for more information.
+	 * Clears the current cache. See {{#crossLink "DisplayObject/cache"}}{{/crossLink}} for more information.
 	 * @method uncache
 	 **/
 	p.uncache = function() {
@@ -721,6 +764,15 @@ var p = DisplayObject.prototype;
 	 * to the global (stage) coordinate space. For example, this could be used to position an HTML label
 	 * over a specific point on a nested display object. Returns a Point instance with x and y properties
 	 * correlating to the transformed coordinates on the stage.
+	 *
+	 * <h4>Example</h4>
+	 *
+	 *      displayObject.x = 300;
+	 *      displayObject.y = 200;
+	 *      stage.addChild(displayObject);
+	 *      var point = myDisplayObject.localToGlobal(100, 100);
+	 *      // Results in x=400, y=300
+	 *
 	 * @method localToGlobal
 	 * @param {Number} x The x position in the source display object to transform.
 	 * @param {Number} y The y position in the source display object to transform.
@@ -739,6 +791,15 @@ var p = DisplayObject.prototype;
 	 * coordinate space of the display object. For example, this could be used to determine
 	 * the current mouse position within the display object. Returns a Point instance with x and y properties
 	 * correlating to the transformed position in the display object's coordinate space.
+	 *
+	 * <h4>Example</h4>
+	 *
+	 *      displayObject.x = 300;
+	 *      displayObject.y = 200;
+	 *      stage.addChild(displayObject);
+	 *      var point = myDisplayObject.globalToLocal(100, 100);
+	 *      // Results in x=-200, y=-100
+	 *
 	 * @method globalToLocal
 	 * @param {Number} x The x position on the stage to transform.
 	 * @param {Number} y The y position on the stage to transform.
@@ -754,10 +815,14 @@ var p = DisplayObject.prototype;
 	}
 
 	/**
-	 * Transforms the specified x and y position from the coordinate space of this display object to the
-	 * coordinate space of the target display object. Returns a Point instance with x and y properties
-	 * correlating to the transformed position in the target's coordinate space. Effectively the same as calling
-	 * var pt = this.localToGlobal(x, y); pt = target.globalToLocal(pt.x, pt.y);
+	 * Transforms the specified x and y position from the coordinate space of this display object to the coordinate
+	 * space of the target display object. Returns a Point instance with x and y properties correlating to the
+	 * transformed position in the target's coordinate space. Effectively the same as using the following code with
+	 * {{#crossLink "DisplayObject/localToGlobal"}}{{/crossLink}} and {{#crossLink "DisplayObject/globalToLocal"}}{{/crossLink}}.
+	 *
+	 *      var pt = this.localToGlobal(x, y);
+	 *      pt = target.globalToLocal(pt.x, pt.y);
+	 *
 	 * @method localToLocal
 	 * @param {Number} x The x position in the source display object to transform.
 	 * @param {Number} y The y position on the stage to transform.
@@ -772,17 +837,22 @@ var p = DisplayObject.prototype;
 
 	/**
 	 * Shortcut method to quickly set the transform properties on the display object. All parameters are optional.
-	 * Omitted parameters will have the default value set (ex. 0 for x/y, 1 for scaleX/Y).
+	 * Omitted parameters will have the default value set.
+	 *
+	 * <h4>Example</h4>
+	 *
+	 *      displayObject.setTransform(100, 100, 2, 2);
+	 *
 	 * @method setTransform
-	 * @param {Number} x
-	 * @param {Number} y
-	 * @param {Number} scaleX
-	 * @param {Number} scaleY
-	 * @param {Number} rotation
-	 * @param {Number} skewX
-	 * @param {Number} skewY
-	 * @param {Number} regX
-	 * @param {Number} regY
+	 * @param {Number} [x=0] The horizontal translation (x position) in pixels
+	 * @param {Number} [y=0] The vertical translation (y position) in pixels
+	 * @param {Number} [scaleX=1] The horizontal scale, as a percentage of 1
+	 * @param {Number} [scaleY=1] the vertical scale, as a percentage of 1
+	 * @param {Number} [rotation=0] The rotation, in degrees
+	 * @param {Number} [skewX=0] The horizontal skew factor
+	 * @param {Number} [skewY=0] The vertical skew factor
+	 * @param {Number} [regX=0] The horizontal registration point in pixels
+	 * @param {Number} [regY=0] The vertical registration point in pixels
 	 * @return {DisplayObject} Returns this instance. Useful for chaining commands.
 	*/
 	p.setTransform = function(x, y, scaleX, scaleY, rotation, skewX, skewY, regX, regY) {
@@ -811,15 +881,15 @@ var p = DisplayObject.prototype;
 	}
 	
 	/**
-	 * Generates a concatenated Matrix2D object representing the combined transform of
-	 * the display object and all of its parent Containers up to the highest level ancestor
-	 * (usually the stage). This can be used to transform positions between coordinate spaces,
-	 * such as with localToGlobal and globalToLocal.
+	 * Generates a concatenated Matrix2D object representing the combined transform of the display object and all of its
+	 * parent Containers up to the highest level ancestor (usually the {{#crossLink "Stage"}}{{/crossLink}}). This can
+	 * be used to transform positions between coordinate spaces, such as with {{#crossLink "DisplayObject/localToGlobal"}}{{/crossLink}}
+	 * and {{#crossLink "DisplayObject/globalToLocal"}}{{/crossLink}}.
 	 * @method getConcatenatedMatrix
-	 * @param {Matrix2D} mtx Optional. A Matrix2D object to populate with the calculated values. If null, a new
-	 * Matrix object is returned.
-	 * @return {Matrix2D} a concatenated Matrix2D object representing the combined transform of
-	 * the display object and all of its parent Containers up to the highest level ancestor (usually the stage).
+	 * @param {Matrix2D} [mtx] A {{#crossLink "Matrix2D"}}{{/crossLink}} object to populate with the calculated values.
+	 * If null, a new Matrix2D object is returned.
+	 * @return {Matrix2D} a concatenated Matrix2D object representing the combined transform of the display object and
+	 * all of its parent Containers up to the highest level ancestor (usually the {{#crossLink "Stage"}}{{/crossLink}}).
 	 **/
 	p.getConcatenatedMatrix = function(matrix) {
 		if (matrix) { matrix.identity(); }
@@ -836,6 +906,15 @@ var p = DisplayObject.prototype;
 	 * Tests whether the display object intersects the specified local point (ie. draws a pixel with alpha > 0 at
 	 * the specified position). This ignores the alpha, shadow and compositeOperation of the display object, and all
 	 * transform properties including regX/Y.
+	 *
+	 * <h4>Example</h4>
+	 *
+	 *      stage.addEventListener("stagemousedown", handleMouseDown);
+	 *      function handleMouseDown(event) {
+	 *          var hit = myShape.hitTest(event.stageX, event.stageY);
+	 *      }
+	 *
+	 * Please note that shape-to-shape collision is not currently supported by EaselJS.
 	 * @method hitTest
 	 * @param {Number} x The x position to check in the display object's local coordinates.
 	 * @param {Number} y The y position to check in the display object's local coordinates.
@@ -844,21 +923,24 @@ var p = DisplayObject.prototype;
 	*/
 	p.hitTest = function(x, y) {
 		var ctx = DisplayObject._hitTestContext;
-		var canvas = DisplayObject._hitTestCanvas;
-
-		ctx.setTransform(1,  0, 0, 1, -x, -y);
+		ctx.setTransform(1, 0, 0, 1, -x, -y);
 		this.draw(ctx);
 
 		var hit = this._testHit(ctx);
-
-		canvas.width = 0;
-		canvas.width = 1;
+		ctx.setTransform(1, 0, 0, 1, 0, 0);
+		ctx.clearRect(0, 0, 2, 2);
 		return hit;
 	};
 	
 	/**
-	 * Provides a chainable shortcut method for setting a number of properties on a DisplayObject instance. Ex.<br/>
-	 * var shape = stage.addChild( new Shape() ).set({graphics:myGraphics, x:100, y:100, alpha:0.5});
+	 * Provides a chainable shortcut method for setting a number of properties on a DisplayObject instance.
+	 *
+	 * <h4>Example</h4>
+	 *
+	 *      var myGraphics = new createjs.Graphics().beginFill("#ff0000").drawCircle(0, 0, 25);
+	 *      var shape = stage.addChild(new Shape())
+	 *          .set({graphics:myGraphics, x:100, y:100, alpha:0.5});
+	 *
 	 * @method set
 	 * @param {Object} props A generic object containing properties to copy to the DisplayObject instance.
 	 * @return {DisplayObject} Returns The DisplayObject instance the method is called on (useful for chaining calls.)

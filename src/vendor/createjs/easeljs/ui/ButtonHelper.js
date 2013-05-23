@@ -1,5 +1,5 @@
 /*
-* Shape
+* ButtonHelper
 * Visit http://createjs.com/ for documentation, updates and examples.
 *
 * Copyright (c) 2010 gskinner.com, inc.
@@ -43,6 +43,10 @@ this.createjs = this.createjs||{};
  * <h4>Example</h4>
  *
  *      var helper = new createjs.ButtonHelper(myInstance, "out", "over", "down", false, myInstance, "hit");
+ *      myInstance.addEventListener("click", handleClick);
+ *      function handleClick(event) {
+ *          // Click Happened.
+ *      }
  *
  * @param {BitmapAnimation|MovieClip} target The instance to manage.
  * @param {String} [outLabel="out"] The label or animation to go to when the user rolls out of the button.

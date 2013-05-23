@@ -19,12 +19,12 @@ module.exports = function (grunt) {
             'example/collide/*.js',
             'example/invaders/*.js',
             'example/hero/*.js',
-            'src/core/collision/*.js',
-            'src/core/*.js',
-            'src/render/*.js',
-            'src/utils/*.js',
-            'src/collection/*.js',
-            'src/texture/*.js'
+            'src/flyjs/core/collision/*.js',
+            'src/flyjs/core/*.js',
+            'src/flyjs/render/*.js',
+            'src/flyjs/utils/*.js',
+            'src/flyjs/collection/*.js',
+            'src/flyjs/texture/*.js'
         ],
         lint_globals: {
             flyjs: true,
@@ -71,14 +71,14 @@ module.exports = function (grunt) {
                         'src/vendor/createjs/preloadjs/LoadQueue.js',
                         'src/vendor/createjs/preloadjs/TagLoader.js',
                         'src/vendor/createjs/preloadjs/XHRLoader.js',
-                        'src/utils/*.js',
-                        'src/texture/*.js',
-                        'src/collection/*.js',
-                        'src/core/*.js',
-                        'src/core/collision/Node.js',
-                        'src/core/collision/BoundsNode.js',
-                        'src/core/collision/QuadTree.js',
-                        'src/render/*.js'
+                        'src/flyjs/utils/*.js',
+                        'src/flyjs/texture/*.js',
+                        'src/flyjs/collection/*.js',
+                        'src/flyjs/core/*.js',
+                        'src/flyjs/core/collision/Node.js',
+                        'src/flyjs/core/collision/BoundsNode.js',
+                        'src/flyjs/core/collision/QuadTree.js',
+                        'src/flyjs/render/*.js'
                     ],
                     dest: '<%= meta.deployPath %>flyjs.min.js'
                 }],

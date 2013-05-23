@@ -90,13 +90,18 @@ var SpriteSheetUtils = function() {
 	}
 
 	/**
-	 * Returns a single frame of the specified sprite sheet as a new PNG image. Note that in almost all cases it is better
-	 * to display a single frame using a paused instance of BitmapAnimation, than it is to slice out a frame using this
-	 * method and display it with a Bitmap instance.
+	 * Returns a single frame of the specified sprite sheet as a new PNG image.
+	 *
+	 * <strong>WARNING:</strong> In almost all cases it is better to display a single frame using a {{#crossLink "BitmapAnimation"}}{{/crossLink}}
+	 * with a {{#crossLink "BitmapAnimation/gotoAndStop"}}{{/crossLink}} call than it is to slice out a frame using this
+	 * method and display it with a Bitmap instance. You can also crop an image using the <code>sourceRect</code>
+	 * property of {{#crossLink "Bitmap"}}{{/crossLink}}.
+	 *
+	 * The extractFrame method may cause cross-domain warnings since it accesses pixels directly on the canvas.
 	 * @method extractFrame
 	 * @static
 	 * @param {Image} spriteSheet The SpriteSheet instance to extract a frame from.
-	 * @param {Number} frame The frame number or animation name to extract. If an animation
+	 * @param {Number|String} frame The frame number or animation name to extract. If an animation
 	 * name is specified, only the first frame of the animation will be extracted.
 	 * @return {Image} a single frame of the specified sprite sheet as a new PNG image.
 	*/
@@ -151,7 +156,8 @@ var SpriteSheetUtils = function() {
 		for (var i=0;i<il;i++) {
 			var src = imgs[i];
 			src.__tmp = i; // a bit hacky, but faster than doing indexOf below.
-			canvas.width = 0; // make sure it clears.
+			ctx.setTransform(1,0,0,1,0,0);
+			ctx.clearRect(0,0,canvas.width+1,canvas.height+1);
 			canvas.width = src.width;
 			canvas.height = src.height;
 			ctx.setTransform(h?-1:1, 0, 0, v?-1:1, h?src.width:0, v?src.height:0);
