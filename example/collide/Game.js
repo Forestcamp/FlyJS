@@ -12,8 +12,8 @@ this.game = this.game || {};
 (function () {
     'use strict';
 
-    var Game = function (stage) {
-        this.initialize(stage);
+    var Game = function (canvasParent, options) {
+        this.initialize(canvasParent, options);
     };
 
     var p = Game.prototype = new flyjs.StageRender();
@@ -21,9 +21,9 @@ this.game = this.game || {};
     p.StageRender_initialize = p.initialize;
     p.StageRender_tick = p.tickHandler;
 
-    p.initialize = function (stage) {
+    p.initialize = function (canvasParent, options) {
         // must call super !!
-        this.StageRender_initialize(stage, 'manifest.json');
+        this.StageRender_initialize(canvasParent, options);
     };
 
     /**

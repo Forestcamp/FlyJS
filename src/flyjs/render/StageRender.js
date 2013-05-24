@@ -30,37 +30,58 @@ this.flyjs = this.flyjs || {};
      */
     p.stage = null;
 
-    /**
-     * @property _entitiesCollection
-     * @type {EntitiesCollection}
-     * @private
-     */
-    p._entitiesCollection = null;
-
-    /**
-     * @property _FPSMeter
-     * @type {Stats}
-     * @private
-     */
-    p._FPSMeter = null;
-
-    p.initialize = function (stage, manifest) {
-        if (!stage) {
+    p.initialize = function (canvasParent, options) {
+        if (!canvasParent) {
             throw new flyjs.Exception("StageRender: error in parameters", "Stage is Null");
         }
 
-        this.stage = stage;
+        this._parseOptions(options);
+        this._createStage(canvasParent);
 
         //******************
         // Initialize block
         //******************
         this._entitiesCollection = new flyjs.EntitiesCollection();
-        flyjs.GamePad.initialize(stage);
-        this.Render_initialize(stage);
+        flyjs.GamePad.initialize(this.stage);
+        this.Render_initialize(this.stage);
 
         this.loader = new flyjs.ManifestLoader();
         this.loader.addEventListener('ManifestCompleteLoad', this.loadManifestComplete.bind(this));
-        this.loader.start(manifest);
+        this.loader.start(this._options.manifest);
+    };
+
+    /**
+     * Parse 'options' or set defaults settings
+     * @param options
+     * @private
+     */
+    p._parseOptions = function (options) {
+        if (options.hasOwnProperty('manifest')) {
+            this._options.manifest = options.manifest;
+        }
+        if (options.hasOwnProperty('width')) {
+            this._options.width = options.width;
+        }
+        if (options.hasOwnProperty('height')) {
+            this._options.height = options.height;
+        }
+    };
+
+    /**
+     * Create dynamic Canvas stage
+     * @param canvasParent
+     * @private
+     */
+    p._createStage = function (canvasParent) {
+        var canvasHolder = document.getElementsByClassName(canvasParent)[0],
+            canvas = document.createElement('canvas');
+        canvas.width = this._options.width;
+        canvas.height = this._options.height;
+        canvasHolder.appendChild(canvas);
+
+        this.stage = new createjs.Stage(canvas);
+        this.stage.addChild(this);
+        this.stage.update();
     };
 
     /**
@@ -115,6 +136,30 @@ this.flyjs = this.flyjs || {};
     p.add = function (entity) {
         this._entitiesCollection.add(entity);
     };
+
+    /**
+     * Initialize options
+     * @type {Object}
+     * @private
+     */
+    p._options = {
+        manifest: 'manifest.json',
+        width: 800,
+        height: 600
+    };
+    /**
+     * @property _entitiesCollection
+     * @type {EntitiesCollection}
+     * @private
+     */
+    p._entitiesCollection = null;
+
+    /**
+     * @property _FPSMeter
+     * @type {Stats}
+     * @private
+     */
+    p._FPSMeter = null;
 
     flyjs.StageRender = StageRender;
 }());
