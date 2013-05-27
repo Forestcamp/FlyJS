@@ -17,9 +17,6 @@
     "email": "pimenov.o@gmail.com",
     "web": "http://www.flashblogger.ru"
   },
-  "engines": {
-    "node": ">= 0.8.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Forestcamp/Fly.js.git"
