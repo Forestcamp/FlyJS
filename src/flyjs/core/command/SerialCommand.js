@@ -33,7 +33,7 @@ this.flyjs = this.flyjs || {};
         if (this._completeCommandCount == this._commands.length) {
             this.complete();
         } else {
-            this._commands[this._completeCommandCount].addEventListener("complete", this.onSubCommandComplete);
+            this._commands[this._completeCommandCount].addEventListener("complete", this.onSubCommandComplete.bind(this));
             this._commands[this._completeCommandCount].start();
         }
     };

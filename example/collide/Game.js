@@ -83,6 +83,7 @@ this.game = this.game || {};
 
             this.stage.addChild(c);
             list.push(c);
+            this.tree.insert(c);
         }
     };
 

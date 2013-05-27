@@ -123,16 +123,16 @@ this.flyjs = this.flyjs || {};
      */
     p._loadManifestFile = function () {
         this.loader = new flyjs.ManifestManager(this._options.manifest);
-        this.loader.addEventListener('ManifestCompleteLoad', this._loadManifestComplete.bind(this));
+        this.loader.addEventListener('ManifestCompleteLoad', this.loadManifestComplete.bind(this));
         this.loader.start();
     };
 
     /**
      *
-     * @private
+     * @protected
      */
-    p._loadManifestComplete = function () {
-        this.loader.removeEventListener('ManifestCompleteLoad', this._loadManifestComplete);
+    p.loadManifestComplete = function () {
+        this.loader.removeEventListener('ManifestCompleteLoad', this.loadManifestComplete);
     };
 
     /**
