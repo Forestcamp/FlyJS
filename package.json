@@ -33,7 +33,6 @@
     "grunt-contrib-yuidoc": "~0.4.0",
     "grunt-contrib-watch": "~0.4.0",
     "grunt-buster": "~0.2.1",
-    "buster": "~0.6.12",
     "grunt-jslint": "~0.2.5a"
   }
 }
