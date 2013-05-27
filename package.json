@@ -1,35 +1,42 @@
 {
-    "name": "flyjs",
-    "description": "Make your fantastic Games!",
-    "version": "0.1.0",
-    "keywords": [
-        "flyjs",
-        "plugin",
-        "framework",
-        "html5",
-        "javascript",
-        "game",
-        "engine"
-    ],
-    "author": {
-        "name": "Oleg Pimenov",
-        "email": "pimenov.o@gmail.com",
-        "web": "http://www.flashblogger.ru"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Forestcamp/Fly.js.git"
-    },
-    "github": "https://github.com/Forestcamp/Fly.js",
-    "scripts": {
-        "start": "grunt release"
-    },
-    "engine": "node 0.11",
-    "devDependencies": {
-        "grunt": "~0.4.1",
-        "grunt-contrib-uglify": "~0.2.0",
-        "grunt-contrib-jshint": "~0.4.0",
-        "grunt-contrib-yuidoc": "~0.4.0",
-        "grunt-jslint": "~0.2.5a"
-    }
+  "name": "flyjs",
+  "description": "Make your fantastic Games!",
+  "version": "0.1.0",
+  "keywords": [
+    "flyjs",
+    "plugin",
+    "framework",
+    "html5",
+    "javascript",
+    "game",
+    "engine"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Oleg Pimenov",
+    "email": "pimenov.o@gmail.com",
+    "web": "http://www.flashblogger.ru"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Forestcamp/Fly.js.git"
+  },
+  "github": "https://github.com/Forestcamp/Fly.js",
+  "scripts": {
+    "start": "grunt release"
+  },
+  "engine": "node 0.11",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-jshint": "~0.4.0",
+    "grunt-contrib-yuidoc": "~0.4.0",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt-buster": "~0.2.1",
+    "buster": "~0.6.12",
+    "grunt-jslint": "~0.2.5a"
+  }
 }

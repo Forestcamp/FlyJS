@@ -41,15 +41,16 @@ this.game = this.game || {};
      */
     p._prepare = function () {
         this.ship = flyjs.AssetManager.getAsset('player-ship');
-        // set ship position
-        this.ship.x = this.stage.canvas.width / 2 - this.ship.image.width / 2;
-        this.ship.y = this.stage.canvas.height - this.ship.image.height;
 
         this.stage.addChild(this.ship);
 
         // define GamePad buttons
         flyjs.GamePad.define("RIGHT", [flyjs.Key.RIGHT]);
         flyjs.GamePad.define("LEFT", [flyjs.Key.LEFT]);
+
+        // set ship position
+        this.ship.x = this.stage.canvas.width / 2 - this.ship.image.width / 2;
+        this.ship.y = this.stage.canvas.height - this.ship.image.height;
     };
 
     p.update = function () {

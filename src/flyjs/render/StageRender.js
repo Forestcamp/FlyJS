@@ -45,9 +45,9 @@ this.flyjs = this.flyjs || {};
         flyjs.GamePad.initialize(this.stage);
         this.Render_initialize(this.stage);
 
-        this.loader = new flyjs.ManifestLoader();
+        this.loader = new flyjs.ManifestManager(this._options.manifest);
         this.loader.addEventListener('ManifestCompleteLoad', this.loadManifestComplete.bind(this));
-        this.loader.start(this._options.manifest);
+        this.loader.start();
     };
 
     /**

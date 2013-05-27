@@ -20,6 +20,8 @@ module.exports = function (grunt) {
             'example/invaders/*.js',
             'example/hero/*.js',
             'src/flyjs/core/collision/*.js',
+            'src/flyjs/core/command/*.js',
+            'src/flyjs/core/loader/*.js',
             'src/flyjs/core/*.js',
             'src/flyjs/render/*.js',
             'src/flyjs/utils/*.js',
@@ -74,6 +76,8 @@ module.exports = function (grunt) {
                         'src/flyjs/utils/*.js',
                         'src/flyjs/texture/*.js',
                         'src/flyjs/collection/*.js',
+                        'src/flyjs/core/command/*.js',
+                        'src/flyjs/core/loader/*.js',
                         'src/flyjs/core/*.js',
                         'src/flyjs/core/collision/Node.js',
                         'src/flyjs/core/collision/BoundsNode.js',
@@ -116,6 +120,13 @@ module.exports = function (grunt) {
                 globals: '<%= lint_globals %>'
             },
             uses_defaults: '<%= lint_files %>'
+        },
+        buster: {
+            commands: {
+                test: {
+                    config: 'test/buster.js'
+                }
+            }
         }
     });
 
@@ -124,7 +135,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jslint');
+    grunt.loadNpmTasks('grunt-buster');
 
+    grunt.registerTask('unit', ['buster']);
     grunt.registerTask('docs', ['yuidoc']);
     grunt.registerTask('ugli', ['uglify', 'jslint', 'jshint']);
     grunt.registerTask('release', ['jslint', 'jshint']);

@@ -15,6 +15,8 @@ this.flyjs = this.flyjs || {};
         throw "AssetManager cannot be instantiated.";
     };
 
+    AssetManager.manifest = {};
+
     AssetManager._assets = {};
 
     /**
