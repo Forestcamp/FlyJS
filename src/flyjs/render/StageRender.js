@@ -11,6 +11,7 @@ this.flyjs = this.flyjs || {};
     "use strict";
 
     /**
+     * Controlling Entities updates, collisions & other rendering process
      * @class StageRender
      * @constructor
      */
@@ -18,6 +19,9 @@ this.flyjs = this.flyjs || {};
 
     var p = StageRender.prototype = new flyjs.Render();
 
+    ///////////////////////////////////////////////////////////////////////
+    /// Overrides methods
+    ///////////////////////////////////////////////////////////////////////
     p.Render_initialize = p.initialize;
     p.Render_startRender = p.startRender;
     p.Render_stopRender  = p.stopRender;
@@ -26,10 +30,15 @@ this.flyjs = this.flyjs || {};
     /**
      * @property stage
      * @type {Stage}
-     * @private
+     * @public
      */
     p.stage = null;
 
+    /**
+     *
+     * @param canvasParent - div element name
+     * @param options
+     */
     p.initialize = function (canvasParent, options) {
         if (!canvasParent) {
             throw new flyjs.Exception("StageRender: error in parameters", "Stage is Null");
@@ -38,35 +47,59 @@ this.flyjs = this.flyjs || {};
         this._parseOptions(options);
         this._createStage(canvasParent);
 
-        //******************
-        // Initialize block
-        //******************
+        ////////////////////
+        // Initialize
+        ////////////////////
         this._entitiesCollection = new flyjs.EntitiesCollection();
         flyjs.GamePad.initialize(this.stage);
         this.Render_initialize(this.stage);
-
-        this.loader = new flyjs.ManifestManager(this._options.manifest);
-        this.loader.addEventListener('ManifestCompleteLoad', this.loadManifestComplete.bind(this));
-        this.loader.start();
+        this._loadManifestFile();
     };
+
+    ///////////////////////////////////////////////////////////////////////
+    /// Public
+    ///////////////////////////////////////////////////////////////////////
 
     /**
-     * Parse 'options' or set defaults settings
-     * @param options
-     * @private
+     *
+     * @method add
+     * @param entity
+     * @public
      */
-    p._parseOptions = function (options) {
-        if (options.hasOwnProperty('manifest')) {
-            this._options.manifest = options.manifest;
-        }
-        if (options.hasOwnProperty('width')) {
-            this._options.width = options.width;
-        }
-        if (options.hasOwnProperty('height')) {
-            this._options.height = options.height;
-        }
+    p.add = function (entity) {
+        this._entitiesCollection.add(entity);
     };
 
+    p.startRender = function () {
+        this.Render_startRender(this.stage);
+        this._addStats();
+    };
+
+    p.stopRender = function () {
+        this.Render_stopRender();
+    };
+
+    p.tickHandler = function (event) {
+        this._FPSMeter.begin();
+        this.Render_tick(event);
+
+        var i = 0,
+            length = this._entitiesCollection._listEntities.length,
+            entity = null;
+
+        for (i; i < length; i++) {
+            entity = this._entitiesCollection._listEntities[i];
+
+            entity.update();
+        }
+
+        flyjs.GamePad.update();
+        this._FPSMeter.end();
+    };
+
+    ///////////////////////////////////////////////////////////////////////
+    /// Internals
+    ///////////////////////////////////////////////////////////////////////
     /**
      * Create dynamic Canvas stage
      * @param canvasParent
@@ -85,6 +118,24 @@ this.flyjs = this.flyjs || {};
     };
 
     /**
+     * @method _loadManifestFile
+     * @private
+     */
+    p._loadManifestFile = function () {
+        this.loader = new flyjs.ManifestManager(this._options.manifest);
+        this.loader.addEventListener('ManifestCompleteLoad', this._loadManifestComplete.bind(this));
+        this.loader.start();
+    };
+
+    /**
+     *
+     * @private
+     */
+    p._loadManifestComplete = function () {
+        this.loader.removeEventListener('ManifestCompleteLoad', this._loadManifestComplete);
+    };
+
+    /**
      * @method _addStats
      * @private
      */
@@ -99,42 +150,21 @@ this.flyjs = this.flyjs || {};
         document.body.appendChild(this._FPSMeter.domElement);
     };
 
-    p.loadManifestComplete = function () {
-        this.loader.removeEventListener('ManifestCompleteLoad', this.loadManifestComplete);
-    };
-
-    p.startRender = function () {
-        this.Render_startRender(this.stage);
-        this._addStats();
-    };
-
-    p.stopRender = function () {
-        this.Render_stopRender();
-    };
-
-    p.tickHandler = function (event) {
-        this._FPSMeter.begin();
-        this.Render_tick(event);
-
-        var i = 0,
-            length = this._entitiesCollection._listEntities.length;
-
-        for (i; i < length; i++) {
-            this._entitiesCollection._listEntities[i].update();
-        }
-
-        flyjs.GamePad.update();
-        this._FPSMeter.end();
-    };
-
     /**
-     *
-     * @method add
-     * @param entity
-     * @public
+     * Parse 'options' or set defaults settings
+     * @param options
+     * @private
      */
-    p.add = function (entity) {
-        this._entitiesCollection.add(entity);
+    p._parseOptions = function (options) {
+        if (options.hasOwnProperty('manifest')) {
+            this._options.manifest = options.manifest;
+        }
+        if (options.hasOwnProperty('width')) {
+            this._options.width = options.width;
+        }
+        if (options.hasOwnProperty('height')) {
+            this._options.height = options.height;
+        }
     };
 
     /**

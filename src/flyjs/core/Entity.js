@@ -37,9 +37,9 @@ this.flyjs = this.flyjs || {};
     /**
      *
      * @type {boolean}
-     * @property collidable
+     * @property isColliding
      */
-    p.collidable = true;
+    p.isColliding = true;
 
     /**
      * @property allowCollisions

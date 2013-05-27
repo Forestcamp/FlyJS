@@ -9,6 +9,12 @@
 this.flyjs = this.flyjs || {};
 (function () {
     'use strict';
+
+    /**
+     * @class Loader
+     * @param options
+     * @constructor
+     */
     var Loader = function (options) {
         this._options = options;
     };
@@ -16,15 +22,27 @@ this.flyjs = this.flyjs || {};
     var p = Loader.prototype;
 
     p.loadFile = function (item) {
-        this._loader = new createjs.LoadQueue();
-        this._addHandlers();
-        this._loader.loadFile(item);
+        this._load(true, item);
     };
 
     p.loadManifest = function (item) {
-        this._loader = new createjs.LoadQueue(false);
+        this._load(false, item);
+    };
+
+    /**
+     *
+     * @param useXHR - Determines whether the preload instance will favor loading with XHR.
+     * @param item
+     * @private
+     */
+    p._load = function (useXHR, item) {
+        this._loader = new createjs.LoadQueue(useXHR);
         this._addHandlers();
-        this._loader.loadManifest(item);
+        if (useXHR) {
+            this._loader.loadFile(item);
+        } else {
+            this._loader.loadManifest(item);
+        }
     };
 
     p._addHandlers = function () {

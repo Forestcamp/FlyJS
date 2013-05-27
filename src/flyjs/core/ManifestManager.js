@@ -13,21 +13,15 @@ this.flyjs = this.flyjs || {};
     /**
      * ManifestManager for load manifest file
      * @constructor
+     * @param manifestUrl - url to Manifest JSON file
      */
-    var ManifestManager = function (manifest) {
-        this.initialize(manifest);
+    var ManifestManager = function (manifestUrl) {
+        this.initialize(manifestUrl);
     };
 
     var p = ManifestManager.prototype;
 
     createjs.EventDispatcher.initialize(p);
-
-    /**
-     *
-     * @type {LoadQueue}
-     * @private
-     */
-    p._loader = null;
 
     /**
      *
@@ -37,10 +31,17 @@ this.flyjs = this.flyjs || {};
     p._manifestUrl = '';
 
     /**
+     *
+     * @type {SerialCommand}
+     * @private
+     */
+    p._serial = null;
+
+    /**
      * @method initialize
      */
-    p.initialize = function (manifest) {
-        this._manifestUrl = manifest;
+    p.initialize = function (manifestUrl) {
+        this._manifestUrl = manifestUrl;
     };
 
     p.start = function () {
@@ -54,6 +55,8 @@ this.flyjs = this.flyjs || {};
     };
 
     p.handleComplete = function () {
+        this.serial.removeEventListener("complete", this.handleComplete);
+        this.serial = null;
         this.dispatchEvent('ManifestCompleteLoad');
     };
 
