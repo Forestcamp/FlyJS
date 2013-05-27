@@ -64,7 +64,7 @@ this.game = this.game || {};
             if (num == 1) {
                 c = new flyjs.Circle(this.bounds, radius, "rgb(255,255,255)", "rgba(217,83,77,0.7)");
             } else if (num == 2) {
-                c = new flyjs.Circle(this.bounds, radius, "rgba(108,202,255, 0.8)", "rgba(50,221,94,0.9)");
+                c = new flyjs.Rectangle(this.bounds, radius, "rgba(108,202,255, 0.8)", "rgba(50,221,94,0.9)");
             }
 
             x = Math.random() * this.bounds.width;
@@ -83,7 +83,6 @@ this.game = this.game || {};
 
             this.stage.addChild(c);
             list.push(c);
-            this.tree.insert(c);
         }
     };
 
@@ -153,7 +152,7 @@ this.game = this.game || {};
         }
     };
 
-    p._circleCount = 20;
+    p._circleCount = 10;
 
     game.Game = Game;
 }());
