@@ -140,5 +140,5 @@ module.exports = function (grunt) {
     grunt.registerTask('unit', ['buster']);
     grunt.registerTask('docs', ['yuidoc']);
     grunt.registerTask('ugli', ['uglify', 'jslint', 'jshint']);
-    grunt.registerTask('release', ['jslint', 'jshint']);
+    grunt.registerTask('release', ['jshint']);
 };

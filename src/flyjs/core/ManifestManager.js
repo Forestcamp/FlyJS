@@ -57,18 +57,5 @@ this.flyjs = this.flyjs || {};
         this.dispatchEvent('ManifestCompleteLoad');
     };
 
-    p.handleFileLoad = function (event) {
-//        var result = event.result,
-//            contentManifest;
-//        if (result.hasOwnProperty('spriteSheets')) {
-//            contentManifest = flyjs.ManifestParser.parseSpriteSheets(result.spriteSheets);
-//            this._loader.loadManifest(contentManifest);
-//        } else if (result.hasOwnProperty('images')) {
-//            contentManifest = flyjs.ManifestParser.parseImages(result.images);
-//            this._loader.loadManifest(contentManifest);
-//        }
-
-    };
-
     flyjs.ManifestManager = ManifestManager;
 }());

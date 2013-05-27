@@ -20,9 +20,7 @@ this.flyjs = this.flyjs || {};
         this.execute();
     };
 
-    p.execute = function () {
-
-    };
+    p.execute = function () {};
 
     p.complete = function () {
         this.dispatchEvent("complete");
