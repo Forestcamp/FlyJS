@@ -1,4 +1,4 @@
-#FlyJS ![FlyJS](https://raw.github.com/Forestcamp/Fly.js/master/flyjs-logo.png)
+#FlyJS
 Game engine for HTML5
 
 [![Build Status](https://travis-ci.org/Forestcamp/Fly.js.png?branch=master)](https://travis-ci.org/Forestcamp/Fly.js)
