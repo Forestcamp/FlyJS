@@ -124,7 +124,6 @@ this.flyjs = this.flyjs || {};
             var rad = flyjs.MathUtil.degreesToRadian(square.angle),
                 i = points.length;
             while (i) {
-            //for (i; i--;) {
                 var rotatedPoint = this.rotatePoint(square.center, points[i], rad);
                 points[i][0] = rotatedPoint[0];
                 points[i][1] = rotatedPoint[1];

@@ -36,7 +36,6 @@ this.game = this.game || {};
     p._prepare = function () {
         this.ship = flyjs.AssetManager.getAsset('player-ship');
 
-        this.setHitBox(4, 4, 0, 0);
     };
 
     p.update = function () {

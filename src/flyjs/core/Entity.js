@@ -86,6 +86,12 @@ this.flyjs = this.flyjs || {};
         this.stage.addChild(child);
     };
 
+    p.setCollision = function (verticesHit) {
+        this.allowCollisions = true;
+        this.verticesHit = verticesHit;
+        flyjs.VertexLib.convertSquare(this.verticesHit);
+    };
+
     p.update = function () {
         if (this.child != null) {
             this.last.x = this.x = this.child.x;
@@ -93,6 +99,11 @@ this.flyjs = this.flyjs || {};
             if (this.child.hasOwnProperty('image')) {
                 this.width = this.child.image.width;
                 this.height = this.child.image.height;
+            }
+            if (this.allowCollisions && this.verticesHit) {
+                this.verticesHit.x = this.x;
+                this.verticesHit.y = this.y;
+                this.setCollision(this.verticesHit);
             }
         }
     };
