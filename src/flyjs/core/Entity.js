@@ -89,6 +89,7 @@ this.flyjs = this.flyjs || {};
     p.setHitBounds = function (hitBounds) {
         this.allowCollisions = true;
         this.hitBounds = hitBounds;
+        this.verticesHit = flyjs.VertexLib.convertSquare(this.hitBounds);
     };
 
     p.update = function () {

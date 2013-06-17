@@ -40,6 +40,8 @@
 
 <script type="text/javascript" src="../../src/flyjs/utils/Key.js"></script>
 <script type="text/javascript" src="../../src/flyjs/utils/GamePad.js"></script>
+<script type="text/javascript" src="../../src/flyjs/utils/MathUtil.js"></script>
+<script type="text/javascript" src="../../src/flyjs/utils/VertexLib.js"></script>
 <script type="text/javascript" src="../../src/flyjs/texture/AssetManager.js"></script>
 <script type="text/javascript" src="../../src/flyjs/collection/EntitiesCollection.js"></script>
 <script type="text/javascript" src="../../src/flyjs/core/command/Command.js"></script>
@@ -58,19 +60,16 @@
 <script type="text/javascript" src="../../src/flyjs/render/EntitiesRender.js"></script>
 <script type="text/javascript" src="../../src/flyjs/render/StageRender.js"></script>
 
-<script type="text/javascript" src="entities/Rectangle.js"></script>
-<script type="text/javascript" src="entities/Circle.js"></script>
+<script type="text/javascript" src="entities/RectangleBox.js"></script>
 <script type="text/javascript" src="Game.js"></script>
 
 <script type="text/javascript">
     domReady(function (){
-
-        new game.Game('canvasHolder', {
-            manifest:'manifest.json',
-            width:700,
-            height: 600
-        });
-
+            new game.Game('canvasHolder', {
+                manifest:'manifest.json',
+                width:700,
+                height: 600
+            });
     });
 </script>
 </body>
