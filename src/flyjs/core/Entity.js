@@ -35,23 +35,10 @@ this.flyjs = this.flyjs || {};
     p.visible = true;
 
     /**
-     *
-     * @type {boolean}
-     * @property isColliding
-     */
-    p.isColliding = true;
-
-    /**
      * @property allowCollisions
      * @type {boolean}
      */
     p.allowCollisions = true;
-
-    /**
-     * @property exists
-     * @type {boolean}
-     */
-    p.exists = true;
 
     /**
      * x,y position
@@ -77,6 +64,12 @@ this.flyjs = this.flyjs || {};
 
     p.originY = 0;
 
+    /**
+     *
+     * vertices of current entity, for detection collision
+     * @type {Object}
+     */
+    p.verticesHit = null;
     /**
      * Sprite, MovieClip or Graphic
      * @type {Object}

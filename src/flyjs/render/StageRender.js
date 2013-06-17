@@ -3,7 +3,8 @@
  * @author Oleg Pimenov, https://github.com/fost
  *
  */
-/*jslint nomen: true, plusplus: true, vars: true */
+/*jslint nomen: true, plusplus: true, vars: true, eqeq:true */
+/*jshint eqnull:true*/
 /*global flyjs, createjs, document, Stats*/
 
 this.flyjs = this.flyjs || {};
@@ -47,13 +48,17 @@ this.flyjs = this.flyjs || {};
         this._parseOptions(options);
         this._createStage(canvasParent);
 
+        this._entitiesCollection = new flyjs.EntitiesCollection();
         ////////////////////
         // Initialize
         ////////////////////
-        this._entitiesCollection = new flyjs.EntitiesCollection();
+        this._loadManifestFile();
+
+        this.bounds = new createjs.Rectangle(0, 0, this._options.width, this._options.height);
+        this.quadTree = new flyjs.QuadTree(this.bounds, false, 7);
+
         flyjs.GamePad.initialize(this.stage);
         this.Render_initialize(this.stage);
-        this._loadManifestFile();
     };
 
     ///////////////////////////////////////////////////////////////////////
@@ -68,6 +73,9 @@ this.flyjs = this.flyjs || {};
      */
     p.add = function (entity) {
         this._entitiesCollection.add(entity);
+        if (entity.allowCollisions) {
+            this.quadTree.insert(entity);
+        }
     };
 
     p.startRender = function () {
@@ -83,15 +91,7 @@ this.flyjs = this.flyjs || {};
         this._FPSMeter.begin();
         this.Render_tick(event);
 
-        var i = 0,
-            length = this._entitiesCollection._listEntities.length,
-            entity = null;
-
-        for (i; i < length; i++) {
-            entity = this._entitiesCollection._listEntities[i];
-
-            entity.update();
-        }
+        this._collisionRender();
 
         flyjs.GamePad.update();
         this._FPSMeter.end();
@@ -100,6 +100,48 @@ this.flyjs = this.flyjs || {};
     ///////////////////////////////////////////////////////////////////////
     /// Internals
     ///////////////////////////////////////////////////////////////////////
+
+    /**
+     *
+     * @private
+     */
+    p._collisionRender = function () {
+        this.quadTree.clear();
+        this.quadTree.insert(this._entitiesCollection._listEntities);
+
+        var i = 0,
+            j = 0,
+            len = 0,
+            length = this._entitiesCollection._listEntities.length,
+            entity = null,
+            entities = null,
+            entityNode = null,
+            entityEvent = null,
+            collide = null;
+
+        for (i; i < length; i++) {
+            entity = this._entitiesCollection._listEntities[i];
+            if (entity.allowCollisions) {
+                entities = this.quadTree.retrieve(entity);
+                len = entities.length;
+                j = 0;
+                entityEvent = {
+                    collisionList: []
+                };
+                for (j; j < len; j++) {
+                    entityNode = entities[j];
+                    if (entity != entityNode) {
+                        collide = flyjs.VertexLib.sat(entity.verticesHit, entityNode.verticesHit);
+                        if (collide) {
+                            entityEvent.collisionList.push(entityNode.name);
+                        }
+                    }
+                }
+            }
+            entity.update(entityEvent);
+        }
+    };
+
     /**
      * Create dynamic Canvas stage
      * @param canvasParent
