@@ -86,10 +86,9 @@ this.flyjs = this.flyjs || {};
         this.stage.addChild(child);
     };
 
-    p.setCollision = function (verticesHit) {
+    p.setHitBounds = function (hitBounds) {
         this.allowCollisions = true;
-        this.verticesHit = verticesHit;
-        flyjs.VertexLib.convertSquare(this.verticesHit);
+        this.hitBounds = hitBounds;
     };
 
     p.update = function () {
@@ -100,10 +99,12 @@ this.flyjs = this.flyjs || {};
                 this.width = this.child.image.width;
                 this.height = this.child.image.height;
             }
-            if (this.allowCollisions && this.verticesHit) {
-                this.verticesHit.x = this.x;
-                this.verticesHit.y = this.y;
-                this.setCollision(this.verticesHit);
+            // update position hitRectangle
+            if (this.allowCollisions && this.hitBounds &&
+                    this.hitBounds.x != this.x && this.hitBounds.y != this.y) {
+                this.hitBounds.x = this.x;
+                this.hitBounds.y = this.y;
+                this.verticesHit = flyjs.VertexLib.convertSquare(this.hitBounds);
             }
         }
     };

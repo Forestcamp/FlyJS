@@ -40,7 +40,6 @@ this.game = this.game || {};
      */
     p._createEntities = function () {
         this.stage.addChild(flyjs.AssetManager.getAsset('background'));
-        console.log('background added');
         this.add(new game.PlayerShip(this.stage));
     };
 
