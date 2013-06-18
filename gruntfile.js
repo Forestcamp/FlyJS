@@ -134,11 +134,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-yuidoc');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-jslint');
     grunt.loadNpmTasks('grunt-buster');
 
     grunt.registerTask('unit', ['buster']);
     grunt.registerTask('docs', ['yuidoc']);
-    grunt.registerTask('ugli', ['uglify', 'jslint', 'jshint']);
+    grunt.registerTask('ugli', ['jshint', 'uglify']);
     grunt.registerTask('release', ['jshint']);
 };
