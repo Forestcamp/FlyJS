@@ -7,6 +7,8 @@ Game engine for HTML5
 * HTML5 ready.
 * Cross-browser compatible (Chrome, Opera, Safari, Firefox).
 * Based on [CreateJS.com](http://createjs.com/#!/CreateJS).
+* Collisions Entities detection with - Quadtree && Separation of Axis Theorem
+* Pre-loading images, sprites, game data & etc. (JSON)
 
 ## Documentation
 
