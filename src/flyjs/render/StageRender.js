@@ -130,7 +130,7 @@ this.flyjs = this.flyjs || {};
                 };
                 for (j; j < len; j++) {
                     entityNode = entities[j];
-                    if (entity != entityNode) {
+                    if (entity != entityNode && entityNode.allowCollisions) {
                         collide = flyjs.VertexLib.sat(entity.verticesHit, entityNode.verticesHit);
                         if (collide) {
                             entityEvent.collisionList.push(entityNode.name);

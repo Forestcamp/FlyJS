@@ -40,7 +40,8 @@ this.game = this.game || {};
      */
     p._createEntities = function () {
         this.stage.addChild(flyjs.AssetManager.getAsset('background'));
-        this.add(new game.PlayerShip(this.stage));
+
+        this.add(new game.PlayerShip(this.stage, this));
     };
 
     /**

@@ -20,50 +20,34 @@ this.flyjs = this.flyjs || {};
      * @public
      */
     p.name = null;
-
     /**
      * @property _stage
      * @type {Stage}
      * @public
      */
     p.stage = null;
-
     /**
      * @type {Boolean}
      * @property visible
      */
     p.visible = true;
-
     /**
      * @property allowCollisions
      * @type {boolean}
      */
     p.allowCollisions = true;
-
-    /**
-     * x,y position
-     * @property last
-     * @type {Object}
-     */
-    p.last = null;
     /**
      * @type {number}
      * @property x
      * @public
      */
     p.x = 0;
-
     /**
      * @type {number}
      * @property y
      * @public
      */
     p.y = 0;
-
-    p.originX = 0;
-
-    p.originY = 0;
-
     /**
      *
      * vertices of current entity, for detection collision
@@ -76,9 +60,11 @@ this.flyjs = this.flyjs || {};
      */
     p.child = null;
 
-    p.initialize = function (stage) {
+    p.stageRender = null;
+
+    p.initialize = function (stage, render) {
         this.stage = stage;
-        this.last = {};
+        this.stageRender = render;
     };
 
     p.addChild = function (child) {
@@ -94,8 +80,8 @@ this.flyjs = this.flyjs || {};
 
     p.update = function () {
         if (this.child != null) {
-            this.last.x = this.x = this.child.x;
-            this.last.y = this.y = this.child.y;
+            this.x = this.child.x;
+            this.y = this.child.y;
             if (this.child.hasOwnProperty('image')) {
                 this.width = this.child.image.width;
                 this.height = this.child.image.height;
@@ -112,7 +98,6 @@ this.flyjs = this.flyjs || {};
 
     p.destroy = function () {
         this.stage = null;
-        this.last = null;
     };
 
     flyjs.Entity = Entity;
