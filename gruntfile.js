@@ -43,6 +43,8 @@ module.exports = function (grunt) {
                 files: [{
                     src: [
                         'src/vendor/stats.min.js',
+                        'src/vendor/domReady.js',
+                        'src/vendor/jshashtable-2.1.js',
                         'src/vendor/createjs/easeljs/utils/UID.js',
                         'src/vendor/createjs/easeljs/events/EventDispatcher.js',
                         'src/vendor/createjs/easeljs/utils/Ticker.js',

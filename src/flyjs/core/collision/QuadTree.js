@@ -44,6 +44,10 @@ this.flyjs = this.flyjs || {};
         }
     };
 
+    p.remove = function (item) {
+
+    };
+
     /**
      * @method clear
      */

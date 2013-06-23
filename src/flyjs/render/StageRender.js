@@ -78,6 +78,10 @@ this.flyjs = this.flyjs || {};
         }
     };
 
+    p.remove = function (entity) {
+        this._entitiesCollection.remove(entity);
+    };
+
     p.startRender = function () {
         this.Render_startRender(this.stage);
         this._addStats();
@@ -106,13 +110,17 @@ this.flyjs = this.flyjs || {};
      * @private
      */
     p._collisionRender = function () {
+
+        this._entitiesCollection.checkStack();
+
         this.quadTree.clear();
-        this.quadTree.insert(this._entitiesCollection._listEntities);
+        this.quadTree.insert(this._entitiesCollection.getEntitiesValues());
 
         var i = 0,
             j = 0,
             len = 0,
-            length = this._entitiesCollection._listEntities.length,
+            listEntities = this._entitiesCollection.getEntities(),
+            length = listEntities.length,
             entity = null,
             entities = null,
             entityNode = null,
@@ -120,7 +128,7 @@ this.flyjs = this.flyjs || {};
             collide = null;
 
         for (i; i < length; i++) {
-            entity = this._entitiesCollection._listEntities[i];
+            entity = listEntities[i][1];
             if (entity.allowCollisions) {
                 entities = this.quadTree.retrieve(entity);
                 len = entities.length;
@@ -140,6 +148,7 @@ this.flyjs = this.flyjs || {};
             }
             entity.update(entityEvent);
         }
+
     };
 
     /**

@@ -21,12 +21,6 @@ this.game = this.game || {};
 
     /**
      *
-     * @type {Boolean}
-     */
-    p.alive = true;
-
-    /**
-     *
      * @param stage
      */
     p.initialize = function (stage, render) {
@@ -66,7 +60,7 @@ this.game = this.game || {};
         }
 
         if (flyjs.GamePad.isPressed("SPACE")) {
-            var laser = new game.Laser(this.stage);
+            var laser = new game.Laser(this.stage, this.stageRender);
             laser.setPosition({
                 x: this.ship.x + this.ship.image.width / 2,
                 y: this.ship.y

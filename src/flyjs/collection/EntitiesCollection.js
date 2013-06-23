@@ -4,7 +4,7 @@
  *
  */
 /*jslint nomen: true, plusplus: true, vars: true*/
-/*global flyjs, Dictionary*/
+/*global flyjs, Hashtable*/
 
 this.flyjs = this.flyjs || {};
 
@@ -21,18 +21,42 @@ this.flyjs = this.flyjs || {};
 
     /**
      * @property _listEntities
+     * @type {Hashtable}
+     * @private
+     */
+    e._listEntities = new Hashtable();
+
+    /**
+     * stack of id`s for one tick
      * @type {Array}
      * @private
      */
-    e._listEntities = [];
+    e._removeStack = [];
+
+    /**
+     * count of created entities
+     * @type {number}
+     * @private
+     */
+    e._entitiesCount = 1;
 
     /**
      * @method getEntities
-     * @return {Object}
+     * @return {Array}
      * @public
      */
     e.getEntities = function () {
-        return this._listEntities;
+        return this._listEntities.entries();
+    };
+
+    /**
+     *
+     * @method getEntitiesValues
+     * @returns {Array}
+     * @public
+     */
+    e.getEntitiesValues = function () {
+        return this._listEntities.values();
     };
 
     /**
@@ -42,7 +66,29 @@ this.flyjs = this.flyjs || {};
      * @public
      */
     e.add = function (entity) {
-        this._listEntities.push(entity);
+        entity.id = this._entitiesCount;
+        this._listEntities.put(entity.id, entity);
+        this._entitiesCount++;
+    };
+
+    e.remove = function (entity) {
+        this._removeStack.push(entity.id);
+    };
+
+    e.checkStack = function () {
+        if (this._removeStack.length > 0) {
+            this.spliceStack(this._listEntities, this._removeStack);
+            this._removeStack = [];
+        }
+    };
+
+    e.spliceStack = function (arr, args) {
+        var i = 0,
+            argsLength = args.length;
+
+        for (i; i < argsLength; i++) {
+            arr.remove(args[i]);
+        }
     };
 
     flyjs.EntitiesCollection = EntitiesCollection;

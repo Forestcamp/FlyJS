@@ -11,8 +11,8 @@ this.game = this.game || {};
 (function () {
     'use strict';
 
-    var Laser = function (stage) {
-        this.initialize(stage);
+    var Laser = function (stage, render) {
+        this.initialize(stage, render);
     };
 
     var p = Laser.prototype = new flyjs.Entity();
@@ -23,8 +23,8 @@ this.game = this.game || {};
      *
      * @param stage
      */
-    p.initialize = function (stage) {
-        this.Flyjs_EntityShape_initialize(stage, null);
+    p.initialize = function (stage, render) {
+        this.Flyjs_EntityShape_initialize(stage, render);
 
         this.draw();
     };
@@ -51,6 +51,10 @@ this.game = this.game || {};
 
     p.update = function () {
         this.bullet.y -= 10;
+
+        if (this.bullet.y < 0) {
+            this.stageRender.remove(this);
+        }
     };
 
     p.setPosition = function (position) {

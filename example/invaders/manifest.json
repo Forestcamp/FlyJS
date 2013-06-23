@@ -8,6 +8,10 @@
         {
             "id": "player-ship",
             "src": "assets/player-ship.png"
+        },
+        {
+            "id": "enemy-ship-green",
+            "src": "assets/enemy-green.png"
         }
     ]
 }

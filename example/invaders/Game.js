@@ -42,6 +42,7 @@ this.game = this.game || {};
         this.stage.addChild(flyjs.AssetManager.getAsset('background'));
 
         this.add(new game.PlayerShip(this.stage, this));
+        this.add(new game.EnemyShip(this.stage, this));
     };
 
     /**
