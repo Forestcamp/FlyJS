@@ -5,15 +5,15 @@ this.flyjs = this.flyjs || {};
 (function () {
     'use strict';
     /**
-     * Object simple RectangleBox
-     * @param stage
+     * Class simple RectangleBox
+     * @param scene
      * @param demensions
      * @param color
      * @param colorHit
      * @constructor
      */
-    var RectangleBox = function (stage, demensions, color, colorHit) {
-        this.initialize(stage, demensions, color, colorHit);
+    var RectangleBox = function (scene, demensions, color, colorHit) {
+        this.initialize(scene, demensions, color, colorHit);
     };
 
     RectangleBox.MAX_SPEED = 4;
@@ -55,13 +55,13 @@ this.flyjs = this.flyjs || {};
 
     /**
      *
-     * @param stage
+     * @param scene
      * @param demensions
      * @param color
      * @param colorHit
      */
-    p.initialize = function (stage, demensions, color, colorHit) {
-        this.Flyjs_Entity_initialize(stage);
+    p.initialize = function (scene, demensions, color, colorHit) {
+        this.Flyjs_Entity_initialize(scene);
 
         this.demensions = demensions;
         this._color = color;
@@ -85,7 +85,7 @@ this.flyjs = this.flyjs || {};
 
         this._draw();
         this.update(null);
-        this.addChild(this.shape);
+        this.scene.addChild(this.shape);
     };
 
     p.update = function (event) {

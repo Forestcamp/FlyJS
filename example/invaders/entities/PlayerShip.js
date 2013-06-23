@@ -11,8 +11,8 @@ this.game = this.game || {};
 (function () {
     'use strict';
 
-    var PlayerShip = function (stage, render) {
-        this.initialize(stage, render);
+    var PlayerShip = function (scene) {
+        this.initialize(scene);
     };
 
     var p = PlayerShip.prototype = new flyjs.Entity();
@@ -21,10 +21,10 @@ this.game = this.game || {};
 
     /**
      *
-     * @param stage
+     * @param scene
      */
-    p.initialize = function (stage, render) {
-        this.Flyjs_Entity_initialize(stage, render);
+    p.initialize = function (scene) {
+        this.Flyjs_Entity_initialize(scene);
 
         this._prepare();
     };
@@ -36,7 +36,7 @@ this.game = this.game || {};
     p._prepare = function () {
         this.ship = flyjs.AssetManager.getAsset('player-ship');
 
-        this.stage.addChild(this.ship);
+        this.scene.stage.addChild(this.ship);
 
         // define GamePad buttons
         flyjs.GamePad.define("RIGHT", [flyjs.Key.RIGHT]);
@@ -44,8 +44,8 @@ this.game = this.game || {};
         flyjs.GamePad.define("SPACE", [flyjs.Key.SPACE]);
 
         // set ship position
-        this.ship.x = this.stage.canvas.width / 2 - this.ship.image.width / 2;
-        this.ship.y = this.stage.canvas.height - this.ship.image.height;
+        this.ship.x = this.scene.stage.canvas.width / 2 - this.ship.image.width / 2;
+        this.ship.y = this.scene.stage.canvas.height - this.ship.image.height;
 
         this.allowCollisions = false;
     };
@@ -60,13 +60,13 @@ this.game = this.game || {};
         }
 
         if (flyjs.GamePad.isPressed("SPACE")) {
-            var laser = new game.Laser(this.stage, this.stageRender);
+            var laser = new game.Laser(this.scene);
             laser.setPosition({
                 x: this.ship.x + this.ship.image.width / 2,
                 y: this.ship.y
             });
 
-            this.stageRender.add(laser);
+            this.scene.add(laser);
         }
     };
 

@@ -36,10 +36,10 @@ this.game = this.game || {};
     p._prepare = function () {
         this.ship = flyjs.AssetManager.getAsset('enemy-ship-green');
 
-        this.stage.addChild(this.ship);
+        this.scene.stage.addChild(this.ship);
 
         // set ship position
-        this.ship.x = this.stage.canvas.width / 2 - this.ship.image.width / 2;
+        this.ship.x = this.scene.stage.canvas.width / 2 - this.ship.image.width / 2;
         this.ship.y = 50;
 
         this.allowCollisions = false;

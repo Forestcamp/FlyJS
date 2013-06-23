@@ -27,7 +27,7 @@ this.game = this.game || {};
     };
 
     p.loadManifestComplete = function (event) {
-        this._createEntities(this.stage);
+        this._createEntities();
 
         // after create game Entities run Stage update
         this.startRender();
@@ -37,8 +37,8 @@ this.game = this.game || {};
      * @private
      * @param stage
      */
-    p._createEntities = function (stage) {
-        this.add(new game.Hero(stage));
+    p._createEntities = function () {
+        this.add(new game.Hero(this));
     };
 
     /**

@@ -69,7 +69,7 @@ this.game = this.game || {};
             }
 
             c = new flyjs.RectangleBox(
-                this.stage,
+                this,
                 {width: width, height: height, x: x, y: y},
                 "rgb(255,255,255)",
                 "rgba(217,83,77,0.7)"

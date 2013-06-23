@@ -21,12 +21,6 @@ this.flyjs = this.flyjs || {};
      */
     p.name = null;
     /**
-     * @property _stage
-     * @type {Stage}
-     * @public
-     */
-    p.stage = null;
-    /**
      * @type {Boolean}
      * @property visible
      */
@@ -60,16 +54,20 @@ this.flyjs = this.flyjs || {};
      */
     p.child = null;
 
-    p.stageRender = null;
+    /**
+     *
+     * @type {StageRender}
+     * @public
+     */
+    p.scene = null;
 
-    p.initialize = function (stage, render) {
-        this.stage = stage;
-        this.stageRender = render;
+    p.initialize = function (scene) {
+        this.scene = scene;
     };
 
     p.addChild = function (child) {
         this.child = child;
-        this.stage.addChild(child);
+        this.scene.stage.addChild(child);
     };
 
     p.setHitBounds = function (hitBounds) {
@@ -97,7 +95,7 @@ this.flyjs = this.flyjs || {};
     };
 
     p.destroy = function () {
-        this.stage = null;
+        this.scene = null;
     };
 
     flyjs.Entity = Entity;

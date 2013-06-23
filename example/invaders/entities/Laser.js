@@ -21,10 +21,10 @@ this.game = this.game || {};
     p.Flyjs_Entity_setHitBounds = p.setHitBounds;
     /**
      *
-     * @param stage
+     * @param scene
      */
-    p.initialize = function (stage, render) {
-        this.Flyjs_EntityShape_initialize(stage, render);
+    p.initialize = function (scene) {
+        this.Flyjs_EntityShape_initialize(scene);
 
         this.draw();
     };
@@ -50,11 +50,11 @@ this.game = this.game || {};
     };
 
     p.update = function () {
-        this.bullet.y -= 10;
-
         if (this.bullet.y < 0) {
-            this.stageRender.remove(this);
+            this.scene.remove(this);
         }
+
+        this.bullet.y -= 10;
     };
 
     p.setPosition = function (position) {

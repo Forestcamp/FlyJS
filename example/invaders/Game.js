@@ -41,8 +41,8 @@ this.game = this.game || {};
     p._createEntities = function () {
         this.stage.addChild(flyjs.AssetManager.getAsset('background'));
 
-        this.add(new game.PlayerShip(this.stage, this));
-        this.add(new game.EnemyShip(this.stage, this));
+        this.add(new game.PlayerShip(this));
+        this.add(new game.EnemyShip(this));
     };
 
     /**

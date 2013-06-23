@@ -10,17 +10,17 @@ this.game = this.game || {};
 (function () {
     'use strict';
 
-    var Hero = function (stage) {
-        this.initialize(stage);
+    var Hero = function (scene) {
+        this.initialize(scene);
     };
 
     var p = Hero.prototype = new flyjs.Entity();
 
     p.Flyjs_Entity_initialize = p.initialize;
 
-    p.initialize = function (stage) {
+    p.initialize = function (scene) {
 
-        this.Flyjs_Entity_initialize(stage);
+        this.Flyjs_Entity_initialize(scene);
 
         this._prepare();
     };
@@ -38,7 +38,7 @@ this.game = this.game || {};
 
         this.hero.bitmap.gotoAndPlay("run");
 
-        this.stage.addChild(this.hero.bitmap);
+        this.scene.addChild(this.hero.bitmap);
         // define GamePad buttons
         flyjs.GamePad.define("UP", [flyjs.Key.UP]);
         flyjs.GamePad.define("RIGHT", [flyjs.Key.RIGHT]);
