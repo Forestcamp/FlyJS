@@ -26,7 +26,7 @@ this.game = this.game || {};
      */
     p.initialize = function (scene) {
         this.Flyjs_EntityLaser_initialize(scene);
-
+        this.name = "Laser";
         this.draw();
     };
 
@@ -43,8 +43,8 @@ this.game = this.game || {};
         this.Flyjs_Entity_setHitBounds({
             x: this.bullet.x,
             y: this.bullet.y,
-            width: this.bullet.width,
-            height: this.bullet.height
+            width: 5,
+            height: 20
         });
 
         this.addChild(this.bullet);

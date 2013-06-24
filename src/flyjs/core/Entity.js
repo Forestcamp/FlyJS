@@ -92,7 +92,7 @@ this.flyjs = this.flyjs || {};
             }
             // update position hitRectangle
             if (this.allowCollisions && this.hitBounds &&
-                    this.hitBounds.x != this.x && this.hitBounds.y != this.y) {
+                    (this.hitBounds.x != this.x || this.hitBounds.y != this.y)) {
                 this.hitBounds.x = this.x;
                 this.hitBounds.y = this.y;
                 this.verticesHit = flyjs.VertexLib.convertSquare(this.hitBounds);

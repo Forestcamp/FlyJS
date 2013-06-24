@@ -3,7 +3,7 @@
  * @author Oleg Pimenov, https://github.com/fost
  *
  */
-/*jslint nomen: true, plusplus: true, vars: true */
+/*jslint nomen: true, plusplus: true, vars: true, eqeq:true */
 /*global flyjs, console, game*/
 
 this.game = this.game || {};
@@ -11,21 +11,23 @@ this.game = this.game || {};
 (function () {
     'use strict';
 
-    var EnemyShip = function (stage, render) {
-        this.initialize(stage, render);
+    var EnemyShip = function (scene) {
+        this.initialize(scene);
     };
 
     var p = EnemyShip.prototype = new flyjs.Entity();
 
     p.Flyjs_Entity_initialize = p.initialize;
+    p.Flyjs_Entity_initialize = p.initialize;
+    p.Flyjs_Entity_setHitBounds = p.setHitBounds;
 
     /**
      *
-     * @param stage
+     * @param scene
      */
-    p.initialize = function (stage, render) {
-        this.Flyjs_Entity_initialize(stage, render);
-
+    p.initialize = function (scene) {
+        this.Flyjs_Entity_initialize(scene);
+        this.name = "EnemyShip";
         this._prepare();
     };
 
@@ -36,18 +38,26 @@ this.game = this.game || {};
     p._prepare = function () {
         this.ship = flyjs.AssetManager.getAsset('enemy-ship-green');
 
-        this.scene.stage.addChild(this.ship);
-
         // set ship position
         this.ship.x = this.scene.stage.canvas.width / 2 - this.ship.image.width / 2;
         this.ship.y = 50;
 
-        this.allowCollisions = false;
+        this.Flyjs_Entity_setHitBounds({
+            x: this.ship.x,
+            y: this.ship.y,
+            width: this.ship.image.width,
+            height: this.ship.image.height
+        });
+
+        this.addChild(this.ship);
     };
 
-    p.update = function () {
+    p.update = function (event) {
+        this.Flyjs_Entity_initialize();
 
-
+        if (event && event.collisionList[0] == "Laser") {
+            console.log("Enemy damage!!");
+        }
     };
 
     game.EnemyShip = EnemyShip;

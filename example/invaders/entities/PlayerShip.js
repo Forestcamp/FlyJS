@@ -25,7 +25,7 @@ this.game = this.game || {};
      */
     p.initialize = function (scene) {
         this.Flyjs_Entity_initialize(scene);
-
+        this.name = "PlayerShip";
         this._prepare();
     };
 
