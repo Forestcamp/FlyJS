@@ -87,7 +87,7 @@ this.flyjs = this.flyjs || {};
             argsLength = args.length;
 
         for (i; i < argsLength; i++) {
-            arr.remove(args[i]);
+            arr.remove(args[i]).removeChild();
         }
     };
 

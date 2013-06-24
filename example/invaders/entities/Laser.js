@@ -17,14 +17,15 @@ this.game = this.game || {};
 
     var p = Laser.prototype = new flyjs.Entity();
 
-    p.Flyjs_EntityShape_initialize = p.initialize;
+    p.Flyjs_EntityLaser_initialize = p.initialize;
+    p.Flyjs_EntityLaser_update = p.update;
     p.Flyjs_Entity_setHitBounds = p.setHitBounds;
     /**
      *
      * @param scene
      */
     p.initialize = function (scene) {
-        this.Flyjs_EntityShape_initialize(scene);
+        this.Flyjs_EntityLaser_initialize(scene);
 
         this.draw();
     };
@@ -55,6 +56,7 @@ this.game = this.game || {};
         }
 
         this.bullet.y -= 10;
+        this.Flyjs_EntityLaser_update();
     };
 
     p.setPosition = function (position) {

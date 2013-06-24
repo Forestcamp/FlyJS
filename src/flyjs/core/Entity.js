@@ -70,6 +70,12 @@ this.flyjs = this.flyjs || {};
         this.scene.stage.addChild(child);
     };
 
+    p.removeChild = function () {
+        if (this.child) {
+            this.scene.stage.removeChild(this.child);
+        }
+    };
+
     p.setHitBounds = function (hitBounds) {
         this.allowCollisions = true;
         this.hitBounds = hitBounds;
