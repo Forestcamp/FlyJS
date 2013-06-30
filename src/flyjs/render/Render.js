@@ -17,7 +17,7 @@ this.flyjs = this.flyjs || {};
     // use EventDispatcher for this target (Class):
     createjs.EventDispatcher.initialize(p);
     /**
-     *  From hack with debuger
+     *  From hack with debugger
      * @type {Number}
      * @property _tickThreshold
      * @default 3000

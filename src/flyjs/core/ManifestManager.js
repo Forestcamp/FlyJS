@@ -45,18 +45,18 @@ this.flyjs = this.flyjs || {};
     };
 
     p.start = function () {
-        this.serial = new flyjs.SerialCommand([
+        this._serial = new flyjs.SerialCommand([
             new flyjs.ManifestLoader(this._manifestUrl),
             new flyjs.ImageLoader(),
             new flyjs.SpriteSheetLoader()
         ]);
-        this.serial.addEventListener("complete", this.handleComplete.bind(this));
-        this.serial.start();
+        this._serial.addEventListener("complete", this.handleComplete.bind(this));
+        this._serial.start();
     };
 
     p.handleComplete = function () {
-        this.serial.removeEventListener("complete", this.handleComplete);
-        this.serial = null;
+        this._serial.removeEventListener("complete", this.handleComplete);
+        this._serial = null;
         this.dispatchEvent('ManifestCompleteLoad');
     };
 

@@ -20,27 +20,6 @@ this.flyjs = this.flyjs || {};
     var e = EntitiesCollection.prototype;
 
     /**
-     * @property _listEntities
-     * @type {Hashtable}
-     * @private
-     */
-    e._listEntities = new Hashtable();
-
-    /**
-     * stack of id`s for one tick
-     * @type {Array}
-     * @private
-     */
-    e._removeStack = [];
-
-    /**
-     * count of created entities
-     * @type {number}
-     * @private
-     */
-    e._entitiesCount = 1;
-
-    /**
      * @method getEntities
      * @return {Array}
      * @public
@@ -60,8 +39,8 @@ this.flyjs = this.flyjs || {};
     };
 
     /**
-     * Set data from AVSX parser
-     * @method setData
+     * add Entity to collection
+     * @method add
      * @param entity {Array}
      * @public
      */
@@ -90,6 +69,27 @@ this.flyjs = this.flyjs || {};
             arr.remove(args[i]).removeChild();
         }
     };
+
+    /**
+     * @property _listEntities
+     * @type {Hashtable}
+     * @private
+     */
+    e._listEntities = new Hashtable();
+
+    /**
+     * stack of id`s for one tick
+     * @type {Array}
+     * @private
+     */
+    e._removeStack = [];
+
+    /**
+     * count of created entities
+     * @type {number}
+     * @private
+     */
+    e._entitiesCount = 1;
 
     flyjs.EntitiesCollection = EntitiesCollection;
 }());

@@ -14,7 +14,7 @@ this.flyjs = this.flyjs || {};
     /**
      * EntitiesRender get all ViewObjects in projects, render & update
      * @class EntitiesRender
-     * @param stage {createjs.Stage}
+     * @param stage {Stage}
      * @constructor
      */
     var EntitiesRender = function (stage) {

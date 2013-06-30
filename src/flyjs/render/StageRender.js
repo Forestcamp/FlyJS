@@ -66,7 +66,7 @@ this.flyjs = this.flyjs || {};
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     *
+     * add Entity to scene
      * @method add
      * @param entity
      * @public
@@ -78,6 +78,12 @@ this.flyjs = this.flyjs || {};
         }
     };
 
+    /**
+     * remove Entity from scene
+     * @method remove
+     * @param entity
+     * @public
+     */
     p.remove = function (entity) {
         this._entitiesCollection.remove(entity);
     };
