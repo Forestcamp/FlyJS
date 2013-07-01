@@ -11,11 +11,11 @@ this.game = this.game || {};
 (function () {
     'use strict';
 
-    var GameConstant = function () {
-
-    };
+    var GameConstant = function () {};
 
     GameConstant.gameLives = 3;
+
+    GameConstant.invadersPerRow = 5;
 
     game.GameConstant = GameConstant;
 }());

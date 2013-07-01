@@ -11,8 +11,8 @@ this.game = this.game || {};
 (function () {
     'use strict';
 
-    var EnemyShip = function (scene) {
-        this.initialize(scene);
+    var EnemyShip = function (scene, startX, startY) {
+        this.initialize(scene, startX, startY);
     };
 
     var p = EnemyShip.prototype = new flyjs.Entity();
@@ -21,13 +21,11 @@ this.game = this.game || {};
     p.Flyjs_Entity_initialize = p.initialize;
     p.Flyjs_Entity_setHitBounds = p.setHitBounds;
 
-    /**
-     *
-     * @param scene
-     */
-    p.initialize = function (scene) {
+    p.initialize = function (scene, startX, startY) {
         this.Flyjs_Entity_initialize(scene);
         this.name = "EnemyShip";
+        this.x = startX;
+        this.y = startY;
         this._prepare();
     };
 
@@ -36,11 +34,11 @@ this.game = this.game || {};
      * @private
      */
     p._prepare = function () {
-        this.ship = flyjs.AssetManager.getAsset('enemy-ship-green');
+        this.ship = flyjs.AssetManager.getAsset('enemy-ship-green').clone(true);
 
         // set ship position
-        this.ship.x = this.scene.stage.canvas.width / 2 - this.ship.image.width / 2;
-        this.ship.y = 50;
+        this.ship.x = this.x;//this.scene.stage.canvas.width / 2 - this.ship.image.width / 2;
+        this.ship.y = this.y;
 
         this.Flyjs_Entity_setHitBounds({
             x: this.ship.x,

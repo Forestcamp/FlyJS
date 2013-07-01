@@ -22,7 +22,7 @@ this.game = this.game || {};
 
     p.initialize = function (holderCanvasId, options) {
         //call super
-        this.StageRender_initialize(holderCanvasId, options, 'manifest.json');
+        this.StageRender_initialize(holderCanvasId, options);
     };
 
     /**
@@ -42,7 +42,17 @@ this.game = this.game || {};
         this.stage.addChild(flyjs.AssetManager.getAsset('background'));
 
         this.add(new game.PlayerShip(this));
-        this.add(new game.EnemyShip(this));
+
+        this._popInvaderInRow(60, 50);
+    };
+
+    p._popInvaderInRow = function (startX, startY) {
+        var currentX = startX,
+            i = 0;
+        for (i; i < game.GameConstant.invadersPerRow; i++) {
+            this.add(new game.EnemyShip(this, currentX, startY));
+            currentX += 120;
+        }
     };
 
     /**

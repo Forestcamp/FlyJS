@@ -22,7 +22,7 @@ this.game = this.game || {};
     p.StageRender_tick = p.tickHandler;
 
     p.initialize = function (canvasParent, options) {
-        // must call super !!
+        // call super !!
         this.StageRender_initialize(canvasParent, options);
     };
 

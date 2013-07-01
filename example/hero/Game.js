@@ -22,7 +22,7 @@ this.game = this.game || {};
 
     p.initialize = function (canvasParent, options) {
         // must call super !!
-        this.StageRender_initialize(canvasParent, options, 'manifest.json');
+        this.StageRender_initialize(canvasParent, options);
 
     };
 
