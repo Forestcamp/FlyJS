@@ -54,8 +54,8 @@ this.flyjs = this.flyjs || {};
         ////////////////////
         this._loadManifestFile();
 
-        this.bounds = new createjs.Rectangle(0, 0, this._options.width, this._options.height);
-        this.quadTree = new flyjs.QuadTree(this.bounds, false, 7);
+        var bounds = new createjs.Rectangle(0, 0, this._options.width, this._options.height);
+        this._quadTree = new flyjs.QuadTree(bounds, false, 7);
 
         flyjs.GamePad.initialize(this.stage);
         this.Render_initialize(this.stage);
@@ -74,7 +74,7 @@ this.flyjs = this.flyjs || {};
     p.add = function (entity) {
         this._entitiesCollection.add(entity);
         if (entity.allowCollisions) {
-            this.quadTree.insert(entity);
+            this._quadTree.insert(entity);
         }
     };
 
@@ -119,8 +119,8 @@ this.flyjs = this.flyjs || {};
 
         this._entitiesCollection.checkStack();
 
-        this.quadTree.clear();
-        this.quadTree.insert(this._entitiesCollection.getEntitiesValues());
+        this._quadTree.clear();
+        this._quadTree.insert(this._entitiesCollection.getEntitiesValues());
 
         var i = 0,
             j = 0,
@@ -136,7 +136,7 @@ this.flyjs = this.flyjs || {};
         for (i; i < length; i++) {
             entity = listEntities[i][1];
             if (entity.allowCollisions) {
-                entities = this.quadTree.retrieve(entity);
+                entities = this._quadTree.retrieve(entity);
                 len = entities.length;
                 j = 0;
                 entityEvent = {
@@ -224,6 +224,12 @@ this.flyjs = this.flyjs || {};
         }
     };
 
+    /**
+     *
+     * @type {QuadTree}
+     * @private
+     */
+    p._quadTree = null;
     /**
      * Initialize options
      * @type {Object}
