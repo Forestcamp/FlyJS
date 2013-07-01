@@ -18,7 +18,7 @@ this.game = this.game || {};
     var p = EnemyShip.prototype = new flyjs.Entity();
 
     p.Flyjs_Entity_initialize = p.initialize;
-    p.Flyjs_Entity_initialize = p.initialize;
+    p.Flyjs_Entity_update = p.update;
     p.Flyjs_Entity_setHitBounds = p.setHitBounds;
 
     p.initialize = function (scene, startX, startY) {
@@ -51,10 +51,11 @@ this.game = this.game || {};
     };
 
     p.update = function (event) {
-        this.Flyjs_Entity_initialize();
+        this.Flyjs_Entity_update();
 
         if (event && event.collisionList[0] == "Laser") {
             console.log("Enemy damage!!");
+            this.scene.remove(this);
         }
     };
 
