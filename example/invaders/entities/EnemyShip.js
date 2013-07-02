@@ -34,10 +34,10 @@ this.game = this.game || {};
      * @private
      */
     p._prepare = function () {
-        this.ship = flyjs.AssetManager.getAsset('enemy-ship-green').clone(true);
+        this.ship = flyjs.AssetManager.getAsset('enemy-ship-green');
 
         // set ship position
-        this.ship.x = this.x;//this.scene.stage.canvas.width / 2 - this.ship.image.width / 2;
+        this.ship.x = this.x;
         this.ship.y = this.y;
 
         this.Flyjs_Entity_setHitBounds({
@@ -51,7 +51,7 @@ this.game = this.game || {};
     };
 
     p.update = function (event) {
-        this.Flyjs_Entity_update();
+    //    this.Flyjs_Entity_update();
 
         if (event && event.collisionList[0] == "Laser") {
             console.log("Enemy damage!!");

@@ -101,7 +101,12 @@ this.flyjs = this.flyjs || {};
         this._FPSMeter.begin();
         this.Render_tick(event);
 
-        this._collisionRender();
+        this._entitiesCollection.checkStack();
+
+        var listEntities = this._entitiesCollection.getEntities();
+
+        this._updateEntityPosition(listEntities);
+        this._collisionRender(listEntities);
 
         flyjs.GamePad.update();
         this._FPSMeter.end();
@@ -112,12 +117,32 @@ this.flyjs = this.flyjs || {};
     ///////////////////////////////////////////////////////////////////////
 
     /**
-     *
+     * updated Entities on scene
+     * @method _updateEntityPosition
+     * @param listEntities
      * @private
      */
-    p._collisionRender = function () {
+    p._updateEntityPosition = function (listEntities) {
+        var i = 0,
+            entity,
+            length = listEntities.length;
 
-        this._entitiesCollection.checkStack();
+        for (i; i < length; i++) {
+            entity = listEntities[i][1];
+            entity.update();
+        }
+        i = null;
+        entity = null;
+        length = null;
+    };
+
+    /**
+     * checked collision on scene
+     * @method _collisionRender
+     * @param listEntities
+     * @private
+     */
+    p._collisionRender = function (listEntities) {
 
         this._quadTree.clear();
         this._quadTree.insert(this._entitiesCollection.getEntitiesValues());
@@ -125,7 +150,6 @@ this.flyjs = this.flyjs || {};
         var i = 0,
             j = 0,
             len = 0,
-            listEntities = this._entitiesCollection.getEntities(),
             length = listEntities.length,
             entity = null,
             entities = null,
@@ -144,17 +168,18 @@ this.flyjs = this.flyjs || {};
                 };
                 for (j; j < len; j++) {
                     entityNode = entities[j];
-                    if (entity != entityNode && entityNode.allowCollisions) {
+                    if (entity.id != entityNode.id && entityNode.allowCollisions) {
                         collide = flyjs.VertexLib.sat(entity.verticesHit, entityNode.verticesHit);
                         if (collide) {
                             entityEvent.collisionList.push(entityNode.name);
                         }
                     }
                 }
+                if (entityEvent.collisionList.length > 0) {
+                    entity.update(entityEvent);
+                }
             }
-            entity.update(entityEvent);
         }
-
     };
 
     /**

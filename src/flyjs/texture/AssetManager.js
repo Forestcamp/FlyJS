@@ -57,7 +57,7 @@ this.flyjs = this.flyjs || {};
             throw "asset not exist!";
         }
 
-        return asset;
+        return asset.clone(true);
     };
 
     flyjs.AssetManager = AssetManager;
