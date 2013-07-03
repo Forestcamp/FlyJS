@@ -51,10 +51,9 @@ this.game = this.game || {};
     };
 
     p.update = function (event) {
-    //    this.Flyjs_Entity_update();
+        this.Flyjs_Entity_update();
 
         if (event && event.collisionList[0] == "Laser") {
-            console.log("Enemy damage!!");
             this.scene.remove(this);
         }
     };

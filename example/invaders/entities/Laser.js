@@ -55,12 +55,12 @@ this.game = this.game || {};
 
         this.Flyjs_EntityLaser_update();
         if (event && event.collisionList[0] == "EnemyShip") {
-            console.log("Enemy damage!!");
             this.scene.remove(this);
             return;
         }
         if (this.bullet.y < 0) {
             this.scene.remove(this);
+            return;
         }
 
         this.bullet.y -= 10;
@@ -69,9 +69,6 @@ this.game = this.game || {};
     p.setPosition = function (position) {
         this.bullet.x = position.x;
         this.bullet.y = position.y;
-//        this.bullet.y = 70;
-//        this.bullet.x = 70;
-        this.Flyjs_EntityLaser_update();
     };
 
     game.Laser = Laser;
