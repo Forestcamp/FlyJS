@@ -43,14 +43,21 @@ this.game = this.game || {};
 
         this.add(new game.PlayerShip(this));
 
+        this.invadersList = [];
         this._popInvaderInRow(60, 50);
+        this._popInvaderInRow(60, 150);
+
+        this.invaderDirection = game.Direction.LEFT;
     };
 
     p._popInvaderInRow = function (startX, startY) {
         var currentX = startX,
+            enemy = null,
             i = 0;
         for (i; i < game.GameConstant.invadersPerRow; i++) {
-            this.add(new game.EnemyShip(this, currentX, startY));
+            enemy = new game.EnemyShip(this, currentX, startY);
+            this.add(enemy);
+            this.invadersList.push(enemy);
             currentX += 120;
         }
     };
@@ -59,7 +66,53 @@ this.game = this.game || {};
      * @override
      */
     p.tickHandler = function (event) {
-        event.target.StageRender_tick(event);
+        var target = event.target;
+
+        target.StageRender_tick(event);
+
+        target._moveInvaders(target.frameNumber);
+
+        target = null;
+    };
+
+    p._moveInvaders = function (frameNumber) {
+        if ((frameNumber % game.GameConstant.frameSkipped) == 0) {
+
+            var dirChangeNeeded = this._checkInvadersDirection();
+
+            var i = 0;
+            for (i; i < this.invadersList.length; i++) {
+                this.invadersList[i].move(this.invaderDirection);
+
+                if (dirChangeNeeded) {
+                    this.invadersList[i].move(game.Direction.DOWN);
+                }
+            }
+        }
+    };
+
+    p._checkInvadersDirection = function () {
+        var dirChangeNeeded = false,
+            i = 0;
+
+        if (this.invaderDirection == game.Direction.LEFT) {
+            for (i; i < this.invadersList.length; i++) {
+                if (this.invadersList[i].x < 10) {
+                    dirChangeNeeded = true;
+                    this.invaderDirection = game.Direction.RIGHT;
+                    break;
+                }
+            }
+        } else if (this.invaderDirection == game.Direction.RIGHT) {
+            for (i; i < this.invadersList.length; i++) {
+                if (this.invadersList[i].x > this.sceneBounds.width - 80) {
+                    dirChangeNeeded = true;
+                    this.invaderDirection = game.Direction.LEFT;
+                    break;
+                }
+            }
+        }
+        return dirChangeNeeded;
     };
 
     game.Game = Game;

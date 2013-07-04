@@ -58,5 +58,23 @@ this.game = this.game || {};
         }
     };
 
+    /**
+     * Move entity
+     * @param direction
+     */
+    p.move = function (direction) {
+        switch (direction) {
+            case game.Direction.RIGHT:
+                this.ship.x += 10;
+                break;
+            case game.Direction.LEFT:
+                this.ship.x -= 10;
+                break;
+            case game.Direction.DOWN:
+                this.ship.y += 30;
+                break;
+        }
+    };
+
     game.EnemyShip = EnemyShip;
 }());

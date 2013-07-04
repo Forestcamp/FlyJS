@@ -34,19 +34,26 @@ this.flyjs = this.flyjs || {};
      * @public
      */
     p.stage = null;
+    /**
+     *
+     * @property sceneBounds
+     * @type {Rectangle}
+     * @public
+     */
+    p.sceneBounds = null;
 
     /**
      *
-     * @param canvasParent - div element name
+     * @param holderCanvasId - div element id
      * @param options
      */
-    p.initialize = function (canvasParent, options) {
-        if (!canvasParent) {
+    p.initialize = function (holderCanvasId, options) {
+        if (!holderCanvasId) {
             throw new flyjs.Exception("StageRender: error in parameters", "Stage is Null");
         }
 
         this._parseOptions(options);
-        this._createStage(canvasParent);
+        this._createStage(holderCanvasId);
 
         this._entitiesCollection = new flyjs.EntitiesCollection();
         ////////////////////
@@ -54,8 +61,8 @@ this.flyjs = this.flyjs || {};
         ////////////////////
         this._loadManifestFile();
 
-        var bounds = new createjs.Rectangle(0, 0, this._options.width, this._options.height);
-        this._quadTree = new flyjs.QuadTree(bounds, false, 7);
+        this.sceneBounds = new createjs.Rectangle(0, 0, this._options.width, this._options.height);
+        this._quadTree = new flyjs.QuadTree(this.sceneBounds, false, 7);
 
         flyjs.GamePad.initialize(this.stage);
         this.Render_initialize(this.stage);
@@ -97,6 +104,12 @@ this.flyjs = this.flyjs || {};
         this.Render_stopRender();
     };
 
+    /**
+     * Override this method for handlers scene(game) tick
+     * @method tickHandler
+     * @param event
+     * @public
+     */
     p.tickHandler = function (event) {
         this._FPSMeter.begin();
         this.Render_tick(event);

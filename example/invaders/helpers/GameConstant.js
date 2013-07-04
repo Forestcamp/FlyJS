@@ -17,5 +17,7 @@ this.game = this.game || {};
 
     GameConstant.invadersPerRow = 5;
 
+    GameConstant.frameSkipped = 10;
+
     game.GameConstant = GameConstant;
 }());
