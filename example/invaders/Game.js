@@ -3,7 +3,8 @@
  * @author Oleg Pimenov, https://github.com/fost
  *
  */
-/*jslint nomen: true, plusplus: true, vars: true */
+/*jslint nomen: true, plusplus: true, vars: true, eqeq:true */
+/*jshint eqnull:true*/
 /*global flyjs, console, game*/
 
 this.game = this.game || {};
@@ -76,7 +77,7 @@ this.game = this.game || {};
     };
 
     p._moveInvaders = function (frameNumber) {
-        if ((frameNumber % game.GameConstant.frameSkipped) == 0) {
+        if ((frameNumber % game.GameConstant.frameSkipped) === 0) {
 
             var dirChangeNeeded = this._checkInvadersDirection();
 
