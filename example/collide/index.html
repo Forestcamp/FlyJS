@@ -13,11 +13,13 @@
 <script type="text/javascript" src="../../src/vendor/domReady.js"></script>
 <script type="text/javascript" src="../../src/vendor/jshashtable-2.1.js"></script>
 
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/events/Event.js"></script>
 <script type="text/javascript" src="../../src/vendor/createjs/easeljs/events/EventDispatcher.js"></script>
 <script type="text/javascript" src="../../src/vendor/createjs/easeljs/utils/UID.js"></script>
 <script type="text/javascript" src="../../src/vendor/createjs/easeljs/geom/Matrix2D.js"></script>
 <script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/DisplayObject.js"></script>
 <script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/Container.js"></script>
+<script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/Sprite.js"></script>
 <script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/Stage.js"></script>
 <script type="text/javascript" src="../../src/vendor/createjs/easeljs/events/MouseEvent.js"></script>
 <script type="text/javascript" src="../../src/vendor/createjs/easeljs/display/Shape.js"></script>
@@ -68,8 +70,8 @@
     domReady(function (){
             new game.Game('canvasHolder', {
                 manifest:'manifest.json',
-                width:700,
-                height: 600
+                width:300,
+                height:300
             });
     });
 </script>

@@ -45,7 +45,7 @@ this.game = this.game || {};
      * @override
      */
     p.tickHandler = function (event) {
-        event.target.StageRender_tick(event);
+        event.currentTarget.StageRender_tick(event);
     };
 
     game.Game = Game;
