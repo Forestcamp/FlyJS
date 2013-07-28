@@ -57,7 +57,15 @@ this.flyjs = this.flyjs || {};
             throw "asset not exist!";
         }
 
-        return asset.clone(true);
+        if (asset.clone != null) {
+            asset = asset.clone(true);
+        }
+
+        if (asset.hasOwnProperty("bitmap")) {
+            asset.bitmap = asset.bitmap.clone(true);
+        }
+
+        return asset;
     };
 
     flyjs.AssetManager = AssetManager;
