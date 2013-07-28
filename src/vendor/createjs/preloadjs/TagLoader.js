@@ -1,5 +1,5 @@
 /*
-* TagLoader for PreloadJS
+* TagLoader
 * Visit http://createjs.com/ for documentation, updates and examples.
 *
 *
@@ -52,13 +52,14 @@ this.createjs = this.createjs||{};
 	 * @param {Object} item The item to load. Please see {{#crossLink "LoadQueue/loadFile"}}{{/crossLink}} for
 	 * information on load items.
 	 */
-	var TagLoader = function (item) {
-		this.init(item);
+	var TagLoader = function (item, basePath) {
+		this.init(item, basePath);
 	};
 
 	var p = TagLoader.prototype = new createjs.AbstractLoader();
 
 // Protected
+
 	/**
 	 * The timeout that is fired if nothing is loaded after a certain delay. See the <code>LoadQueue.LOAD_TIMEOUT</code>
 	 * for the timeout duration.
@@ -95,9 +96,18 @@ this.createjs = this.createjs||{};
 	 */
 	p._tag = null;
 
+	/**
+	 * When loading a JSONP request this will be the parsed JSON result.
+	 *
+	 * @type {Object}
+	 * @private
+	 */
+	p._jsonResult = null;
+
 	// Overrides abstract method in AbstractLoader
-	p.init = function (item) {
+	p.init = function (item, basePath) {
 		this._item = item;
+		this._basePath = basePath;
 		this._tag = item.tag;
 		this._isAudio = (window.HTMLAudioElement && item.tag instanceof HTMLAudioElement);
 		this._tagCompleteProxy = createjs.proxy(this._handleLoad, this);
@@ -107,10 +117,14 @@ this.createjs = this.createjs||{};
 	 * Get the loaded content. This is usually an HTML tag or other tag-style object that has been fully loaded. If the
 	 * loader is not complete, this will be null.
 	 * @method getResult
-	 * @return {HTMLImageElement | HTMLAudioElement} The loaded and parsed content.
+	 * @return {HTMLImageElement | HTMLAudioElement | Object} The loaded and parsed content.
 	 */
 	p.getResult = function() {
-		return this._tag;
+		if (this._item.type == createjs.LoadQueue.JSONP) {
+			return this._jsonResult;
+		} else {
+			return this._tag;
+		}
 	};
 
 	// Overrides abstract method in AbstractLoader
@@ -148,30 +162,53 @@ this.createjs = this.createjs||{};
 			tag.onreadystatechange = createjs.proxy(this._handleReadyStateChange,  this);
 		}
 
+		var src = this.buildPath(item.src, this._basePath, item.values);
+
 		// Set the src after the events are all added.
 		switch(item.type) {
 			case createjs.LoadQueue.CSS:
-				tag.href = item.src;
+				tag.href = src;
 				break;
 			case createjs.LoadQueue.SVG:
-				tag.data = item.src;
+				tag.data = src;
 				break;
 			default:
-				tag.src = item.src;
+				tag.src = src;
+		}
+
+		// If we're loading JSONP, we need to add our callback now.
+		if (item.type == createjs.LoadQueue.JSONP) {
+			if (item.callback == null) {
+				throw new Error('callback is required for loading JSONP requests.');
+			}
+
+			if (window[item.callback] != null) {
+				throw new Error('JSONP callback "' + item.callback + '" already exists on window. You need to specify a different callback. Or re-name the current one.');
+			}
+
+			window[item.callback] = createjs.proxy(this._handleJSONPLoad, this);
 		}
 
 		// If its SVG, it needs to be on the DOM to load (we remove it before sending complete).
 		// It is important that this happens AFTER setting the src/data.
-		if (item.type == createjs.LoadQueue.SVG || item.type == createjs.LoadQueue.JAVASCRIPT || item.type == createjs.LoadQueue.CSS) {
-			(document.body || document.getElementsByTagName("body")[0]).appendChild(tag);
-			//TODO: Move SVG off-screen.  // OJR perhaps just make invisible until load completes  tag.style.display = "none"; did not work
-			// OJR tag.style.visibility = "hidden"; worked, but didn't appear necessary  remember to add "visible" to _handleLoad
+		if (item.type == createjs.LoadQueue.SVG ||
+			item.type == createjs.LoadQueue.JSONP ||
+			item.type == createjs.LoadQueue.JSON ||
+			item.type == createjs.LoadQueue.JAVASCRIPT ||
+			item.type == createjs.LoadQueue.CSS) {
+				this._startTagVisibility = tag.style.visibility;
+				tag.style.visibility = "hidden";
+				(document.body || document.getElementsByTagName("body")[0]).appendChild(tag);
 		}
 
 		// Note: Previous versions didn't seem to work when we called load() for OGG tags in Firefox. Seems fixed in 15.0.1
 		if (tag.load != null) {
 			tag.load();
 		}
+	};
+
+	p._handleJSONPLoad = function(data) {
+		this._jsonResult = data;
 	};
 
 	/**
@@ -182,7 +219,9 @@ this.createjs = this.createjs||{};
 	 */
 	p._handleTimeout = function() {
 		this._clean();
-		this._sendError({reason:"PRELOAD_TIMEOUT"}); //TODO: Evaluate a reason prop
+		var event = new createjs.Event("error");
+		event.text = "PRELOAD_TIMEOUT";
+		this._sendError(event);
 	};
 
 	/**
@@ -200,9 +239,12 @@ this.createjs = this.createjs||{};
 	 * @method _handleError
 	 * @private
 	 */
-	p._handleError = function() {
+	p._handleError = function(event) {
 		this._clean();
-		this._sendError(); //TODO: Reason or error?
+
+		var newEvent = new createjs.Event("error");
+		//TODO: Propagate actual event error?
+		this._sendError(newEvent);
 	};
 
 	/**
@@ -215,7 +257,9 @@ this.createjs = this.createjs||{};
 		clearTimeout(this._loadTimeout);
 		// This is strictly for tags in browsers that do not support onload.
 		var tag = this.getItem().tag;
-		if (tag.readyState == "loaded") {
+
+		// Complete is for old IE support.
+		if (tag.readyState == "loaded" || tag.readyState == "complete") {
 			this._handleLoad();
 		}
 	};
@@ -237,9 +281,15 @@ this.createjs = this.createjs||{};
 		this.loaded = true;
 
 		// Remove from the DOM
-		if (item.type == createjs.LoadQueue.SVG) { // item.type == createjs.LoadQueue.CSS) {
-			//LM: We may need to remove CSS tags loaded using a LINK
-			(document.body || document.getElementsByTagName("body")[0]).removeChild(tag);
+		switch (item.type) {
+			case createjs.LoadQueue.SVG:
+			case createjs.LoadQueue.JSONP:
+				// case createjs.LoadQueue.CSS:
+				//LM: We may need to remove CSS tags loaded using a LINK
+				tag.style.visibility = this._startTagVisibility;
+				(document.body || document.getElementsByTagName("body")[0]).removeChild(tag);
+			break;
+			default:
 		}
 
 		this._clean();
@@ -247,7 +297,8 @@ this.createjs = this.createjs||{};
 	};
 
 	/**
-	 * Clean up the loader. This stops any timers and removes references to prevent errant callbacks and clean up memory.
+	 * Clean up the loader.
+	 * This stops any timers and removes references to prevent errant callbacks and clean up memory.
 	 * @method _clean
 	 * @private
 	 */
@@ -265,6 +316,11 @@ this.createjs = this.createjs||{};
 		//TODO: Test this
 		if (tag.parentNode) {
 			tag.parentNode.removeChild(tag);
+		}
+
+		var item = this.getItem();
+		if (item.type == createjs.LoadQueue.JSONP) {
+			window[item.callback] = null;
 		}
 	};
 

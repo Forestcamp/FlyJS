@@ -1,5 +1,5 @@
 /*
- * XHRLoader for PreloadJS
+ * XHRLoader
  * Visit http://createjs.com/ for documentation, updates and examples.
  *
  *
@@ -44,12 +44,12 @@ this.createjs = this.createjs || {};
 	 * cross-domain loading.
 	 * @class XHRLoader
 	 * @constructor
-	 * @param {Object} file The object that defines the file to load. Please see the {{#crossLink "LoadQueue/loadFile"}}{{/crossLink}}
+	 * @param {Object} item The object that defines the file to load. Please see the {{#crossLink "LoadQueue/loadFile"}}{{/crossLink}}
 	 * for an overview of supported file properties.
 	 * @extends AbstractLoader
 	 */
-	var XHRLoader = function (file) {
-		this.init(file);
+	var XHRLoader = function (item, basePath) {
+		this.init(item, basePath);
 	};
 
 	var p = XHRLoader.prototype = new createjs.AbstractLoader();
@@ -102,8 +102,9 @@ this.createjs = this.createjs || {};
 	p._rawResponse = null;
 
 	// Overrides abstract method in AbstractLoader
-	p.init = function (item) {
+	p.init = function (item, basePath) {
 		this._item = item;
+		this._basePath = basePath;
 		if (!this._createXHR(item)) {
 			//TODO: Throw error?
 		}
@@ -162,15 +163,57 @@ this.createjs = this.createjs || {};
 
 		// Note: We don't get onload in all browsers (earlier FF and IE). onReadyStateChange handles these.
 		this._request.onload = createjs.proxy(this._handleLoad, this);
-		if (this._request.onreadystatechange) {
-			this._request.onreadystatechange = this._handleReadyStateChange(this);
-		}
+
+		this._request.onreadystatechange = createjs.proxy(this._handleReadyStateChange, this);
 
 		// Sometimes we get back 404s immediately, particularly when there is a cross origin request.  // note this does not catch in Chrome
 		try {
-			this._request.send();
+			if (!this._item.values || this._item.method == createjs.LoadQueue.GET) {
+				this._request.send();
+			} else if (this._item.method == createjs.LoadQueue.POST) {
+				this._request.send(this._formatQueryString(this._item.values));
+			}
 		} catch (error) {
-			this._sendError({source:error});
+			var event = new createjs.Event("error");
+			event.error = error;
+			this._sendError(event);
+		}
+	};
+
+	/**
+	 * Get all the response headers from the XmlHttpRequest.
+	 *
+	 * <strong>From the docs:</strong> Return all the HTTP headers, excluding headers that are a case-insensitive match
+	 * for Set-Cookie or Set-Cookie2, as a single string, with each header line separated by a U+000D CR U+000A LF pair,
+	 * excluding the status line, and with each header name and header value separated by a U+003A COLON U+0020 SPACE
+	 * pair.
+	 * @method getAllResponseHeaders
+	 * @return {String}
+	 * @since 0.4.1
+	 */
+	p.getAllResponseHeaders = function () {
+		if  (this._request.getAllResponseHeaders instanceof Function) {
+			return this._request.getAllResponseHeaders();
+		} else {
+			return null;
+		}
+	};
+
+	/**
+	 * Get a specific response header from the XmlHttpRequest.
+	 *
+	 * <strong>From the docs:</strong> Returns the header field value from the response of which the field name matches
+	 * header, unless the field name is Set-Cookie or Set-Cookie2.
+	 * @method getResponseHeader
+	 * @param {String} header The header name to retrieve.
+	 * @return {String}
+	 * @since 0.4.1
+	 */
+	p.getResponseHeader = function (header) {
+		if (this._request.getResponseHeader instanceof Function) {
+			return this._request.getResponseHeader(header);
+		} else {
+			return null;
 		}
 	};
 
@@ -181,10 +224,14 @@ this.createjs = this.createjs || {};
 	 * @private
 	 */
 	p._handleProgress = function (event) {
-		if (event.loaded > 0 && event.total == 0) {
+		if (!event || event.loaded > 0 && event.total == 0) {
 			return; // Sometimes we get no "total", so just ignore the progress event.
 		}
-		this._sendProgress({loaded:event.loaded, total:event.total});
+
+		var newEvent = new createjs.Event("progress");
+		newEvent.loaded = event.loaded;
+		newEvent.total = event.total;
+		this._sendProgress(newEvent);
 	};
 
 	/**
@@ -206,7 +253,9 @@ this.createjs = this.createjs || {};
 	 */
 	p._handleAbort = function (event) {
 		this._clean();
-		this._sendError();
+		var event = new createjs.Event("error");
+		event.text = "XHR_ABORTED";
+		this._sendError(event);
 	};
 
 	/**
@@ -217,7 +266,9 @@ this.createjs = this.createjs || {};
 	 */
 	p._handleError = function (event) {
 		this._clean();
-		this._sendError();
+		var newEvent = new createjs.Event("error");
+		//TODO: Propagate event error
+		this._sendError(newEvent);
 	};
 
 	/**
@@ -268,7 +319,10 @@ this.createjs = this.createjs || {};
 	 */
 	p._handleTimeout = function (event) {
 		this._clean();
-		this._sendError({reason:"PRELOAD_TIMEOUT"});
+		var newEvent = new createjs.Event("error");
+		newEvent.text = "PRELOAD_TIMEOUT";
+		//TODO: Propagate actual event error
+		this._sendError(event);
 	};
 
 
@@ -342,10 +396,15 @@ this.createjs = this.createjs || {};
 	p._createXHR = function (item) {
 		// Check for cross-domain loads. We can't fully support them, but we can try.
 		var target = document.createElement("a");
-		target.href = item.src;
+		target.href = this.buildPath(item.src, this._basePath);
+
 		var host = document.createElement("a");
 		host.href = location.href;
-		var crossdomain = (target.hostname != "") && (target.port != host.port || target.protocol != host.protocol || target.hostname != host.hostname);
+
+		var crossdomain = (target.hostname != "") &&
+						 	(target.port != host.port ||
+							 target.protocol != host.protocol ||
+							 target.hostname != host.hostname);
 
 		// Create the request. Fall back to whatever support we have.
 		var req = null;
@@ -377,11 +436,24 @@ this.createjs = this.createjs || {};
 		// Determine the XHR level
 		this._xhrLevel = (typeof req.responseType === "string") ? 2 : 1;
 
+		var src = null;
+		if (item.method == createjs.LoadQueue.GET) {
+			src = this.buildPath(item.src, this._basePath, item.values);
+		} else {
+			src = this.buildPath(item.src, this._basePath);
+		}
+
 		// Open the request.  Set cross-domain flags if it is supported (XHR level 1 only)
-		req.open("GET", item.src, true);
+		req.open(item.method || createjs.LoadQueue.GET, src, true);
+
 		if (crossdomain && req instanceof XMLHttpRequest && this._xhrLevel == 1) {
 			req.setRequestHeader("Origin", location.origin);
 		}
+
+		// To send data we need to set the Content-type header)
+		 if (item.values && item.method == createjs.LoadQueue.POST) {
+			req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		 }
 
 		// Binary files are loaded differently.
 		if (createjs.LoadQueue.isBinary(item.type)) {
@@ -427,7 +499,7 @@ this.createjs = this.createjs || {};
 			// Note: Images need to wait for onload, but do use the cache.
 			case createjs.LoadQueue.IMAGE:
 				tag.onload = createjs.proxy(this._handleTagReady, this);
-				tag.src = this._item.src;
+				tag.src = this.buildPath(this._item.src, this._basePath, this._item.values);
 
 				this._rawResponse = this._response;
 				this._response = tag;
@@ -465,8 +537,12 @@ this.createjs = this.createjs || {};
 			case createjs.LoadQueue.SVG:
 				var xml = this._parseXML(this._response, "image/svg+xml");
 				this._rawResponse = this._response;
-				tag.appendChild(xml.documentElement);
-				this._response = tag;
+				if (xml.documentElement != null) {
+					tag.appendChild(xml.documentElement);
+					this._response = tag;
+				} else { // For browsers that don't support SVG, just give them the XML. (IE 9-8)
+					this._response = xml;
+				}
 				return true;
 
 			case createjs.LoadQueue.JSON:
@@ -474,8 +550,7 @@ this.createjs = this.createjs || {};
 				try {
 					json = JSON.parse(this._response);
 				} catch (error) {
-					// Log error?
-					json = null;
+					json = error;
 				}
 
 				this._rawResponse = this._response;
@@ -545,145 +620,6 @@ this.createjs = this.createjs || {};
 
  USE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO
  NOT CONTROL.
-
-
- This file creates a global JSON object containing two methods: stringify
- and parse.
-
- JSON.stringify(value, replacer, space)
- value       any JavaScript value, usually an object or array.
-
- replacer    an optional parameter that determines how object
- values are stringified for objects. It can be a
- function or an array of strings.
-
- space       an optional parameter that specifies the indentation
- of nested structures. If it is omitted, the text will
- be packed without extra whitespace. If it is a number,
- it will specify the number of spaces to indent at each
- level. If it is a string (such as '\t' or '&nbsp;'),
- it contains the characters used to indent at each level.
-
- This method produces a JSON text from a JavaScript value.
-
- When an object value is found, if the object contains a toJSON
- method, its toJSON method will be called and the result will be
- stringified. A toJSON method does not serialize: it returns the
- value represented by the name/value pair that should be serialized,
- or undefined if nothing should be serialized. The toJSON method
- will be passed the key associated with the value, and this will be
- bound to the value
-
- For example, this would serialize Dates as ISO strings.
-
- Date.prototype.toJSON = function (key) {
- function f(n) {
- // Format integers to have at least two digits.
- return n < 10 ? '0' + n : n;
- }
-
- return this.getUTCFullYear()   + '-' +
- f(this.getUTCMonth() + 1) + '-' +
- f(this.getUTCDate())      + 'T' +
- f(this.getUTCHours())     + ':' +
- f(this.getUTCMinutes())   + ':' +
- f(this.getUTCSeconds())   + 'Z';
- };
-
- You can provide an optional replacer method. It will be passed the
- key and value of each member, with this bound to the containing
- object. The value that is returned from your method will be
- serialized. If your method returns undefined, then the member will
- be excluded from the serialization.
-
- If the replacer parameter is an array of strings, then it will be
- used to select the members to be serialized. It filters the results
- such that only members with keys listed in the replacer array are
- stringified.
-
- Values that do not have JSON representations, such as undefined or
- functions, will not be serialized. Such values in objects will be
- dropped; in arrays they will be replaced with null. You can use
- a replacer function to replace those with JSON values.
- JSON.stringify(undefined) returns undefined.
-
- The optional space parameter produces a stringification of the
- value that is filled with line breaks and indentation to make it
- easier to read.
-
- If the space parameter is a non-empty string, then that string will
- be used for indentation. If the space parameter is a number, then
- the indentation will be that many spaces.
-
- Example:
-
- text = JSON.stringify(['e', {pluribus: 'unum'}]);
- // text is '["e",{"pluribus":"unum"}]'
-
-
- text = JSON.stringify(['e', {pluribus: 'unum'}], null, '\t');
- // text is '[\n\t"e",\n\t{\n\t\t"pluribus": "unum"\n\t}\n]'
-
- text = JSON.stringify([new Date()], function (key, value) {
- return this[key] instanceof Date ?
- 'Date(' + this[key] + ')' : value;
- });
- // text is '["Date(---current time---)"]'
-
-
- JSON.parse(text, reviver)
- This method parses a JSON text to produce an object or array.
- It can throw a SyntaxError exception.
-
- The optional reviver parameter is a function that can filter and
- transform the results. It receives each of the keys and values,
- and its return value is used instead of the original value.
- If it returns what it received, then the structure is not modified.
- If it returns undefined then the member is deleted.
-
- Example:
-
- // Parse the text. Values that look like ISO date strings will
- // be converted to Date objects.
-
- myData = JSON.parse(text, function (key, value) {
- var a;
- if (typeof value === 'string') {
- a =
- /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
- if (a) {
- return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
- +a[5], +a[6]));
- }
- }
- return value;
- });
-
- myData = JSON.parse('["Date(09/09/2001)"]', function (key, value) {
- var d;
- if (typeof value === 'string' &&
- value.slice(0, 5) === 'Date(' &&
- value.slice(-1) === ')') {
- d = new Date(value.slice(5, -1));
- if (d) {
- return d;
- }
- }
- return value;
- });
-
-
- This is a reference implementation. You are free to copy, modify, or
- redistribute.
- */
-
-/*jslint evil: true, regexp: true */
-
-/*members "", "\b", "\t", "\n", "\f", "\r", "\"", JSON, "\\", apply,
- call, charCodeAt, getUTCDate, getUTCFullYear, getUTCHours,
- getUTCMinutes, getUTCMonth, getUTCSeconds, hasOwnProperty, join,
- lastIndex, length, parse, prototype, push, replace, slice, stringify,
- test, toJSON, toString, valueOf
  */
 
 

@@ -1,5 +1,5 @@
 /*
-* PreloadJS
+* LoadQueue
 * Visit http://createjs.com/ for documentation, updates and examples.
 *
 *
@@ -61,6 +61,16 @@
  * they will not be processed, even if the load has not actually kicked off yet. Plugin functionality is handled when
  * the items are added to the LoadQueue.
  *
+ * <h4>Browser Support</h4>
+ * PreloadJS is partially supported in all browsers, and fully supported in all modern browsers. Known exceptions:
+ * <ul><li>XHR loading of any content will not work in many older browsers (See a matrix here: <a href="http://caniuse.com/xhr2">http://caniuse.com/xhr2</a>).
+ *      In many cases, you can fall back on tag loading (images, audio, CSS, scripts, SVG, and JSONP). Text and
+ *      WebAudio will only work with XHR.</li>
+ *      <li>Some formats have poor support for complete events in IE 6, 7, and 8 (SVG, tag loading of scripts, XML/JSON)</li>
+ *      <li>Opera has poor support for SVG loading with XHR</li>
+ *      <li>CSS loading in Android and Safari will not work with tags (currently, a workaround is in progress)</li>
+ * </li>
+ *
  * @module PreloadJS
  * @main PreloadJS
  */
@@ -68,7 +78,6 @@
 // namespace:
 this.createjs = this.createjs||{};
 
-//TODO: JSONP support?
 //TODO: addHeadTags support
 
 /*
@@ -80,7 +89,7 @@ TODO: WINDOWS ISSUES
 	* Need to hide loading SVG in Opera TAGS
 	* No CSS onload/readystatechange in Safari or Android TAGS (requires rule checking)
 	* SVG no load or failure in Opera XHR
-	*
+	* Reported issues with IE7/8
  */
 
 (function() {
@@ -117,6 +126,31 @@ TODO: WINDOWS ISSUES
 	 * Note that a paused queue will automatically resume when new files are added to it.
 	 *
 	 *      queue.load();
+	 *
+	 * <b>File Types</b><br />
+	 * The file type of a manifest item is auto-determined by the file extension. The pattern matching in PreloadJS
+	 * should handle the majority of standard file and url formats, and works with common file extensions. If you have
+	 * either a non-standard file extension, or are serving the file using a proxy script, then you can pass in a
+	 * <code>type</code> property with any manifest item.
+	 *
+	 *      queue.loadFile({src:"path/to/myFile.mp3x", type:createjs.LoadQueue.SOUND});
+	 *
+	 *      // Note that PreloadJS will not read a file extension from the query string
+	 *      queue.loadFile({src:"http://server.com/proxy?file=image.jpg"}, type:createjs.LoadQueue.IMAGE});
+	 *
+	 * Supported types include:
+	 * <ul>
+	 *     <li>createjs.LoadQueue.BINARY (Raw binary data via XHR)</li>
+	 *     <li>createjs.LoadQueue.CSS (CSS files)</li>
+	 *     <li>createjs.LoadQueue.IMAGE (Common image formats)</li>
+	 *     <li>createjs.LoadQueue.JAVASCRIPT (JavaScript files)</li>
+	 *     <li>createjs.LoadQueue.JSON (JSON data)</li>
+	 *     <li>createjs.LoadQueue.JSONP (JSON files cross-domain)</li>
+	 *     <li>createjs.LoadQueue.SOUND (Audio file formats)</li>
+	 *     <li>createjs.LoadQueue.SVG (SVG files)</li>
+	 *     <li>createjs.LoadQueue.TEXT (Text files - XHR only)</li>
+	 *     <li>createjs.LoadQueue.XML (XML data)</li>
+	 * </ul>
 	 *
 	 * <b>Handling Results</b><br />
 	 * When a file is finished downloading, a "fileload" event is dispatched. In an example above, there is an event
@@ -165,26 +199,32 @@ TODO: WINDOWS ISSUES
 	 *      queue.installPlugin(createjs.Sound);
 	 *
 	 * <h4>Known Browser Issues</h4>
-	 * <ul><li>Browsers without audio support can not load audio files.</li>
-	 *      <li>Audio tags will only download until their <code>canPlayThrough</code> event is fired. Browsers other
-	 *      than Chrome will continue to download in the background.</li>
-	 *      <li>When loading scripts using tags, they are automatically added to the document.</li>
-	 *      <li>Scripts loaded via XHR may not be properly inspectable with browser tools.</li>
-	 *      <li>IE6 and IE7 (and some other browsers) may not be able to load XML, Text, or JSON, since they require
-	 *      XHR to work.</li>
-	 *      <li>Content loaded via tags will not show progress, and although they can be canceled, they will continue
-	 *      to download in the background.</li>
+	 * <ul>
+	 *     <li>Browsers without audio support can not load audio files.</li>
+	 *     <li>Safari on Mac OS X can only play HTML audio if QuickTime is installed</li>
+	 *     <li>HTML Audio tags will only download until their <code>canPlayThrough</code> event is fired. Browsers other
+	 *     than Chrome will continue to download in the background.</li>
+	 *     <li>When loading scripts using tags, they are automatically added to the document.</li>
+	 *     <li>Scripts loaded via XHR may not be properly inspectable with browser tools.</li>
+	 *     <li>IE6 and IE7 (and some other browsers) may not be able to load XML, Text, or JSON, since they require
+	 *     XHR to work.</li>
+	 *     <li>Content loaded via tags will not show progress, and will continue to download in the background when
+	 *     canceled, although no events will be dispatched.</li>
 	 * </ul>
 	 *
 	 * @class LoadQueue
 	 * @param {Boolean} [useXHR=true] Determines whether the preload instance will favor loading with XHR (XML HTTP Requests),
 	 * or HTML tags. When this is <code>false</code>, LoadQueue will use tag loading when possible, and fall back on XHR
 	 * when necessary.
+	 * @param {String} basePath A path that will be prepended on to the source parameter of all items in the queue
+	 * before they are loaded.  Sources beginning with http:// or similar will not receive a base path.
+	 * Note that a basePath provided to any loadFile or loadManifest call will override the
+	 * basePath specified on the LoadQueue constructor.
 	 * @constructor
 	 * @extends AbstractLoader
 	 */
-	var LoadQueue = function(useXHR) {
-		this.init(useXHR);
+	var LoadQueue = function(useXHR, basePath) {
+		this.init(useXHR, basePath);
 	};
 
 	var p = LoadQueue.prototype = new createjs.AbstractLoader();
@@ -248,6 +288,16 @@ TODO: WINDOWS ISSUES
 	s.JSON = "json";
 
 	/**
+	 * The preload type for jsonp files, usually with the "json" file extension. JSOON data is loaded and parsed into a
+	 * JavaScript object. You are required to pass a callback parameter that matches the jsonp result.
+	 * @property JSONP
+	 * @type {String}
+	 * @default jsonp
+	 * @static
+	 */
+	s.JSONP = "jsonp";
+
+	/**
 	 * The preload type for sound files, usually mp3, ogg, or wav. Audio is loaded into an AUDIO tag.
 	 * @property SOUND
 	 * @type {String}
@@ -284,6 +334,20 @@ TODO: WINDOWS ISSUES
 	 */
 	s.XML = "xml";
 
+	/**
+	 * Defines a POST request, use for a method value when loading data.
+	 *
+	 * @type {string}
+	 */
+	s.POST = 'POST';
+
+	/**
+	 * Defines a GET request, use for a method value when loading data.
+	 *
+	 * @type {string}
+	 */
+	s.GET = 'GET';
+
 
 // Prototype
 	/**
@@ -293,6 +357,7 @@ TODO: WINDOWS ISSUES
 	 *
 	 * <b>Note: This property is read-only.</b> To change it, please use the {{#crossLink "LoadQueue/setUseXHR"}}{{/crossLink}}
 	 * method.
+	 *
 	 * @property useXHR
 	 * @type {Boolean}
 	 * @readOnly
@@ -362,26 +427,35 @@ TODO: WINDOWS ISSUES
 	 * object will contain that value as a property.
 	 * @param {Number} loaded The number of bytes that have been loaded. Note that this may just be a percentage of 1.
 	 * @param {Number} total The total number of bytes. If it is unknown, the value is 1.
-	 * @param {Number} percent The percentage that has been loaded. This will be a number between 0 and 1.
+	 * @param {Number} progress The amount that has been loaded between 0 and 1.
 	 * @since 0.3.0
 	 */
 
-// Callbacks (deprecated)
 	/**
-	 * The callback that is fired when an individual file is loaded.
+	 * This event is fired when an individual file starts to load.
+	 * @event filestart
+	 * @param {Object} The object that dispatched the event.
+	 * @param {String} type The event type.
+	 * @param {Object} item The file item which was specified in the {{#crossLink "LoadQueue/loadFile"}}{{/crossLink}}
+	 * or {{#crossLink "LoadQueue/loadManifest"}}{{/crossLink}} call. If only a string path or tag was specified, the
+	 * object will contain that value as a property.
+	 */
+
+	//TODO: Deprecated
+	/**
+	 * REMOVED. Use {{#crossLink "EventDispatcher/addEventListener"}}{{/crossLink}} and the {{#crossLink "LoadQueue/fileload:event"}}{{/crossLink}}
+	 * event.
 	 * @property onFileLoad
 	 * @type {Function}
-	 * @deprecated In favour of the "fileload" event. Will be removed in a future version.
+	 * @deprecated Use addEventListener and the "fileload" event.
 	 */
-	p.onFileLoad = null;
-
 	/**
-	 * The callback that is fired when an individual files progress changes.
+	 * REMOVED. Use {{#crossLink "EventDispatcher/addEventListener"}}{{/crossLink}} and the {{#crossLink "LoadQueue/fileprogress:event"}}{{/crossLink}}
+	 * event.
 	 * @property onFileProgress
 	 * @type {Function}
-	 * @deprecated In favour of the "fileprogress" event. Will be removed in a future version.
+	 * @deprecated Use addEventListener and the "fileprogress" event.
 	 */
-	p.onFileProgress = null;
 
 
 // Protected
@@ -530,7 +604,7 @@ TODO: WINDOWS ISSUES
 	p._loadedScripts = null;
 
 	// Overrides abstract method in AbstractLoader
-	p.init = function(useXHR) {
+	p.init = function(useXHR, basePath) {
 		this._numItems = this._numItemsLoaded = 0;
 		this._paused = false;
 		this._loadStartWasDispatched = false;
@@ -549,6 +623,7 @@ TODO: WINDOWS ISSUES
 		this._typeCallbacks = {};
 		this._extensionCallbacks = {};
 
+		this._basePath = basePath;
 		this.setUseXHR(useXHR);
 	};
 
@@ -593,6 +668,8 @@ TODO: WINDOWS ISSUES
 			args = [idsOrUrls];
 		} else if (idsOrUrls) {
 			args = idsOrUrls;
+		} else if (arguments.length > 0) {
+			return;
 		}
 
 		var itemsWereRemoved = false;
@@ -735,7 +812,7 @@ TODO: WINDOWS ISSUES
 	 */
 	p.setMaxConnections = function (value) {
 		this._maxConnections = value;
-		if (!this._paused) {
+		if (!this._paused && this._loadQueue.length > 0) {
 			this._loadNext();
 		}
 	}
@@ -757,23 +834,33 @@ TODO: WINDOWS ISSUES
      *         <li>type: The type of file that will be loaded (image, sound, json, etc). PreloadJS does auto-detection
 	 *         of types using the extension. Supported types are defined on LoadQueue, such as <code>LoadQueue.IMAGE</code>.
 	 *         It is recommended that a type is specified when a non-standard file URI (such as a php script) us used.</li>
-     *         <li>id: A string indentifier which can be used to reference the loaded object.</li>
+     *         <li>id: A string identifier which can be used to reference the loaded object.</li>
+	 *         <li>callback: Optional, used for JSONP requests, to define what method to call when the JSONP is loaded.</li>
      *         <li>data: An arbitrary data object, which is included with the loaded object</li>
+	 *         <li>method: used to define if this request uses GET or POST when sending data to the server. Default; GET</li>
+	 *         <li>values: Optional object of name/value pairs to send to the server.</li>
      *     </ul>
      * </ol>
 	 * @param {Boolean} [loadNow=true] Kick off an immediate load (true) or wait for a load call (false). The default
 	 * value is true. If the queue is paused using {{#crossLink "LoadQueue/setPaused"}}{{/crossLink}}, and the value is
 	 * true, the queue will resume automatically.
+	 * @param {String} [basePath] An optional base path prepended to the file source when the file is loaded.
+	 * Sources beginning with http:// or similar will not receive a base path.
+	 * The load item will not be modified.
 	 */
-	p.loadFile = function(file, loadNow) {
+	p.loadFile = function(file, loadNow, basePath) {
 		if (file == null) {
-			this._sendError({text: "PRELOAD_NO_FILE"});
+			var event = new createjs.Event("error");
+			event.text = "PRELOAD_NO_FILE";
+			this._sendError(event);
 			return;
 		}
-		this._addItem(file);
+		this._addItem(file, basePath);
 
 		if (loadNow !== false) {
 			this.setPaused(false);
+		} else {
+			this.setPaused(true);
 		}
 	}
 
@@ -803,31 +890,41 @@ TODO: WINDOWS ISSUES
 	 * @param {Boolean} [loadNow=true] Kick off an immediate load (true) or wait for a load call (false). The default
 	 * value is true. If the queue is paused using {{#crossLink "LoadQueue/setPaused"}}{{/crossLink}} and this value is
 	 * true, the queue will resume automatically.
+	 * @param {String} [basePath] An optional base path prepended to each of the files' source when the file is loaded.
+	 * Sources beginning with http:// or similar will not receive a base path.
+	 * The load items will not be modified.
 	 */
-	p.loadManifest = function(manifest, loadNow) {
+	p.loadManifest = function(manifest, loadNow, basePath) {
 		var data = null;
 
 		if (manifest instanceof Array) {
 			if (manifest.length == 0) {
-				this._sendError({text: "PRELOAD_MANIFEST_EMPTY"});
+				var event = new createjs.Event("error");
+				event.text = "PRELOAD_MANIFEST_EMPTY";
+				this._sendError(event);
 				return;
 			}
 			data = manifest;
 		} else {
 			if (manifest == null) {
-				this._sendError({text: "PRELOAD_MANIFEST_NULL"});
+				var event = new createjs.Event("error");
+				event.text = "PRELOAD_MANIFEST_NULL";
+				this._sendError(event);
 				return;
 			}
 			data = [manifest];
 		}
 
 		for (var i=0, l=data.length; i<l; i++) {
-			this._addItem(data[i]);
+			this._addItem(data[i], basePath);
 		}
 
 		if (loadNow !== false) {
 			this.setPaused(false);
+		} else {
+			this.setPaused(true);
 		}
+
 	};
 
 	// Overrides abstract method in AbstractLoader
@@ -913,12 +1010,14 @@ TODO: WINDOWS ISSUES
 	 * method.
 	 * @method _addItem
 	 * @param {String|Object} value The item to add to the queue.
+	 * @param {String} basePath A path to prepend to the item's source.
+	 * 	Sources beginning with http:// or similar will not receive a base path.
 	 * @private
 	 */
-	p._addItem = function(value) {
+	p._addItem = function(value, basePath) {
 		var item = this._createLoadItem(value);
 		if (item == null) { return; } // Sometimes plugins or types should be skipped.
-		var loader = this._createLoader(item);
+		var loader = this._createLoader(item, basePath);
 		if (loader != null) {
 			this._loadQueue.push(loader);
 			this._loadQueueBackup.push(loader);
@@ -969,13 +1068,22 @@ TODO: WINDOWS ISSUES
 				}
 				break;
 			default:
-				break;
+				return null;
 		}
 
+		// Note: This does NOT account for basePath. It should be fine.
 		var match = this._parseURI(item.src);
 		if (match != null) { item.ext = match[5]; }
 		if (item.type == null) {
 			item.type = this._getTypeByExtension(item.ext);
+		}
+
+		if (item.type == createjs.LoadQueue.JSON && item.callback != null) {
+			item.type = createjs.LoadQueue.JSONP;
+		}
+
+		if (item.type == createjs.LoadQueue.JSONP && item.callback == null) {
+			throw new Error('callback is required for loading JSONP requests.');
 		}
 
 		// Create a tag for the item. This ensures there is something to either load with or populate when finished.
@@ -1029,10 +1137,11 @@ TODO: WINDOWS ISSUES
 	 * Create a loader for a load item.
 	 * @method _createLoader
 	 * @param {Object} item A formatted load item that can be used to generate a loader.
+	 * @param {String} basePath A path that will be prepended on to the source parameter of all items in the queue before they are loaded. Note that a basePath provided to any loadFile or loadManifest call will override the basePath specified on the LoadQueue constructor.
 	 * @return {AbstractLoader} A loader that can be used to load content.
 	 * @private
 	 */
-	p._createLoader = function(item) {
+	p._createLoader = function(item, basePath) {
 		// Initially, try and use the provided/supported XHR mode:
 		var useXHR = this.useXHR;
 
@@ -1044,15 +1153,21 @@ TODO: WINDOWS ISSUES
 				useXHR = true; // Always use XHR2 with text/XML
 				break;
 			case createjs.LoadQueue.SOUND:
+			case createjs.LoadQueue.JSONP:
 				useXHR = false; // Never load audio using XHR. WebAudio will provide its own loader.
 				break;
+			case null:
+				return null;
 			// Note: IMAGE, CSS, SCRIPT, SVG can all use TAGS or XHR.
 		}
 
+		// If no basepath was provided here (from _addItem), then use the LoadQueue._basePath instead.
+		if (basePath == null) { basePath = this._basePath; }
+
 		if (useXHR) {
-			return new createjs.XHRLoader(item);
+			return new createjs.XHRLoader(item, basePath);
 		} else {
-			return new createjs.TagLoader(item);
+			return new createjs.TagLoader(item, basePath);
 		}
 	};
 
@@ -1068,23 +1183,27 @@ TODO: WINDOWS ISSUES
 	p._loadNext = function() {
 		if (this._paused) { return; }
 
-		// Only dispatch loadStart event when the first file is loaded.
+		// Only dispatch loadstart event when the first file is loaded.
 		if (!this._loadStartWasDispatched) {
 			this._sendLoadStart();
 			this._loadStartWasDispatched = true;
 		}
 
+		// The queue has completed.
 		if (this._numItems == this._numItemsLoaded) {
 			this.loaded = true;
 			this._sendComplete();
+
+			// Load the next queue, if it has been defined.
 			if (this.next && this.next.load) {
 				this.next.load();
-				//TODO: Test. This was changed from a load.apply
 			}
+		} else {
+			this.loaded = false;
 		}
 
 		// Must iterate forwards to load in the right order.
-		for (var i=0, l=this._loadQueue.length; i<l; i++) {
+		for (var i=0; i<this._loadQueue.length; i++) {
 			if (this._currentLoads.length >= this._maxConnections) { break; }
 			var loader = this._loadQueue[i];
 
@@ -1096,8 +1215,8 @@ TODO: WINDOWS ISSUES
 				this._currentlyLoadingScript = true;
 			}
 			this._loadQueue.splice(i, 1);
+  			i--;
             this._loadItem(loader);
-  			i--; l--;
 		}
 	};
 
@@ -1112,12 +1231,13 @@ TODO: WINDOWS ISSUES
 		loader.addEventListener("complete", createjs.proxy(this._handleFileComplete, this));
 		loader.addEventListener("error", createjs.proxy(this._handleFileError, this));
 		this._currentLoads.push(loader);
+		this._sendFileStart(loader.getItem());
 		loader.load();
 	};
 
 	/**
-	 * The callback that is fired when a loader encounters an error. The queue will continue loading unless
-	 * <code>stopOnError</code> is set to <code>true</code>.
+	 * The callback that is fired when a loader encounters an error. The queue will continue loading unless {{#crossLink "LoadQueue/stopOnError:property"}}{{/crossLink}}
+	 * is set to `true`.
 	 * @method _handleFileError
 	 * @param {Object} event The error event, containing relevant error information.
 	 * @private
@@ -1127,10 +1247,11 @@ TODO: WINDOWS ISSUES
 		this._numItemsLoaded++;
 		this._updateProgress();
 
-		var event = {
-			//TODO: Add error text?
-			item: loader.getItem()
-		};
+		var event = new createjs.Event("error");
+		event.text = "FILE_LOAD_ERROR";
+		event.item = loader.getItem();
+		// TOOD: Propagate actual error message.
+
 		this._sendError(event);
 
 		if (!this.stopOnError) {
@@ -1141,7 +1262,7 @@ TODO: WINDOWS ISSUES
 
 	/**
 	 * An item has finished loading. We can assume that it is totally loaded, has been parsed for immediate use, and
-	 * is available as the "result" property on the load item. The raw text result for a parsed item (such as JSON, XML, 
+	 * is available as the "result" property on the load item. The raw text result for a parsed item (such as JSON, XML,
 	 * CSS, JavaScript, etc) is available as the "rawResult" event, and can also be looked up using {{#crossLink "LoadQueue/getResult"}}{{/crossLink}}.
 	 * @method _handleFileComplete
 	 * @param {Object} event The event object from the loader.
@@ -1169,15 +1290,15 @@ TODO: WINDOWS ISSUES
 			}
 		}
 
-		this._processFinishedLoad(item);
+		this._processFinishedLoad(item, loader);
 	}
 
-	p._processFinishedLoad = function(item) {
+	p._processFinishedLoad = function(item, loader) {
 		// Old handleFileTagComplete follows here.
 		this._numItemsLoaded++;
 
 		this._updateProgress();
-		this._sendFileComplete(item);
+		this._sendFileComplete(item, loader);
 
 		this._loadNext();
 	};
@@ -1293,6 +1414,7 @@ TODO: WINDOWS ISSUES
 				tag.autoplay = false;
 				// Note: The type property doesn't seem necessary.
 				return tag;
+			case createjs.LoadQueue.JSONP:
 			case createjs.LoadQueue.JAVASCRIPT:
 				tag = document.createElement("script");
 				tag.type = "text/javascript";
@@ -1327,6 +1449,9 @@ TODO: WINDOWS ISSUES
 	 * @private
 	 */
 	p._getTypeByExtension = function(extension) {
+		if (extension == null) {
+			return createjs.LoadQueue.TEXT;
+		}
 		switch (extension.toLowerCase()) {
 			case "jpeg":
 			case "jpg":
@@ -1367,47 +1492,59 @@ TODO: WINDOWS ISSUES
 			this._cleanUp();
 			return;
 		}
-		var event = {
-			target: this,
-			type: "fileprogress",
-			progress: progress,
-			loaded: progress,
-			total: 1,
-			item: item
-		};
-		this.onFileProgress && this.onFileProgress(event);
+		if (!this.hasEventListener("fileprogress")) { return; }
+
+		var event = new createjs.Event("fileprogress");
+		event.progress = progress;
+		event.loaded = progress;
+		event.total = 1;
+		event.item = item;
+
 		this.dispatchEvent(event);
 	};
 
 	/**
-	 * Dispatch a fileload event (and onFileLoad callback). Please see the <code>LoadQueue.fileload</code> event for
+	 * Dispatch a fileload event. Please see the {{#crossLink "LoadQueue/fileload:event"}}{{/crossLink}} event for
 	 * details on the event payload.
 	 * @method _sendFileComplete
 	 * @param {Object} item The item that is being loaded.
+	 * @param {TagLoader | XHRLoader} loader
 	 * @protected
 	 */
-	p._sendFileComplete = function(item) {
+	p._sendFileComplete = function(item, loader) {
 		if (this._isCanceled()) { return; }
-		var event = {
-			target: this,
-			type: "fileload",
-			item: item,
-			result: this._loadedResults[item.id],
-			rawResult: this._loadedRawResults[item.id]
-		};
+
+		var event = new createjs.Event("fileload");
+		event.loader = loader;
+		event.item = item;
+		event.result = this._loadedResults[item.id];
+		event.rawResult = this._loadedRawResults[item.id];
 
         // This calls a handler specified on the actual load item. Currently, the SoundJS plugin uses this.
         if (item.completeHandler) {
             item.completeHandler(event);
         }
 
-        this.onFileLoad && this.onFileLoad(event);
-		this.dispatchEvent(event)
+		this.hasEventListener("fileload") && this.dispatchEvent(event)
+	};
+
+	/**
+	 * Dispatch a filestart event immediately before a file starts to load. Please see the {{#crossLink "LoadQueue/filestart:event"}}{{/crossLink}}
+	 * event for details on the event payload.
+	 * @method _sendFileStart
+	 * @param {TagLoader | XHRLoader} loader
+	 * @protected
+	 */
+	p._sendFileStart = function(item) {
+		var event = new createjs.Event("filestart");
+		event.item = item;
+		this.hasEventListener("filestart") && this.dispatchEvent(event);
 	};
 
 	p.toString = function() {
 		return "[PreloadJS LoadQueue]";
 	};
+
 	/**
 	 * A function proxy for PreloadJS methods. By default, JavaScript methods do not maintain scope, so passing a
 	 * method as a callback will result in the method getting called in the scope of the caller. Using a proxy
@@ -1419,7 +1556,7 @@ TODO: WINDOWS ISSUES
 	 * @private
 	 * @deprecated In favour of the createjs.proxy method (see LoadQueue source).
 	 */
-	createjs.proxy = function(method, scope) {
+	s.proxy = function(method, scope) {
 		return function() {
 			return method.apply(scope, arguments);
 		};

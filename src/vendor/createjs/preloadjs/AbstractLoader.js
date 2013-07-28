@@ -1,5 +1,5 @@
 /*
-* AbstractLoader for PreloadJS
+* AbstractLoader
 * Visit http://createjs.com/ for documentation, updates and examples.
 *
 *
@@ -96,6 +96,15 @@ this.createjs = this.createjs||{};
 	 */
 	p._item = null;
 
+	/**
+	 * A path that will be prepended on to the item's source parameter before it is loaded.
+	 * @property _basePath
+	 * @type {String}
+	 * @private
+	 * @since 0.3.1
+	 */
+	p._basePath = null;
+
 // Events
 	/**
 	 * The event that is fired when the overall progress changes.
@@ -105,16 +114,16 @@ this.createjs = this.createjs||{};
 	 * @param {Number} loaded The amount that has been loaded so far. Note that this is may just be a percentage of 1,
 	 * since file sizes can not be determined before a load is kicked off, if at all.
 	 * @param {Number} total The total number of bytes. Note that this may just be 1.
-	 * @param {Number} percent The percentage that has been loaded. This will be a number between 0 and 1.
+	 * @param {Number} progress The ratio that has been loaded between 0 and 1.
 	 * @since 0.3.0
 	 */
 
 	/**
 	 * The event that is fired when a load starts.
-	 * @event loadStart
+	 * @event loadstart
 	 * @param {Object} target The object that dispatched the event.
 	 * @param {String} type The event type.
-	 * @since 0.3.0
+	 * @since 0.3.1
 	 */
 
 	/**
@@ -139,38 +148,35 @@ this.createjs = this.createjs||{};
 	 * @since 0.3.0
 	 */
 
-// Callbacks (deprecated)
+	//TODO: Deprecated
 	/**
-	 * The callback that is fired when the overall progress changes.
+	 * REMOVED. Use {{#crossLink "EventDispatcher/addEventListener"}}{{/crossLink}} and the {{#crossLink "AbstractLoader/progress:event"}}{{/crossLink}}
+	 * event.
 	 * @property onProgress
 	 * @type {Function}
-	 * @deprecated In favour of the "progress" event. Will be removed in a future version.
+	 * @deprecated Use addEventListener and the "progress" event.
 	 */
-	p.onProgress = null;
-
 	/**
-	 * The callback that is fired when a load starts.
+	 * REMOVED. Use {{#crossLink "EventDispatcher/addEventListener"}}{{/crossLink}} and the {{#crossLink "AbstractLoader/loadstart:event"}}{{/crossLink}}
+	 * event.
 	 * @property onLoadStart
 	 * @type {Function}
-	 * @deprecated In favour of the "loadStart" event. Will be removed in a future version.
+	 * @deprecated Use addEventListener and the "loadstart" event.
 	 */
-	p.onLoadStart = null;
-
 	/**
-	 * The callback that is fired when the loader's content has been entirely loaded.
+	 * REMOVED. Use {{#crossLink "EventDispatcher/addEventListener"}}{{/crossLink}} and the {{#crossLink "AbstractLoader/complete:event"}}{{/crossLink}}
+	 * event.
 	 * @property onComplete
 	 * @type {Function}
-	 * @deprecated In favour of the "complete" event. Will be removed in a future version.
+	 * @deprecated Use addEventListener and the "complete" event.
 	 */
-	p.onComplete = null;
-
 	/**
-	 * The callback that is fired when the loader encounters an error.
+	 * REMOVED. Use {{#crossLink "EventDispatcher/addEventListener"}}{{/crossLink}} and the {{#crossLink "AbstractLoader/error:event"}}{{/crossLink}}
+	 * event.
 	 * @property onError
 	 * @type {Function}
-	 * @deprecated In favour of the "error" event. Will be removed in a future version.
+	 * @deprecated Use addEventListener and the "error" event.
 	 */
-	p.onError = null;
 
 
 // mix-ins:
@@ -226,20 +232,19 @@ this.createjs = this.createjs||{};
 
 //Callback proxies
 	/**
-	 * Dispatch a loadStart event (and onLoadStart callback). Please see the <code>AbstractLoader.loadStart</code> event
+	 * Dispatch a loadstart event. Please see the {{#crossLink "AbstractLoader/loadstart:event"}}{{/crossLink}} event
 	 * for details on the event payload.
 	 * @method _sendLoadStart
 	 * @protected
 	 */
 	p._sendLoadStart = function() {
 		if (this._isCanceled()) { return; }
-		this.onLoadStart && this.onLoadStart({target:this});
-		this.dispatchEvent("loadStart");
+		this.dispatchEvent("loadstart");
 	};
 
 	/**
-	 * Dispatch a progress event (and onProgress callback). Please see the <code>AbstractLoader.progress</code> event
-	 * for details on the event payload.
+	 * Dispatch a progress event. Please see the {{#crossLink "AbstractLoader/progress:event"}}{{/crossLink}} event for
+	 * details on the event payload.
 	 * @method _sendProgress
 	 * @param {Number | Object} value The progress of the loaded item, or an object containing <code>loaded</code>
 	 * and <code>total</code> properties.
@@ -250,43 +255,41 @@ this.createjs = this.createjs||{};
 		var event = null;
 		if (typeof(value) == "number") {
 			this.progress = value;
-			event = {loaded:this.progress, total:1};
+			event = new createjs.Event("progress");
+			event.loaded = this.progress;
+			event.total = 1;
 		} else {
 			event = value;
 			this.progress = value.loaded / value.total;
 			if (isNaN(this.progress) || this.progress == Infinity) { this.progress = 0; }
 		}
-		event.target = this;
-		event.type = "progress";
-		this.onProgress && this.onProgress(event);
-		this.dispatchEvent(event);
+		event.progress = this.progress;
+		this.hasEventListener("progress") && this.dispatchEvent(event);
 	};
 
 	/**
-	 * Dispatch a complete event (and onComplete callback). Please see the <code>AbstractLoader.complete</code> event
+	 * Dispatch a complete event. Please see the {{#crossLink "AbstractLoader/complete:event"}}{{/crossLink}} event
 	 * for details on the event payload.
 	 * @method _sendComplete
 	 * @protected
 	 */
 	p._sendComplete = function() {
 		if (this._isCanceled()) { return; }
-		this.onComplete && this.onComplete({target:this});
 		this.dispatchEvent("complete");
 	};
 
 	/**
-	 * Dispatch an error event (and onError callback). Please see the <code>AbstractLoader.error</code> event for
+	 * Dispatch an error event. Please see the {{#crossLink "AbstractLoader/error:event"}}{{/crossLink}} event for
 	 * details on the event payload.
 	 * @method _sendError
 	 * @param {Object} event The event object containing specific error properties.
 	 * @protected
 	 */
 	p._sendError = function(event) {
-		if (this._isCanceled()) { return; }
-		if (event == null) { event = {}; }
-		event.target = this;
-		event.type = "error";
-		this.onError && this.onError(event);
+		if (this._isCanceled() || !this.hasEventListener("error")) { return; }
+		if (event == null) {
+			event = new createjs.Event("error");
+		}
 		this.dispatchEvent(event);
 	};
 
@@ -315,6 +318,66 @@ this.createjs = this.createjs||{};
 	p._parseURI = function(path) {
 		if (!path) { return null; }
 		return path.match(s.FILE_PATTERN);
+	};
+
+	/**
+	 * Formats an object into a query string for either a POST or GET request.
+	 * @method _formatQueryString
+	 * @param {Object} data The data to convert to a query string.
+	 * @param {Array} [query] Existing name/value pairs to append on to this query.
+	 * @private
+	 */
+	p._formatQueryString = function(data, query) {
+		if (data == null) {
+			throw new Error('You must specify data.');
+		}
+		var params = [];
+		for (var n in data) {
+			params.push(n+'='+escape(data[n]));
+		}
+		if (query) {
+			params = params.concat(query);
+		}
+		return params.join('&');
+	};
+
+	/**
+	 * A utility method that builds a file path using a source, a basePath, and a data object, and formats it into a new
+	 * path. All of the loaders in PreloadJS use this method to compile paths when loading.
+	 * @method buildPath
+	 * @param {String} src The source path to add values to.
+	 * @param {String} [basePath] A string to prepend to the file path. Sources beginning with http:// or similar will
+	 * not receive a base path.
+	 * @param {Object} [data] Object used to append values to this request as a query string. Existing parameters on the
+	 * path will be preserved.
+	 * @returns {string} A formatted string that contains the path and the supplied parameters.
+	 * @since 0.3.1
+	 */
+	p.buildPath = function(src, _basePath, data) {
+		if (_basePath != null) {
+			var match = this._parseURI(src);
+			// IE 7,8 Return empty string here.
+			if (match == null || match[1] == null || match[1] == '') {
+				src = _basePath + src;
+			}
+		}
+		if (data == null) {
+			return src;
+		}
+
+		var query = [];
+		var idx = src.indexOf('?');
+
+		if (idx != -1) {
+			var q = src.slice(idx+1);
+			query = query.concat(q.split('&'));
+		}
+
+		if (idx != -1) {
+			return src.slice(0, idx) + '?' + this._formatQueryString(data, query);
+		} else {
+			return src + '?' + this._formatQueryString(data, query);
+		}
 	};
 
 	/**

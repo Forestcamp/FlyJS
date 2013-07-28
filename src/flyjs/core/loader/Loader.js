@@ -21,6 +21,9 @@ this.flyjs = this.flyjs || {};
 
     var p = Loader.prototype;
 
+    // use EventDispatcher for this target (Class):
+    createjs.EventDispatcher.initialize(p);
+
     p.loadFile = function (item) {
         this._load(true, item);
     };
@@ -46,10 +49,10 @@ this.flyjs = this.flyjs || {};
     };
 
     p._addHandlers = function () {
-        this._loader.onProgress = this._options.onProgress;
-        this._loader.onError = this._options.onError;
-        this._loader.onFileLoad = this._options.onFileLoad;
-        this._loader.onComplete = this._options.onComplete;
+        this._loader.addEventListener("complete", this._options.onComplete);
+        this._loader.addEventListener("fileload", this._options.onFileLoad);
+        this._loader.addEventListener("fileprogress", this._options.onProgress);
+        this._loader.addEventListener("error", this._options.onError);
     };
 
     flyjs.Loader = Loader;
