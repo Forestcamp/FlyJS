@@ -43,8 +43,6 @@ this.flyjs = this.flyjs || {};
     ManifestParser.parseSpriteSheets = function (list) {
         var i = 0,
             length = list.length,
-            spriteSheet,
-            bitmapAnimation,
             listItem;
 
         for (i; i < length; i++) {

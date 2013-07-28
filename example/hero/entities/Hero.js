@@ -31,14 +31,14 @@ this.game = this.game || {};
      */
     p._prepare = function () {
         // get our Sprite
-        this.hero = flyjs.AssetManager.getAsset('hero');
+        this.heroSpriteSheet = flyjs.AssetManager.getAsset('hero');
         // Createjs - Set up looping
-        this.hero.sprite.getAnimation("run").next = "run";
-        this.hero.sprite.getAnimation("jump").next = "run";
+        this.heroSpriteSheet.getAnimation("run").next = "run";
+        this.heroSpriteSheet.getAnimation("jump").next = "run";
 
-        this.hero.bitmap.gotoAndPlay("run");
+        this.heroSprite = new createjs.Sprite(this.heroSpriteSheet, "run");
 
-        this.scene.addChild(this.hero.bitmap);
+        this.scene.addChild(this.heroSprite);
         // define GamePad buttons
         flyjs.GamePad.define("UP", [flyjs.Key.UP]);
         flyjs.GamePad.define("RIGHT", [flyjs.Key.RIGHT]);
@@ -51,15 +51,15 @@ this.game = this.game || {};
     p.update = function () {
 
         if (flyjs.GamePad.isPressed("UP")) {
-            this.hero.bitmap.gotoAndPlay("jump");
+            this.heroSprite.gotoAndPlay("jump");
         }
 
         if (flyjs.GamePad.check("RIGHT")) {
-            this.hero.bitmap.x += 3;
+            this.heroSprite.x += 3;
         }
 
         if (flyjs.GamePad.check("LEFT")) {
-            this.hero.bitmap.x -= 3;
+            this.heroSprite.x -= 3;
         }
 
     };

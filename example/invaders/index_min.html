@@ -2,17 +2,20 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>FlyJS | Hero</title>
+    <title>FlyJS | Invaders</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
 
 <div class="canvasHolder" style="float: left;"></div>
 
-
 <script type="text/javascript" src="../../flyjs.min.js"></script>
 
-<script type="text/javascript" src="entities/Hero.js"></script>
+<script type="text/javascript" src="helpers/GameConstant.js"></script>
+<script type="text/javascript" src="helpers/Direction.js"></script>
+<script type="text/javascript" src="entities/Laser.js"></script>
+<script type="text/javascript" src="entities/EnemyShip.js"></script>
+<script type="text/javascript" src="entities/PlayerShip.js"></script>
 <script type="text/javascript" src="Game.js"></script>
 
 <script type="text/javascript">
@@ -21,7 +24,7 @@
         new game.Game('canvasHolder', {
             manifest:'manifest.json',
             width:700,
-            height: 600
+            height:600
         });
 
     });

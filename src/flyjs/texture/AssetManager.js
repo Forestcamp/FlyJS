@@ -30,22 +30,6 @@ this.flyjs = this.flyjs || {};
     };
 
     /**
-     * @method addSpriteSheetAsset
-     * @param asset {Object}
-     */
-    AssetManager.addSpriteSheetAsset = function (asset) {
-        var spriteSheet,
-            bitmapAnimation;
-        spriteSheet = new createjs.SpriteSheet(asset);
-        bitmapAnimation = new createjs.BitmapAnimation(spriteSheet);
-
-        this._assets[asset.id] = {
-            'sprite': spriteSheet,
-            'bitmap': bitmapAnimation
-        };
-    };
-
-    /**
      *
      * @param name
      * @returns {*}
@@ -66,6 +50,14 @@ this.flyjs = this.flyjs || {};
         }
 
         return asset;
+    };
+
+    /**
+     * @method addSpriteSheetAsset
+     * @param asset {Object}
+     */
+    AssetManager.addSpriteSheetAsset = function (asset) {
+        this._assets[asset.id] = new createjs.SpriteSheet(asset);
     };
 
     flyjs.AssetManager = AssetManager;
