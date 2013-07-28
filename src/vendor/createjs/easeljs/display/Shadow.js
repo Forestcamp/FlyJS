@@ -33,7 +33,7 @@ this.createjs = this.createjs||{};
 
 /**
  * This class encapsulates the properties required to define a shadow to apply to a {{#crossLink "DisplayObject"}}{{/crossLink}}
- * via it's <code>shadow</code> property.
+ * via its <code>shadow</code> property.
  *
  * <h4>Example</h4>
  *      myImage.shadow = new createjs.Shadow("#000000", 5, 5, 10);
@@ -52,11 +52,12 @@ var p = Shadow.prototype;
 	
 // static public properties:
 	/**
-	 * An identity shadow object (all properties are set to 0). Read-only.
+	 * An identity shadow object (all properties are set to 0).
 	 * @property identity
 	 * @type Shadow
 	 * @static
 	 * @final
+	 * @readonly
 	 **/
 	Shadow.identity = null; // set at bottom of class definition.
 	

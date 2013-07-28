@@ -89,13 +89,14 @@ var p = DOMElement.prototype = new createjs.DisplayObject();
 	/**
 	 * @property DisplayObject_initialize
 	 * @type Function
-   * @private
+	 * @private
 	 */
 	p.DisplayObject_initialize = p.initialize;
 
 	/**
 	 * Initialization method.
 	 * @method initialize
+	 * @param {HTMLElement} htmlElement A reference or id for the DOM element to manage.
 	 * @protected
 	*/
 	p.initialize = function(htmlElement) {
@@ -122,7 +123,7 @@ var p = DOMElement.prototype = new createjs.DisplayObject();
 	}
 
 	/**
-	 * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
+	 * Draws the display object into the specified context ignoring its visible, alpha, shadow, and transform.
 	 * Returns true if the draw was handled (useful for overriding functionality).
 	 * NOTE: This method is mainly for internal use, though it may be useful for advanced uses.
 	 * @method draw
@@ -145,8 +146,8 @@ var p = DOMElement.prototype = new createjs.DisplayObject();
 		var oMtx = this._oldMtx||{};
 		if (oMtx.alpha != mtx.alpha) { style.opacity = ""+mtx.alpha; oMtx.alpha = mtx.alpha; }
 		if (oMtx.tx != mtx.tx || oMtx.ty != mtx.ty || oMtx.a != mtx.a || oMtx.b != mtx.b || oMtx.c != mtx.c || oMtx.d != mtx.d) {
-			style.transform = style.WebkitTransform = style.OTransform =  style.msTransform = ["matrix("+mtx.a,mtx.b,mtx.c,mtx.d,(mtx.tx+0.5|0),(mtx.ty+0.5|0)+")"].join(",");
-			style.MozTransform = ["matrix("+mtx.a,mtx.b,mtx.c,mtx.d,(mtx.tx+0.5|0)+"px",(mtx.ty+0.5|0)+"px)"].join(",");
+			style.transform = style.WebkitTransform = style.OTransform = style.msTransform = ["matrix("+mtx.a.toFixed(3),mtx.b.toFixed(3),mtx.c.toFixed(3),mtx.d.toFixed(3),(mtx.tx+0.5|0),(mtx.ty+0.5|0)+")"].join(",");
+			style.MozTransform = ["matrix("+mtx.a.toFixed(3),mtx.b.toFixed(3),mtx.c.toFixed(3),mtx.d.toFixed(3),(mtx.tx+0.5|0)+"px",(mtx.ty+0.5|0)+"px)"].join(",");
 			this._oldMtx = mtx.clone();
 		}
 		
@@ -252,6 +253,8 @@ var p = DOMElement.prototype = new createjs.DisplayObject();
 	
 	/**
 	 * @method _tick
+	 * @param {Array} params Parameters to pass onto the DisplayObject {{#crossLink "DisplayObject/tick"}}{{/crossLink}}
+	 * function.
 	 * @protected
 	 */
 	p._tick = function(params) {

@@ -48,7 +48,7 @@ function Command(f, params, path) {
 * @protected
 * @param {Object} scope
 **/
-Command.prototype.exec = function(scope) { this.f.apply(scope, this.params); }
+Command.prototype.exec = function(scope) { this.f.apply(scope, this.params); };
 
 /**
  * The Graphics class exposes an easy to use API for generating vector drawing instructions and drawing them to a
@@ -63,7 +63,7 @@ Command.prototype.exec = function(scope) { this.f.apply(scope, this.params); }
  *	    g.beginFill(createjs.Graphics.getRGB(255,0,0));
  *	    g.drawCircle(0,0,3);
  *
- *	    var s = new Shape(g);
+ *	    var s = new createjs.Shape(g);
  *	    	s.x = 100;
  *	    	s.y = 100;
  *
@@ -132,13 +132,13 @@ var p = Graphics.prototype;
 	 * Returns a CSS compatible color string based on the specified RGB numeric color values in the format 
 	 * "rgba(255,255,255,1.0)", or if alpha is null then in the format "rgb(255,255,255)". For example,
 	 *
-	 *      Graphics.getRGB(50, 100, 150, 0.5);
+	 *      createjs.Graphics.getRGB(50, 100, 150, 0.5);
 	 *      // Returns "rgba(50,100,150,0.5)"
 	 *
 	 * It also supports passing a single hex color value as the first param, and an optional alpha value as the second
 	 * param. For example,
 	 *
-	 *      Graphics.getRGB(0xFF00FF, 0.2);
+	 *      createjs.Graphics.getRGB(0xFF00FF, 0.2);
 	 *      // Returns "rgba(255,0,255,0.2)"
 	 *
 	 * @method getRGB
@@ -168,7 +168,7 @@ var p = Graphics.prototype;
 	 * Returns a CSS compatible color string based on the specified HSL numeric color values in the format "hsla(360,100,100,1.0)", 
 	 * or if alpha is null then in the format "hsl(360,100,100)".
 	 *
-	 *      Graphics.getHSL(150, 100, 70);
+	 *      createjs.Graphics.getHSL(150, 100, 70);
 	 *      // Returns "hsl(150,100,70)"
 	 *
 	 * @method getHSL
@@ -188,11 +188,23 @@ var p = Graphics.prototype;
 		}
 	};
 	
+// static properties:
+	
+	/**
+	 * Exposes the Command class used internally by Graphics. Useful for extending the Graphics class or injecting
+	 * functionality.
+	 * @property Command
+	 * @static
+	 * @type {Function}
+	 **/
+	Graphics.Command = Command;
+	
 	/**
 	 * Map of Base64 characters to values. Used by {{#crossLink "Graphics/decodePath"}}{{/crossLink}}.
 	 * @property BASE_64
 	 * @static
 	 * @final
+	 * @readonly
 	 * @type {Object}
 	 **/
 	Graphics.BASE_64 = {"A":0,"B":1,"C":2,"D":3,"E":4,"F":5,"G":6,"H":7,"I":8,"J":9,"K":10,"L":11,"M":12,"N":13,"O":14,"P":15,"Q":16,"R":17,"S":18,"T":19,"U":20,"V":21,"W":22,"X":23,"Y":24,"Z":25,"a":26,"b":27,"c":28,"d":29,"e":30,"f":31,"g":32,"h":33,"i":34,"j":35,"k":36,"l":37,"m":38,"n":39,"o":40,"p":41,"q":42,"r":43,"s":44,"t":45,"u":46,"v":47,"w":48,"x":49,"y":50,"z":51,"0":52,"1":53,"2":54,"3":55,"4":56,"5":57,"6":58,"7":59,"8":60,"9":61,"+":62,"/":63};
@@ -209,6 +221,7 @@ var p = Graphics.prototype;
 	 * @property STROKE_CAPS_MAP
 	 * @static
 	 * @final
+	 * @readonly
 	 * @type {Array}
 	 **/
 	Graphics.STROKE_CAPS_MAP = ["butt", "round", "square"];
@@ -224,6 +237,7 @@ var p = Graphics.prototype;
 	 * @property STROKE_JOINTS_MAP
 	 * @static
 	 * @final
+	 * @readonly
 	 * @type {Array}
 	 **/
 	Graphics.STROKE_JOINTS_MAP = ["miter", "round", "bevel"];
@@ -278,11 +292,11 @@ var p = Graphics.prototype;
 	p._strokeStyleInstructions = null;
 	
 	/**
-	 * @property _ignoreScaleStroke
+	 * @property _strokeIgnoreScale
 	 * @protected
 	 * @type Boolean
 	 **/
-	p._ignoreScaleStroke = false;
+	p._strokeIgnoreScale = false;
 	
 	/**
 	 * @property _fillInstructions
@@ -290,6 +304,13 @@ var p = Graphics.prototype;
 	 * @type {Array}
 	 **/
 	p._fillInstructions = null;
+	
+	/**
+	 * @property _strokeMatrix
+	 * @protected
+	 * @type {Array}
+	 **/
+	p._fillMatrix = null;
 	
 	/**
 	 * @property _instructions
@@ -348,7 +369,7 @@ var p = Graphics.prototype;
 	};
 	
 	/**
-	 * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
+	 * Draws the display object into the specified context ignoring its visible, alpha, shadow, and transform.
 	 * Returns true if the draw was handled (useful for overriding functionality).
 	 *
 	 * NOTE: This method is mainly for internal use, though it may be useful for advanced uses.
@@ -533,8 +554,8 @@ var p = Graphics.prototype;
 		this._instructions = [];
 		this._oldInstructions = [];
 		this._activeInstructions = [];
-		this._strokeStyleInstructions = this._strokeInstructions = this._fillInstructions = null;
-		this._active = this._dirty = false;
+		this._strokeStyleInstructions = this._strokeInstructions = this._fillInstructions = this._fillMatrix = null;
+		this._active = this._dirty = this._strokeIgnoreScale = false;
 		return this;
 	};
 	
@@ -547,7 +568,8 @@ var p = Graphics.prototype;
 	 **/
 	p.beginFill = function(color) {
 		if (this._active) { this._newPath(); }
-		this._fillInstructions = color ? [new Command(this._setProp, ["fillStyle", color], false), Graphics.fillCmd] : null;
+		this._fillInstructions = color ? [new Command(this._setProp, ["fillStyle", color], false)] : null;
+		this._fillMatrix = null;
 		return this;
 	};
 	
@@ -576,7 +598,8 @@ var p = Graphics.prototype;
 		for (var i=0, l=colors.length; i<l; i++) {
 			o.addColorStop(ratios[i], colors[i]);
 		}
-		this._fillInstructions = [new Command(this._setProp, ["fillStyle", o], false), Graphics.fillCmd];
+		this._fillInstructions = [new Command(this._setProp, ["fillStyle", o], false)];
+		this._fillMatrix = null;
 		return this;
 	};
 	
@@ -606,7 +629,8 @@ var p = Graphics.prototype;
 		for (var i=0, l=colors.length; i<l; i++) {
 			o.addColorStop(ratios[i], colors[i]);
 		}
-		this._fillInstructions = [new Command(this._setProp, ["fillStyle", o], false), Graphics.fillCmd];
+		this._fillInstructions = [new Command(this._setProp, ["fillStyle", o], false)];
+		this._fillMatrix = null;
 		return this;
 	};
 	
@@ -627,20 +651,8 @@ var p = Graphics.prototype;
 		if (this._active) { this._newPath(); }
 		repetition = repetition || "";
 		var o = this._ctx.createPattern(image, repetition);
-		var cmd = new Command(this._setProp, ["fillStyle", o], false);
-		var arr;
-		if (matrix) {
-			arr = [
-				cmd,
-				new Command(this._ctx.save, [], false),
-				new Command(this._ctx.transform, [matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty], false),
-				Graphics.fillCmd,
-				new Command(this._ctx.restore, [], false)
-			];
-		} else {
-			arr = [cmd, Graphics.fillCmd];
-		}
-		this._fillInstructions = arr;
+		this._fillInstructions = [new Command(this._setProp, ["fillStyle", o], false)];
+		this._fillMatrix = matrix ? [matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty] : null;
 		return this;
 	};
 	
@@ -683,7 +695,7 @@ var p = Graphics.prototype;
 			new Command(this._setProp, ["lineJoin", (joints == null ? "miter" : (isNaN(joints) ? joints : Graphics.STROKE_JOINTS_MAP[joints]))], false),
 			new Command(this._setProp, ["miterLimit", (miterLimit == null ? "10" : miterLimit)], false)
 			];
-		this._ignoreScaleStroke = ignoreScale;
+		this._strokeIgnoreScale = ignoreScale;
 		return this;
 	};
 	
@@ -776,6 +788,7 @@ var p = Graphics.prototype;
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)	
 	 **/
 	p.beginBitmapStroke = function(image, repetition) {
+		// NOTE: matrix is not supported for stroke because transforms on strokes also affect the drawn stroke width.
 		if (this._active) { this._newPath(); }
 		repetition = repetition || "";
 		var o = this._ctx.createPattern(image, repetition);
@@ -870,13 +883,13 @@ var p = Graphics.prototype;
 	/**
 	 * Draws a circle with the specified radius at (x, y).
 	 *
-	 *      var g = new Graphics();
+	 *      var g = new createjs.Graphics();
 	 *	    g.setStrokeStyle(1);
-	 *	    g.beginStroke(Graphics.getRGB(0,0,0));
-	 *	    g.beginFill(Graphics.getRGB(255,0,0));
+	 *	    g.beginStroke(createjs.Graphics.getRGB(0,0,0));
+	 *	    g.beginFill(createjs.Graphics.getRGB(255,0,0));
 	 *	    g.drawCircle(0,0,3);
 	 *
-	 *	    var s = new Shape(g);
+	 *	    var s = new createjs.Shape(g);
 	 *		s.x = 100;
 	 *		s.y = 100;
 	 *
@@ -921,6 +934,53 @@ var p = Graphics.prototype;
 			new Command(this._ctx.bezierCurveTo, [xm+ox, y, xe, ym-oy, xe, ym]),
 			new Command(this._ctx.bezierCurveTo, [xe, ym+oy, xm+ox, ye, xm, ye]),
 			new Command(this._ctx.bezierCurveTo, [xm-ox, ye, x, ym+oy, x, ym])
+		);
+		return this;
+	};
+	
+	/**
+	 * Provides a method for injecting arbitrary Context2D (aka Canvas) API calls into a Graphics queue. The specified
+	 * callback function will be called in sequence with other drawing instructions. The callback will be executed in the
+	 * scope of the target canvas's Context2D object, and will be passed the data object as a parameter.
+	 * 
+	 * This is an advanced feature. It can allow for powerful functionality, like injecting output from tools that
+	 * export Context2D instructions, executing raw canvas calls within the context of the display list, or dynamically 
+	 * modifying colors or stroke styles within a Graphics instance over time, but it is not intended for general use.
+	 * 
+	 * Within a Graphics queue, each path begins by applying the fill and stroke styles and settings, followed by
+	 * drawing instructions, followed by the fill() and/or stroke() commands. This means that within a path, inject() can
+	 * update the fill & stroke styles, but for it to be applied in a predictable manner, you must have begun a fill or
+	 * stroke (as appropriate) normally via the Graphics API. For example:
+	 * 
+	 * 	function setColor(color) {
+	 * 		this.fillStyle = color;
+	 * 	}
+	 * 	
+	 * 	// this will not draw anything - no fill was begun, so fill() is not called:
+	 * 	myGraphics.inject(setColor, "red").drawRect(0,0,100,100);
+	 * 	
+	 * 	// this will draw the rect in green:
+	 * 	myGraphics.beginFill("#000").inject(setColor, "green").drawRect(0,0,100,100);
+	 * 	
+	 * 	// this will draw both rects in blue, because there is only a single path
+	 * 	// so the second inject overwrites the first:
+	 * 	myGraphics.beginFill("#000").inject(setColor, "green").drawRect(0,0,100,100)
+	 * 		.inject(setColor, "blue").drawRect(100,0,100,100);
+	 * 		
+	 * 	// this will draw the first rect in green, and the second in blue:
+	 * 	myGraphics.beginFill("#000").inject(setColor, "green").drawRect(0,0,100,100)
+	 * 		.beginFill("#000").inject(setColor, "blue").drawRect(100,0,100,100);
+	 * 
+	 * @method inject
+	 * @param {Function} callback The function to execute.
+	 * @param {Object} data Arbitrary data that will be passed to the callback when it is executed.
+	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
+	 **/
+	p.inject = function(callback, data) {
+		this._dirty = this._active = true;
+		
+		this._activeInstructions.push(
+			new Command(callback, [data])
 		);
 		return this;
 	};
@@ -1052,6 +1112,8 @@ var p = Graphics.prototype;
 		if (this._strokeStyleInstructions) { o._strokeStyleInstructions = this._strokeStyleInstructions.slice(); }
 		o._active = this._active;
 		o._dirty = this._dirty;
+		o._fillMatrix = this._fillMatrix;
+		o._strokeIgnoreScale = this._strokeIgnoreScale;
 		return o;
 	};
 		
@@ -1265,24 +1327,41 @@ var p = Graphics.prototype;
 		this._instructions = this._oldInstructions.slice();
 		this._instructions.push(Graphics.beginCmd);
 		
-		this._instructions.push.apply(this._instructions, this._activeInstructions);
+		this._appendInstructions(this._fillInstructions);
+		this._appendInstructions(this._strokeInstructions);
+		this._appendInstructions(this._strokeInstructions&&this._strokeStyleInstructions);
 		
-		if (this._fillInstructions) { this._instructions.push.apply(this._instructions, this._fillInstructions); }
+		this._appendInstructions(this._activeInstructions);
+		
+		if (this._fillInstructions) {
+			this._appendDraw(Graphics.fillCmd, this._fillMatrix);
+		}
 		if (this._strokeInstructions) {
-			if (this._strokeStyleInstructions) {
-				this._instructions.push.apply(this._instructions, this._strokeStyleInstructions);
-			}
-			this._instructions.push.apply(this._instructions, this._strokeInstructions);
-			if (this._ignoreScaleStroke) {
-				this._instructions.push(
-					new Command(this._ctx.save, [], false),
-					new Command(this._ctx.setTransform, [1,0,0,1,0,0], false),
-					Graphics.strokeCmd,
-					new Command(this._ctx.restore, [], false)
-				);
-			} else {
-				this._instructions.push(Graphics.strokeCmd);
-			}
+			this._appendDraw(Graphics.strokeCmd, this._strokeIgnoreScale&&[1,0,0,1,0,0]);
+		}
+	};
+	
+	/**
+	 * @method _appendInstructions
+	 * @protected
+	 **/
+	p._appendInstructions = function(instructions) {
+		if (instructions) { this._instructions.push.apply(this._instructions, instructions); }
+	};
+	
+	/**
+	 * @method _appendDraw
+	 * @protected
+	 **/
+	p._appendDraw = function(command, matrixArr) {
+		if (!matrixArr) { this._instructions.push(command); }
+		else {
+			this._instructions.push(
+				new Command(this._ctx.save, [], false),
+				new Command(this._ctx.setTransform, matrixArr, false),
+				command,
+				new Command(this._ctx.restore, [], false)
+			);
 		}
 	};
 	

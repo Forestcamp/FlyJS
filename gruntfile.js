@@ -81,9 +81,7 @@ module.exports = function (grunt) {
                         'src/flyjs/core/command/*.js',
                         'src/flyjs/core/loader/*.js',
                         'src/flyjs/core/*.js',
-                        'src/flyjs/core/collision/Node.js',
-                        'src/flyjs/core/collision/BoundsNode.js',
-                        'src/flyjs/core/collision/QuadTree.js',
+                        'src/flyjs/core/collision/*.js',
                         'src/flyjs/render/*.js'
                     ],
                     dest: '<%= meta.deployPath %>flyjs.min.js'

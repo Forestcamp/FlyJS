@@ -33,12 +33,14 @@ this.createjs = this.createjs||{};
 
 /**
  * The ButtonHelper is a helper class to create interactive buttons from {{#crossLink "MovieClip"}}{{/crossLink}} or
- * {{#crossLink "BitmapAnimation"}}{{/crossLink}} instances. This class will intercept mouse events from an object, and
- * automatically call {{#crossLink "BitmapAnimation/gotoAndStop"}}{{/crossLink}} or {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}},
+ * {{#crossLink "Sprite"}}{{/crossLink}} instances. This class will intercept mouse events from an object, and
+ * automatically call {{#crossLink "Sprite/gotoAndStop"}}{{/crossLink}} or {{#crossLink "Sprite/gotoAndPlay"}}{{/crossLink}},
  * to the respective animation labels, add a pointer cursor, and allows the user to define a hit state frame.
  *
  * The ButtonHelper instance does not need to be added to the stage, but a reference should be maintained to prevent
  * garbage collection.
+ * 
+ * Note that over states will not work unless you call {{#crossLink "Stage/enableMouseOver"}}{{/crossLink}}.
  *
  * <h4>Example</h4>
  *
@@ -48,7 +50,8 @@ this.createjs = this.createjs||{};
  *          // Click Happened.
  *      }
  *
- * @param {BitmapAnimation|MovieClip} target The instance to manage.
+ * @class ButtonHelper
+ * @param {Sprite|MovieClip} target The instance to manage.
  * @param {String} [outLabel="out"] The label or animation to go to when the user rolls out of the button.
  * @param {String} [overLabel="over"] The label or animation to go to when the user rolls over the button.
  * @param {String} [downLabel="down"] The label or animation to go to when the user presses the button.
@@ -58,21 +61,20 @@ this.createjs = this.createjs||{};
  * then the button's visible states will be used instead. Note that the same instance as the "target" argument can be
  * used for the hitState.
  * @param {String} [hitLabel] The label or animation on the hitArea instance that defines the hitArea bounds. If this is
- * null, then the default state of the hitArea will be used.
- *
- * @class ButtonHelper
+ * null, then the default state of the hitArea will be used. *
  * @constructor
  */
 var ButtonHelper = function(target, outLabel, overLabel, downLabel, play, hitArea, hitLabel) {
 	this.initialize(target, outLabel, overLabel, downLabel, play, hitArea, hitLabel);
-}
+};
 var p = ButtonHelper.prototype;
 
 // public properties:
 	/**
-	 * Read-only. The target for this button helper.
+	 * The target for this button helper.
 	 * @property target
-	 * @type MovieClip | BitmapAnimation
+	 * @type MovieClip | Sprite
+	 * @readonly
 	 **/
 	p.target = null;
 	
@@ -114,7 +116,7 @@ var p = ButtonHelper.prototype;
 	p._isPressed = false;
 	
 	/**
-	 * @property _isPressed
+	 * @property _isOver
 	 * @type Boolean
 	 * @protected
 	 **/
@@ -124,6 +126,17 @@ var p = ButtonHelper.prototype;
 	/** 
 	 * Initialization method.
 	 * @method initialize
+	 * @param {Sprite|MovieClip} target The instance to manage.
+	 * @param {String} [outLabel="out"] The label or animation to go to when the user rolls out of the button.
+	 * @param {String} [overLabel="over"] The label or animation to go to when the user rolls over the button.
+	 * @param {String} [downLabel="down"] The label or animation to go to when the user presses the button.
+	 * @param {Boolean} [play=false] If the helper should call "gotoAndPlay" or "gotoAndStop" on the button when changing
+	 * states.
+	 * @param {DisplayObject} [hitArea] An optional item to use as the hit state for the button. If this is not defined,
+	 * then the button's visible states will be used instead. Note that the same instance as the "target" argument can be
+	 * used for the hitState.
+	 * @param {String} [hitLabel] The label or animation on the hitArea instance that defines the hitArea bounds. If this is
+	 * null, then the default state of the hitArea will be used.
 	 * @protected
 	 **/
 	p.initialize = function(target, outLabel, overLabel, downLabel, play, hitArea, hitLabel) {
@@ -154,13 +167,15 @@ var p = ButtonHelper.prototype;
 	p.setEnabled = function(value) {
 		var o = this.target;
 		if (value) {
-			o.addEventListener("mouseover", this);
-			o.addEventListener("mouseout", this);
+			o.addEventListener("rollover", this);
+			o.addEventListener("rollout", this);
 			o.addEventListener("mousedown", this);
+			o.addEventListener("pressup", this);
 		} else {
-			o.removeEventListener("mouseover", this);
-			o.removeEventListener("mouseout", this);
+			o.removeEventListener("rollover", this);
+			o.removeEventListener("rollout", this);
 			o.removeEventListener("mousedown", this);
+			o.removeEventListener("pressup", this);
 		}
 	};
 		
@@ -177,22 +192,22 @@ var p = ButtonHelper.prototype;
 // protected methods:
 	/**
 	 * @method handleEvent
+	 * @param {Object} evt The mouse event to handle.
 	 * @protected
 	 **/
 	p.handleEvent = function(evt) {
 		var label, t = this.target, type = evt.type;
 		
 		if (type == "mousedown") {
-			evt.addEventListener("mouseup", this);
 			this._isPressed = true;
 			label = this.downLabel;
-		} else if (type == "mouseup") {
+		} else if (type == "pressup") {
 			this._isPressed = false;
 			label = this._isOver ? this.overLabel : this.outLabel;
-		} else if (type == "mouseover") {
+		} else if (type == "rollover") {
 			this._isOver = true;
 			label = this._isPressed ? this.downLabel : this.overLabel;
-		} else { // mouseout and default
+		} else { // rollout and default
 			this._isOver = false;
 			label = this._isPressed ? this.overLabel : this.outLabel;
 		}

@@ -49,7 +49,7 @@ this.createjs = this.createjs||{};
  * before it can be displayed.
  *
  * <strong>Note:</strong> Text can be expensive to generate, so cache instances where possible. Be aware that not all
- * browsers will render Text exactly the same. *
+ * browsers will render Text exactly the same.
  * @class Text
  * @extends DisplayObject
  * @constructor
@@ -88,10 +88,11 @@ var p = Text.prototype = new createjs.DisplayObject();
 	
 	/**
 	 * The color to draw the text in. Any valid value for the CSS color attribute is acceptable (ex. "#F00"). Default is "#000".
+	 * It will also accept valid canvas fillStyle values.
 	 * @property color
 	 * @type String
 	 **/
-	p.color = "#000";
+	p.color = null;
 	
 	/**
 	 * The horizontal text alignment. Any of "start", "end", "left", "right", and "center". For detailed 
@@ -103,16 +104,17 @@ var p = Text.prototype = new createjs.DisplayObject();
 	 **/
 	p.textAlign = "left";
 	
-	/** The vertical alignment point on the font. Any of "top", "hanging", "middle", "alphabetic", 
-	 * "ideographic", or "bottom". For detailed information view the 
-	 * <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#text-styles">
+	/**
+	 * The vertical alignment point on the font. Any of "top", "hanging", "middle", "alphabetic", "ideographic", or
+	 * "bottom". For detailed information view the <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#text-styles">
 	 * whatwg spec</a>. Default is "top".
 	 * @property textBaseline
 	 * @type String
 	*/
 	p.textBaseline = "top";
 	
-	/** The maximum width to draw the text. If maxWidth is specified (not null), the text will be condensed or 
+	/**
+	 * The maximum width to draw the text. If maxWidth is specified (not null), the text will be condensed or
 	 * shrunk to make it fit in this width. For detailed information view the 
 	 * <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#text-styles">
 	 * whatwg spec</a>.
@@ -121,13 +123,15 @@ var p = Text.prototype = new createjs.DisplayObject();
 	*/
 	p.maxWidth = null;
 	
-	/** If true, the text will be drawn as a stroke (outline). If false, the text will be drawn as a fill.
+	/**
+	 * If greater than 0, the text will be drawn as a stroke (outline) of the specified width.
 	 * @property outline
-	 * @type Boolean
+	 * @type Number
 	 **/
-	p.outline = false;
+	p.outline = 0;
 	
-	/** Indicates the line height (vertical distance between baselines) for multi-line text. If null or 0, 
+	/**
+	 * Indicates the line height (vertical distance between baselines) for multi-line text. If null or 0,
 	 * the value of getMeasuredLineHeight is used.
 	 * @property lineHeight
 	 * @type Number
@@ -142,6 +146,8 @@ var p = Text.prototype = new createjs.DisplayObject();
 	 **/
 	p.lineWidth = null;
 	
+// private properties:
+	
 // constructor:
 	/**
 	 * @property DisplayObject_initialize
@@ -153,14 +159,19 @@ var p = Text.prototype = new createjs.DisplayObject();
 	/** 
 	 * Initialization method.
 	 * @method initialize
+	 * @param {String} [text] The text to display.
+	 * @param {String} [font] The font style to use. Any valid value for the CSS font attribute is acceptable (ex. "bold
+	 * 36px Arial").
+	 * @param {String} [color] The color to draw the text in. Any valid value for the CSS color attribute is acceptable (ex.
+	 * "#F00", "red", or "#FF0000").
 	 * @protected
 	*/
 	p.initialize = function(text, font, color) {
 		this.DisplayObject_initialize();
 		this.text = text;
 		this.font = font;
-		this.color = color ? color : "#000";
-	}
+		this.color = color;
+	};
 	
 	/**
 	 * Returns true or false indicating whether the display object would be visible if drawn to a canvas.
@@ -172,7 +183,7 @@ var p = Text.prototype = new createjs.DisplayObject();
 	p.isVisible = function() {
 		var hasContent = this.cacheCanvas || (this.text != null && this.text !== "");
 		return !!(this.visible && this.alpha > 0 && this.scaleX != 0 && this.scaleY != 0 && hasContent);
-	}
+	};
 
 	/**
 	 * @property DisplayObject_draw
@@ -182,7 +193,7 @@ var p = Text.prototype = new createjs.DisplayObject();
 	p.DisplayObject_draw = p.draw;
 	
 	/**
-	 * Draws the Text into the specified context ignoring it's visible, alpha, shadow, and transform.
+	 * Draws the Text into the specified context ignoring its visible, alpha, shadow, and transform.
 	 * Returns true if the draw was handled (useful for overriding functionality).
 	 * NOTE: This method is mainly for internal use, though it may be useful for advanced uses.
 	 * @method draw
@@ -194,15 +205,17 @@ var p = Text.prototype = new createjs.DisplayObject();
 	p.draw = function(ctx, ignoreCache) {
 		if (this.DisplayObject_draw(ctx, ignoreCache)) { return true; }
 		
-		if (this.outline) { ctx.strokeStyle = this.color; }
-		else { ctx.fillStyle = this.color; }
+		var col = this.color || "#000";
+		if (this.outline) { ctx.strokeStyle = col; ctx.lineWidth = this.outline*1; }
+		else { ctx.fillStyle = col; }
+		
 		ctx.font = this.font;
 		ctx.textAlign = this.textAlign||"start";
 		ctx.textBaseline = this.textBaseline||"alphabetic";
 
 		this._drawText(ctx);
 		return true;
-	}
+	};
 	
 	/**
 	 * Returns the measured, untransformed width of the text without wrapping.
@@ -211,7 +224,7 @@ var p = Text.prototype = new createjs.DisplayObject();
 	 **/
 	p.getMeasuredWidth = function() {
 		return this._getWorkingContext().measureText(this.text).width;
-	}
+	};
 
 	/**
 	 * Returns an approximate line height of the text, ignoring the lineHeight property. This is based on the measured
@@ -222,18 +235,18 @@ var p = Text.prototype = new createjs.DisplayObject();
 	 **/
 	p.getMeasuredLineHeight = function() {
 		return this._getWorkingContext().measureText("M").width*1.2;
-	}
+	};
 
 	/**
 	 * Returns the approximate height of multi-line text by multiplying the number of lines against either the
 	 * <code>lineHeight</code> (if specified) or {{#crossLink "Text/getMeasuredLineHeight"}}{{/crossLink}}. Note that
 	 * this operation requires the text flowing logic to run, which has an associated CPU cost.
 	 * @method getMeasuredHeight
-	 * @return {Number} The approximate height of the drawn multi-line text.
+	 * @return {Number} The approximate height of the untransformed multi-line text.
 	 **/
 	p.getMeasuredHeight = function() {
-		return this._drawText()*(this.lineHeight||this.getMeasuredLineHeight());
-	}
+		return this._drawText(null,{}).height;
+	};
 	
 	/**
 	 * Returns a clone of the Text instance.
@@ -244,7 +257,7 @@ var p = Text.prototype = new createjs.DisplayObject();
 		var o = new Text(this.text, this.font, this.color);
 		this.cloneProps(o);
 		return o;
-	}
+	};
 		
 	/**
 	 * Returns a string representation of this object.
@@ -253,7 +266,7 @@ var p = Text.prototype = new createjs.DisplayObject();
 	 **/
 	p.toString = function() {
 		return "[Text (text="+  (this.text.length > 20 ? this.text.substr(0, 17)+"..." : this.text) +")]";
-	}
+	};
 	
 // private methods:
 	
@@ -277,7 +290,7 @@ var p = Text.prototype = new createjs.DisplayObject();
 		o.outline = this.outline;
 		o.lineHeight = this.lineHeight;
 		o.lineWidth = this.lineWidth;
-	}
+	};
 
 	/** 
 	 * @method _getWorkingContext
@@ -289,22 +302,25 @@ var p = Text.prototype = new createjs.DisplayObject();
 		ctx.textAlign = this.textAlign||"start";
 		ctx.textBaseline = this.textBaseline||"alphabetic";
 		return ctx;
-	}
+	};
 	 
 	/**
 	 * Draws multiline text.
-	 * @method _getWorkingContext
+	 * @method _drawText
+	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {Object} o
 	 * @protected
-	 * @return {Number} The number of lines drawn.
 	 **/
-	p._drawText = function(ctx) {
+	p._drawText = function(ctx, o) {
 		var paint = !!ctx;
 		if (!paint) { ctx = this._getWorkingContext(); }
 		var lines = String(this.text).split(/(?:\r\n|\r|\n)/);
 		var lineHeight = this.lineHeight||this.getMeasuredLineHeight();
 		var count = 0;
+		var maxW = 0;
 		for (var i=0, l=lines.length; i<l; i++) {
 			var w = ctx.measureText(lines[i]).width;
+			if (w > maxW) { maxW = w; }
 			if (this.lineWidth == null || w < this.lineWidth) {
 				if (paint) { this._drawTextLine(ctx, lines[i], count*lineHeight); }
 				count++;
@@ -327,13 +343,18 @@ var p = Text.prototype = new createjs.DisplayObject();
 			if (paint) { this._drawTextLine(ctx, str, count*lineHeight); } // Draw remaining text
 			count++;
 		}
-		return count;
-	}
+		if (o) {
+			o.count = count;
+			o.width = maxW;
+			o.height = count*lineHeight;
+		}
+		return o;
+	};
 	
 	/** 
 	 * @method _drawTextLine
 	 * @param {CanvasRenderingContext2D} ctx
-	 * @param {Text} text
+	 * @param {String} text
 	 * @param {Number} y
 	 * @protected 
 	 **/
@@ -342,7 +363,7 @@ var p = Text.prototype = new createjs.DisplayObject();
 			if (this.outline) { ctx.strokeText(text, 0, y, this.maxWidth||0xFFFF); }
 			else { ctx.fillText(text, 0, y, this.maxWidth||0xFFFF); }
 		
-	}
+	};
 
 createjs.Text = Text;
 }());

@@ -42,13 +42,13 @@ this.createjs = this.createjs||{};
  * Note that the "images" used in the generated sprite sheet are actually canvas elements, and that they will be sized
  * to the nearest power of 2 up to the value of <code>maxWidth</code> or <code>maxHeight</code>.
  * @class SpriteSheetBuilder
- * @uses EventDispatcher
+ * @extends EventDispatcher
  * @constructor
  **/
 var SpriteSheetBuilder = function() {
   this.initialize();
-}
-var p = SpriteSheetBuilder.prototype;
+};
+var p = SpriteSheetBuilder.prototype = new createjs.EventDispatcher;
 
 // constants:
 	SpriteSheetBuilder.ERR_DIMENSIONS = "frame dimensions exceed max spritesheet dimensions";
@@ -106,7 +106,7 @@ var p = SpriteSheetBuilder.prototype;
 	 * The scale to apply when drawing all frames to the sprite sheet. This is multiplied against any scale specified
 	 * in the addFrame call. This can be used, for example, to generate a sprite sheet at run time that is tailored to
 	 * the a specific device resolution (ex. tablet vs mobile).
-	 * @property defaultScale
+	 * @property scale
 	 * @type Number
 	 * @default 1
 	 **/
@@ -132,47 +132,30 @@ var p = SpriteSheetBuilder.prototype;
 	p.timeSlice = 0.3;
 	
 	/**
-	 * Read-only. A value between 0 and 1 that indicates the progress of a build, or -1 if a build has not
+	 * A value between 0 and 1 that indicates the progress of a build, or -1 if a build has not
 	 * been initiated.
 	 * @property progress
 	 * @type Number
 	 * @default -1
+	 * @readonly
 	 **/
 	p.progress = -1;
-	
-	/**
-	 * 
-	 * @property onComplete
-	 * @type Function
-	 * @default null
-	 **/
 	 
+	// TODO: deprecated.
 	/**
-	 * Callback function to call when a build completes. Called with a single parameter pointing back to this instance.
+	 * REMOVED. Use {{#crossLink "EventDispatcher/addEventListener"}}{{/crossLink}} and the {{#crossLink "SpriteSheetBuilder/complete:event"}}{{/crossLink}}
+	 * event.
 	 * @property onComplete
 	 * @type Function
-	 * @deprecated In favour of the "complete" event. Will be removed in a future version.
+	 * @deprecated Use addEventListener and the "complete" event.
 	 */
-	p.onComplete = null;
-	 
 	/**
-	 * Callback to call when an asynchronous build has progress. Called with two parameters, a reference back to this
-	 * instance, and the current progress value (0-1).
+	 * REMOVED. Use {{#crossLink "EventDispatcher/addEventListener"}}{{/crossLink}} and the {{#crossLink "SpriteSheetBuilder/progress:event"}}{{/crossLink}}
+	 * event.
 	 * @property onProgress
 	 * @type Function
-	 * @deprecated In favour of the "progress" event. Will be removed in a future version.
+	 * @deprecated Use addEventListener and the "progress" event.
 	 */
-	p.onProgress = null;
-	
-// mix-ins:
-	// EventDispatcher methods:
-	p.addEventListener = null;
-	p.removeEventListener = null;
-	p.removeAllEventListeners = null;
-	p.dispatchEvent = null;
-	p.hasEventListener = null;
-	p._listeners = null;
-	createjs.EventDispatcher.initialize(p); // inject EventDispatcher methods.
 
 // private properties:
 
@@ -234,7 +217,7 @@ var p = SpriteSheetBuilder.prototype;
 	p.initialize = function() {
 		this._frames = [];
 		this._animations = {};
-	}
+	};
 
 // public methods:
 	
@@ -242,7 +225,7 @@ var p = SpriteSheetBuilder.prototype;
 	 * Adds a frame to the {{#crossLink "SpriteSheet"}}{{/crossLink}}. Note that the frame will not be drawn until you
 	 * call {{#crossLink "SpriteSheetBuilder/build"}}{{/crossLink}} method. The optional setup params allow you to have
 	 * a function run immediately before the draw occurs. For example, this allows you to add a single source multiple
-	 * times, but manipulate it or it's children to change it to generate different frames.
+	 * times, but manipulate it or its children to change it to generate different frames.
 	 *
 	 * Note that the source's transformations (x, y, scale, rotate, alpha) will be ignored, except for regX/Y. To apply
 	 * transforms to a source object and have them captured in the sprite sheet, simply place it into a {{#crossLink "Container"}}{{/crossLink}}
@@ -265,7 +248,7 @@ var p = SpriteSheetBuilder.prototype;
 		if (!rect) { return null; }
 		scale = scale||1;
 		return this._frames.push({source:source, sourceRect:rect, scale:scale, funct:setupFunction, params:setupParams, scope:setupScope, index:this._frames.length, height:rect.height*scale})-1;
-	}
+	};
 	
 	/**
 	 * Adds an animation that will be included in the created sprite sheet.
@@ -281,7 +264,7 @@ var p = SpriteSheetBuilder.prototype;
 	p.addAnimation = function(name, frames, next, frequency) {
 		if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
 		this._animations[name] = {frames:frames, next:next, frequency:frequency};
-	}
+	};
 	
 	/**
 	 * This will take a MovieClip, and add its frames and labels to this builder. Labels will be added as an animation
@@ -332,7 +315,7 @@ var p = SpriteSheetBuilder.prototype;
 				this.addAnimation(label, frames, true); // for now, this loops all animations.
 			}
 		}
-	}
+	};
 	
 	/**
 	 * Builds a SpriteSheet instance based on the current frames.
@@ -345,7 +328,7 @@ var p = SpriteSheetBuilder.prototype;
 		while (this._drawNext()) {}
 		this._endBuild();
 		return this.spriteSheet;
-	}
+	};
 	
 	/**
 	 * Asynchronously builds a {{#crossLink "SpriteSheet"}}{{/crossLink}} instance based on the current frames. It will
@@ -360,7 +343,7 @@ var p = SpriteSheetBuilder.prototype;
 		this._startBuild();
 		var _this = this;
 		this._timerID = setTimeout(function() { _this._run(); }, 50-Math.max(0.01, Math.min(0.99, this.timeSlice||0.3))*50);
-	}
+	};
 	
 	/**
 	 * Stops the current asynchronous build.
@@ -369,7 +352,7 @@ var p = SpriteSheetBuilder.prototype;
 	p.stopAsync = function() {
 		clearTimeout(this._timerID);
 		this._data = null;
-	}
+	};
 	
 	/**
 	 * SpriteSheetBuilder instances cannot be cloned.
@@ -377,7 +360,7 @@ var p = SpriteSheetBuilder.prototype;
 	 **/
 	p.clone = function() {
 		throw("SpriteSheetBuilder cannot be cloned.");
-	}
+	};
 
 	/**
 	 * Returns a string representation of this object.
@@ -386,7 +369,7 @@ var p = SpriteSheetBuilder.prototype;
 	 **/
 	p.toString = function() {
 		return "[SpriteSheetBuilder]";
-	}
+	};
 
 // private methods:
 	/**
@@ -427,10 +410,10 @@ var p = SpriteSheetBuilder.prototype;
 				}
 			}
 		}
-	}
+	};
 	
 	/**
-	 * @method _fillRow
+	 * @method _getSize
 	 * @protected
 	 * @return {Number} The width & height of the row.
 	 **/
@@ -438,10 +421,15 @@ var p = SpriteSheetBuilder.prototype;
 		var pow = 4;
 		while (Math.pow(2,++pow) < size){}
 		return Math.min(max,Math.pow(2,pow));
-	}
+	};
 	
 	/**
 	 * @method _fillRow
+	 * @param {Array} frames
+	 * @param {Number} y
+	 * @param {Image} img
+	 * @param {Object} dataFrames
+	 * @param {Number} pad
 	 * @protected
 	 * @return {Number} The width & height of the row.
 	 **/
@@ -471,7 +459,7 @@ var p = SpriteSheetBuilder.prototype;
 			x += rw;
 		}
 		return {w:x, h:height};
-	}
+	};
 	
 	/**
 	 * @method _endBuild
@@ -481,9 +469,8 @@ var p = SpriteSheetBuilder.prototype;
 		this.spriteSheet = new createjs.SpriteSheet(this._data);
 		this._data = null;
 		this.progress = 1;
-		this.onComplete&&this.onComplete(this);
 		this.dispatchEvent("complete");
-	}
+	};
 	
 	/**
 	 * @method _run
@@ -503,9 +490,12 @@ var p = SpriteSheetBuilder.prototype;
 			this._timerID = setTimeout(function() { _this._run(); }, 50-ts);
 		}
 		var p = this.progress = this._index/this._frames.length;
-		this.onProgress&&this.onProgress(this, p);
-		this.dispatchEvent({type:"progress", progress:p});
-	}
+		if (this.hasEventListener("progress")) {
+			var evt = new createjs.Event("progress");
+			evt.progress = p;
+			this.dispatchEvent(evt);
+		}
+	};
 	
 	/**
 	 * @method _drawNext
@@ -529,7 +519,7 @@ var p = SpriteSheetBuilder.prototype;
 		frame.source.draw(ctx); // display object will draw itself.
 		ctx.restore();
 		return (++this._index) < this._frames.length;
-	}
+	};
 
 createjs.SpriteSheetBuilder = SpriteSheetBuilder;
 }());
