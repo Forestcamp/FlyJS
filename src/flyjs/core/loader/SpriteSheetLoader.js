@@ -43,7 +43,7 @@ this.flyjs = this.flyjs || {};
     };
 
     p.handleOnComplete = function () {
-        flyjs.ManifestParser.parseSpriteSheets(flyjs.AssetManager.manifest.spriteSheets);
+        flyjs.ManifestParser.parseSpriteSheets(flyjs.AssetManager.manifest.spriteSheets, this.spriteSheets);
         this.complete();
         this.spriteSheets = null;
     };

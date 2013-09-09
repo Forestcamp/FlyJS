@@ -40,13 +40,14 @@ this.flyjs = this.flyjs || {};
      * @param list {Array}
      * @public
      */
-    ManifestParser.parseSpriteSheets = function (list) {
+    ManifestParser.parseSpriteSheets = function (list, imgList) {
         var i = 0,
             length = list.length,
             listItem;
 
         for (i; i < length; i++) {
             listItem = list[i];
+            listItem.images = [imgList[i].tag];
             flyjs.AssetManager.addSpriteSheetAsset(listItem);
         }
     };
