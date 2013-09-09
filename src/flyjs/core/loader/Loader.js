@@ -51,8 +51,23 @@ this.flyjs = this.flyjs || {};
     p._addHandlers = function () {
         this._loader.addEventListener("complete", this._options.onComplete);
         this._loader.addEventListener("fileload", this._options.onFileLoad);
-        this._loader.addEventListener("fileprogress", this._options.onProgress);
-        this._loader.addEventListener("error", this._options.onError);
+        this._loader.addEventListener("fileprogress", this.onProgressHandler);
+        this._loader.addEventListener("error", this.onErrorHandler);
+    };
+
+    p.removeHandlers = function () {
+        this._loader.removeEventListener("complete", this._options.onComplete);
+        this._loader.removeEventListener("fileload", this._options.onFileLoad);
+        this._loader.removeEventListener("fileprogress", this.onProgressHandler);
+        this._loader.removeEventListener("error", this.onErrorHandler);
+    };
+
+    p.onErrorHandler = function () {
+        console.log("error in loading");
+    };
+
+    p.onProgressHandler = function () {
+        console.log("listener in onProgressHandler");
     };
 
     flyjs.Loader = Loader;

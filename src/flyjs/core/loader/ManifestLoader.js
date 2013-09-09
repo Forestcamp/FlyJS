@@ -37,6 +37,7 @@ this.flyjs = this.flyjs || {};
     };
 
     p.handleOnComplete = function () {
+        this._loader.removeHandlers();
         this.complete();
     };
 

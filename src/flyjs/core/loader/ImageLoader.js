@@ -40,6 +40,7 @@ this.flyjs = this.flyjs || {};
 
     p.handleOnComplete = function () {
         flyjs.ManifestParser.parseImages(this.images);
+        this._loader.removeHandlers();
         this.complete();
         this.images = null;
     };
