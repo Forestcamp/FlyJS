@@ -25,7 +25,7 @@ this.flyjs = this.flyjs || {};
      */
     AssetManager.addBitmapAsset = function (asset) {
         var bitmap;
-        bitmap = new createjs.Bitmap(asset.src);
+        bitmap = new createjs.Bitmap(asset.tag);
         this._assets[asset.id] = bitmap;
     };
 
