@@ -10,6 +10,10 @@ Game engine for HTML5
 * Collisions Entities detection with - Quadtree && Separation of Axis Theorem
 * Pre-loading images, sprites, game data & etc. (JSON)
 
+## Examples
+* Animation (with keyboard) [Open Example](http://flashblogger.ru/flyjs/example/hero/index_min.html)
+* Space Invaders (with keyboard) [Open Example](http://flashblogger.ru/flyjs/example/invaders/index_min.html)
+
 ## Documentation
 
 
