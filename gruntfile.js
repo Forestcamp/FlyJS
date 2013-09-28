@@ -50,6 +50,7 @@ module.exports = function (grunt) {
                         'src/vendor/createjs/utils/IndexOf.js',
                         'src/vendor/createjs/utils/Log.js',
                         'src/vendor/createjs/utils/Proxy.js',
+                        'src/vendor/easeljs/events/MouseEvent.js',
                         'src/vendor/easeljs/utils/UID.js',
                         'src/vendor/easeljs/utils/Ticker.js',
                         'src/vendor/easeljs/events/MouseEvent.js',
