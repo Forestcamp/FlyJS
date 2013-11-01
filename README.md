@@ -11,8 +11,8 @@ Game engine for HTML5
 * Pre-loading images, sprites, game data & etc. (JSON)
 
 ## Examples
-* Animation (with keyboard) [Open Example](http://frontblogger.ru/flyjs/example/hero/index_min.html)
-* Space Invaders (with keyboard) [Open Example](http://frontblogger.ru/flyjs/example/invaders/index_min.html)
+* Animation (with keyboard) [Open Example](http://frontblogger.ru/example/flyjs/example/hero/index_min.html)
+* Space Invaders (with keyboard) [Open Example](http://frontblogger.ru/example/flyjs/example/invaders/index_min.html)
 
 ## Documentation
 
